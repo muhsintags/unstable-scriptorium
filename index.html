@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scriptorium - Privacy Policy</title>
+<style>
+    :root {
+        --bg-color: #050505;
+        --card-bg: #111113;
+        --text-color: #f5f5f7;
+        --secondary-text: #86868b;
+        --accent-color: #007aff;
+        --border-color: rgba(255, 255, 255, 0.1);
+        --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; }
+    body { font-family: var(--font-family); background-color: var(--bg-color); color: var(--text-color); padding-bottom: 60px; overflow-x: hidden; perspective: 1000px; }
+    
+    #cursor-light { position: absolute; width: 350px; height: 350px; background: radial-gradient(circle, rgba(0, 122, 255, 0.2) 0%, rgba(0, 0, 0, 0) 70%); pointer-events: none; transform: translate(-50%, -50%); z-index: 9999; filter: blur(25px); }
+    .spark { position: absolute; width: 4px; height: 4px; background: #007aff; border-radius: 50%; pointer-events: none; box-shadow: 0 0 10px #007aff, 0 0 20px #007aff; animation: spark-anim 0.8s linear forwards; z-index: 10000; }
+    @keyframes spark-anim { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(0) translate(var(--tx), var(--ty)); opacity: 0; } }
+
+    .container {
+        max-width: 720px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 40px 24px;
+        position: relative;
+        z-index: 2;
+        transform-style: preserve-3d;
+        transition: transform 0.1s ease-out;
+    }
+    .language-selector { margin-bottom: 30px; text-align: center; }
+    .language-selector select {
+        background: var(--card-bg);
+        color: var(--text-color);
+        border: 1px solid var(--border-color);
+        padding: 10px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 15px;
+        max-width: 100%;
+    }
+
+    /* 3D Interactive UI Bars */
+    .bar-container {
+        position: relative;
+        background: linear-gradient(90deg, #161619, #1e1e24);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        height: 48px;
+        margin-bottom: 25px;
+        overflow: visible;
+        display: flex;
+        align-items: center;
+        padding: 0 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .bar-label {
+        font-size: 13px;
+        color: var(--secondary-text);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Pixel Art Crows */
+    .pixel-crow {
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        bottom: 0px;
+        image-rendering: pixelated;
+        z-index: 20;
+        transform-origin: bottom center;
+        transition: transform 0.2s;
+    }
+    /* Pure CSS Pixel Art Crow Matrix */
+    .pixel-crow::before {
+        content: "";
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: #f5f5f7;
+        box-shadow: 
+            /* Beak */
+            20px 8px 0 #ffaa00, 24px 8px 0 #ffaa00,
+            /* Head & Body */
+            12px 4px 0 #111, 16px 4px 0 #111, 8px 8px 0 #111, 12px 8px 0 #111, 16px 8px 0 #111, 20px 8px 0 #111,
+            4px 12px 0 #111, 8px 12px 0 #111, 12px 12px 0 #111, 16px 12px 0 #111, 20px 12px 0 #111,
+            4px 16px 0 #111, 8px 16px 0 #111, 12px 16px 0 #111, 16px 16px 0 #111,
+            /* Legs */
+            8px 20px 0 #ffaa00, 16px 20px 0 #ffaa00;
+    }
+    .pixel-crow.flipping {
+        transform: scaleX(-1);
+    }
+    .pixel-crow.pecking {
+        animation: peck 0.4s infinite alternate;
+    }
+    @keyframes peck {
+        0% { transform: translateY(0) rotate(0deg); }
+        100% { transform: translateY(4px) rotate(15deg); }
+    }
+
+    .policy-section {
+        background-color: var(--card-bg);
+        border-radius: 18px;
+        padding: 24px;
+        margin-bottom: 20px;
+        border: 1px solid var(--border-color);
+        backdrop-filter: blur(20px);
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+    .policy-section:hover {
+        border-color: rgba(0, 122, 255, 0.4);
+        transform: translateY(-2px);
+    }
+    .policy-section h2 { font-size: 19px; margin-bottom: 10px; line-height: 1.3; }
+    .policy-section p { color: var(--secondary-text); font-size: 15px; line-height: 1.6; }
+    .policy-section a { color: var(--accent-color); text-decoration: none; word-break: break-all; }
+
+    h1 {
+        font-size: clamp(28px, 6vw, 44px);
+        font-weight: 800;
+        margin-bottom: 8px;
+        line-height: 1.1;
+        text-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    }
+    .updated { color: var(--secondary-text); font-size: 14px; margin-bottom: 30px; display: block; }
+    [dir="rtl"] .language-selector { direction: ltr; }
+
+    @media (max-width: 768px) {
+        .container { padding: 32px 20px; }
+        .policy-section { padding: 20px; border-radius: 14px; }
+    }
+    @media (max-width: 480px) {
+        .container { padding: 24px 16px; }
+        .language-selector select { width: 100%; }
+        .policy-section { padding: 18px; margin-bottom: 16px; }
+        #cursor-light { display: none; }
+    }
+</style>
+</head>
+<body>
+<div id="cursor-light"></div>
+<div class="container" id="mainContainer">
+    <div class="language-selector">
+        <select id="langSelect" onchange="changeContent()">
+            <option value="en">English</option>
+            <option value="tr">Türkçe</option>
+            <option value="ru">Русский</option>
+            <option value="ar">العربية</option>
+            <option value="hi">हिन्दी</option>
+            <option value="he">עברית</option>
+            <option value="de">Deutsch</option>
+        </select>
+    </div>
+
+    <div class="bar-container" id="topBar">
+        <span class="bar-label" id="barLabel">System Status: Active // Security Grid Online</span>
+        <div class="pixel-crow" id="crow1" style="left: 50px;"></div>
+    </div>
+
+    <h1 id="title">Privacy Policy</h1>
+    <span class="updated" id="updated">Last updated: August 2026</span>
+    
+    <div class="bar-container" id="middleBar" style="margin-top: 10px; margin-bottom: 25px;">
+        <span class="bar-label" id="barLabel2">Data Encryption Module // Local Room DB</span>
+        <div class="pixel-crow" id="crow2" style="left: 200px;"></div>
+    </div>
+
+    <div id="policy-body"></div>
+</div>
+
+<script>
+    const updatedText = {
+        en: "Last updated: August 2026", tr: "Son güncelleme: Ağustos 2026",
+        ru: "Последнее обновление: август 2026", ar: "آخر تحديث: أغسطس 2026",
+        hi: "अंतिम अपडेट: अगस्त 2026", he: "עודכן לאחרונה: אוגוסט 2026",
+        de: "Zuletzt aktualisiert: August 2026"
+    };
+    const rtlLangs = ["ar", "he"];
+
+    const data = {
+        en: { title: "Privacy Policy", sections: [
+            { t: "No Data Collection", b: "Scriptorium does not collect, store, or transmit any personal data to external servers. The app does not use analytics, advertising, or tracking services." },
+            { t: "Local Name Entry", b: "The app may ask you to enter a name for a personalized experience. This name is stored only on your device and is never sent to any server or third party." },
+            { t: "Local Storage", b: "Texts you download within the app are stored locally on your device using a local database (Room). This data stays on your device and is not accessible to us or anyone else." },
+            { t: "Third-Party Services", b: "Scriptorium does not integrate with third-party analytics, advertising, or authentication services. No data is shared with third parties." },
+            { t: "Children's Privacy", b: "Since the app does not collect any personal data, it is safe for use by users of all ages, including children." },
+            { t: "Changes to This Policy", b: "This privacy policy may be updated if the app's functionality changes in the future. Any changes will be posted on this page." },
+            { t: "Contact", b: 'For questions, please reach out via: <a href="https://github.com/muhsintags" target="_blank">github.com/muhsintags</a>' }
+        ]},
+        tr: { title: "Gizlilik Politikası", sections: [
+            { t: "Veri Toplanmaz", b: "Scriptorium, dış sunuculara herhangi bir kişisel veri toplamaz, saklamaz veya iletmez. Uygulama analitik, reklam veya takip hizmeti kullanmaz." },
+            { t: "Yerel İsim Girişi", b: "Uygulama, kişiselleştirilmiş bir deneyim için sizden bir isim girmenizi isteyebilir. Bu isim yalnızca cihazınızda saklanır ve hiçbir sunucuya veya üçüncü tarafa gönderilmez." },
+            { t: "Yerel Depolama", b: "Uygulama içinde indirdiğiniz metinler, yerel bir veritabanı (Room) kullanılarak cihazınızda saklanır. Bu veriler cihazınızda kalır ve bize veya başka birine erişilebilir değildir." },
+            { t: "Üçüncü Taraf Hizmetler", b: "Scriptorium, üçüncü taraf analitik, reklam veya kimlik doğrulama hizmetleriyle entegre değildir. Hiçbir veri üçüncü taraflarla paylaşılmaz." },
+            { t: "Çocukların Gizliliği", b: "Uygulama hiçbir kişisel veri toplamadığından, çocuklar dahil her yaştan kullanıcı için güvenlidir." },
+            { t: "Bu Politikadaki Değişiklikler", b: "Uygulamanın işlevselliği gelecekte değişirse bu gizlilik politikası güncellenebilir. Değişiklikler bu sayfada yayınlanacaktır." },
+            { t: "İletişim", b: 'Sorularınız için: <a href="https://github.com/muhsintags" target="_blank">github.com/muhsintags</a>' }
+        ]},
+        ru: { title: "Политика конфиденциальности", sections: [
+            { t: "Мы не собираем данные", b: "Scriptorium не собирает, не хранит и не передаёт какие-либо персональные данные на внешние серверы. Приложение не использует аналитику, рекламу или отслеживание." },
+            { t: "Локальный ввод имени", b: "Приложение может попросить вас ввести имя для персонализации. Это имя хранится только на вашем устройстве и никогда не отправляется на сервер или третьим лицам." },
+            { t: "Локальное хранение", b: "Загруженные вами тексты хранятся локально на вашем устройстве с использованием локальной базы данных (Room). Эти данные остаются на вашем устройстве." },
+            { t: "Сторонние сервисы", b: "Scriptorium не интегрируется со сторонними сервисами аналитики, рекламы или авторизации. Данные не передаются третьим лицам." },
+            { t: "Конфиденциальность детей", b: "Поскольку приложение не собирает персональные данные, оно безопасно для пользователей любого возраста, включая детей." },
+            { t: "Изменения в политике", b: "Эта политика может быть обновлена, если функциональность приложения изменится в будущем. Изменения будут опубликованы на этой странице." },
+            { t: "Контакты", b: 'По вопросам обращайтесь: <a href="https://github.com/muhsintags" target="_blank">github.com/muhsintags</a>' }
+        ]},
+        ar: { title: "سياسة الخصوصية", sections: [
+            { t: "عدم جمع البيانات", b: "لا يقوم تطبيق Scriptorium بجمع أو تخزين أو نقل أي بيانات شخصية إلى خوادم خارجية. لا يستخدم التطبيق أي خدمات تحليلات أو إعلانات أو تتبع." },
+            { t: "إدخال الاسم محليًا", b: "قد يطلب منك التطبيق إدخال اسم لتجربة مخصصة. يُخزَّن هذا الاسم فقط على جهازك ولا يُرسَل أبدًا إلى أي خادم أو جهة خارجية." },
+            { t: "التخزين المحلي", b: "يتم تخزين النصوص التي تقوم بتنزيلها داخل التطبيق محليًا على جهازك باستخدام قاعدة بيانات محلية (Room). تبقى هذه البيانات على جهازك فقط." },
+            { t: "خدمات الجهات الخارجية", b: "لا يتكامل Scriptorium مع أي خدمات تحليلات أو إعلانات أو مصادقة تابعة لجهات خارجية. لا تتم مشاركة أي بيانات مع أطراف ثالثة." },
+            { t: "خصوصية الأطفال", b: "نظرًا لأن التطبيق لا يجمع أي بيانات شخصية، فهو آمن للاستخدام من قبل جميع الأعمار، بما في ذلك الأطفال." },
+            { t: "التغييرات على هذه السياسة", b: "قد يتم تحديث سياسة الخصوصية هذه إذا تغيرت وظائف التطبيق في المستقبل. سيتم نشر أي تغييرات في هذه الصفحة." },
+            { t: "التواصل", b: 'للأسئلة، يرجى التواصل عبر: <a href="https://github.com/muhsintags" target="_blank">github.com/muhsintags</a>' }
+        ]},
+        hi: { title: "गोपनीयता नीति", sections: [
+            { t: "कोई डेटा संग्रह नहीं", b: "Scriptorium किसी भी व्यक्तिगत डेटा को बाहरी सर्वर पर एकत्र, संग्रहीत या प्रसारित नहीं करता है। ऐप एनालिटिक्स, विज्ञापन या ट्रैकिंग सेवाओं का उपयोग नहीं करता है।" },
+            { t: "स्थानीय नाम प्रविष्टि", b: "ऐप आपसे व्यक्तिगत अनुभव के लिए एक नाम दर्ज करने के लिए कह सकता है। यह नाम केवल आपके डिवाइस पर संग्रहीत होता है और कभी नहीं भेजा जाता है।" },
+            { t: "स्थानीय भंडारण", b: "ऐप के भीतर आपके द्वारा डाउनलोड किए गए टेक्स्ट स्थानीय डेटाबेस (Room) का उपयोग करके आपके डिवाइस पर संग्रहीत होते हैं। यह डेटा आपके डिवाइस पर ही रहता है।" },
+            { t: "तृतीय-पक्ष सेवाएं", b: "Scriptorium किसी भी तृतीय-पक्ष एनालिटिक्स, विज्ञापन या प्रमाणीकरण सेवाओं के साथ एकीकृत नहीं है। कोई डेटा साझा नहीं किया जाता है।" },
+            { t: "बच्चों की गोपनीयता", b: "चूंकि ऐप कोई व्यक्तिगत डेटा एकत्र नहीं करता है, यह बच्चों सहित सभी उम्र के उपयोगकर्ताओं के लिए सुरक्षित है।" },
+            { t: "इस नीति में परिवर्तन", b: "यदि भविष्य में ऐप की कार्यक्षमता बदलती है तो यह नीति अपडेट की जा सकती है। परिवर्तन इस पृष्ठ पर पोस्ट किए जाएंगे।" },
+            { t: "संपर्क", b: 'प्रश्नों के लिए संपर्क करें: <a href="https://github.com/muhsintags" target="_blank">github.com/muhsintags</a>' }
+        ]},
+        he: { title: "מדיניות פרטיות", sections: [
+            { t: "איננו אוספים נתונים", b: "Scriptorium אינו אוסף, שומר או מעביר נתונים אישיים כלשהם לשרתים חיצוניים. האפליקציה אינה משתמשת בשירותי אנליטיקה, פרסום או מעקב." },
+            { t: "הזנת שם מקומית", b: "האפליקציה עשויה לבקש ממך להזין שם לצורך חוויה מותאמת אישית. שם זה נשמר רק במכשיר שלך ואינו נשלח לעולם לשרת או לצד שלישי." },
+            { t: "אחסון מקומי", b: "טקסטים שאתה מוריד בתוך האפליקציה נשמרים באופן מקומי במכשיר שלך באמצעות מסד נתונים מקומי (Room). הנתונים נשארים במכשיר שלך בלבד." },
+            { t: "שירותי צד שלישי", b: "Scriptorium אינה משתלבת עם שירותי אנליטיקה, פרסום או אימות של צד שלישי. שום נתון אינו משותף עם צדדים שלישיים." },
+            { t: "פרטיות ילדים", b: "מכיוון שהאפליקציה אינה אוספת נתונים אישיים, היא בטוחה לשימוש עבור משתמשים מכל הגילאים, כולל ילדים." },
+            { t: "שינויים במדיניות זו", b: "מדיניות זו עשויה להתעדכן אם פונקציונליות האפליקציה תשתנה בעתיד. כל שינוי יפורסם בעמוד זה." },
+            { t: "יצירת קשר", b: 'לשאלות, אנא פנה אל: <a href="https://github.com/muhsintags" target="_blank">github.com/muhsintags</a>' }
+        ]},
+        de: { title: "Datenschutzrichtlinie", sections: [
+            { t: "Keine Datenerfassung", b: "Scriptorium sammelt, speichert oder überträgt keine personenbezogenen Daten an externe Server. Die App verwendet keine Analyse-, Werbe- oder Tracking-Dienste." },
+            { t: "Lokale Namenseingabe", b: "Die App kann Sie bitten, einen Namen für ein personalisiertes Erlebnis einzugeben. Dieser Name wird nur auf Ihrem Gerät gespeichert und niemals gesendet." },
+            { t: "Lokale Speicherung", b: "Innerhalb der App heruntergeladene Texte werden lokal auf Ihrem Gerät mithilfe einer lokalen Datenbank (Room) gespeichert. Diese Daten verbleiben nur auf Ihrem Gerät." },
+            { t: "Dienste Dritter", b: "Scriptorium ist nicht in Analyse-, Werbe- oder Authentifizierungsdienste Dritter integriert. Es werden keine Daten an Dritte weitergegeben." },
+            { t: "Datenschutz für Kinder", b: "Da die App keine personenbezogenen Daten sammelt, ist sie für Nutzer jeden Alters, einschließlich Kindern, sicher." },
+            { t: "Änderungen dieser Richtlinie", b: "Diese Richtlinie kann aktualisiert werden, wenn sich die Funktionalität der App in Zukunft ändert. Änderungen werden auf dieser Seite veröffentlicht." },
+            { t: "Kontakt", b: 'Bei Fragen wenden Sie sich bitte an: <a href="https://github.com/muhsintags" target="_blank">github.com/muhsintags</a>' }
+        ]}
+    };
+
+    function changeContent() {
+        const lang = document.getElementById('langSelect').value;
+        document.getElementById('title').innerText = data[lang].title;
+        document.getElementById('updated').innerText = updatedText[lang];
+        document.documentElement.setAttribute('dir', rtlLangs.includes(lang) ? 'rtl' : 'ltr');
+        const body = document.getElementById('policy-body');
+        body.innerHTML = '';
+        data[lang].sections.forEach(s => {
+            body.innerHTML += `<article class="policy-section"><h2>${s.t}</h2><p>${s.b}</p></article>`;
+        });
+    }
+    changeContent();
+
+    // 3D Parallax Tilt Effect on Mouse Move
+    const container = document.getElementById('mainContainer');
+    document.addEventListener('mousemove', (e) => {
+        const xAxis = (window.innerWidth / 2 - e.pageX) / 50;
+        const yAxis = (window.innerHeight / 2 - e.pageY) / 50;
+        container.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+    });
+
+    // Cursor lighting effect
+    const cursor = document.getElementById('cursor-light');
+    document.addEventListener('mousemove', (e) => {
+        cursor.style.left = e.pageX + 'px';
+        cursor.style.top = e.pageY + 'px';
+        if (Math.random() > 0.5) {
+            const spark = document.createElement('div');
+            spark.className = 'spark';
+            spark.style.left = e.pageX + 'px';
+            spark.style.top = e.pageY + 'px';
+            const tx = (Math.random() - 0.5) * 140;
+            const ty = (Math.random() - 0.5) * 140;
+            spark.style.setProperty('--tx', `${tx}px`);
+            spark.style.setProperty('--ty', `${ty}px`);
+            document.body.appendChild(spark);
+            setTimeout(() => spark.remove(), 800);
+        }
+    });
+
+    // Pixel Crows Automated Movement Simulation on Bars
+    const crows = [
+        { el: document.getElementById('crow1'), pos: 50, dir: 1, min: 10, max: 280 },
+        { el: document.getElementById('crow2'), pos: 200, dir: -1, min: 10, max: 280 }
+    ];
+
+    setInterval(() => {
+        crows.forEach(crow => {
+            crow.pos += crow.dir * 3;
+            if (crow.pos > crow.max) {
+                crow.dir = -1;
+                crow.el.classList.add('flipping');
+            } else if (crow.pos < crow.min) {
+                crow.dir = 1;
+                crow.el.classList.remove('flipping');
+            }
+            crow.el.style.left = crow.pos + 'px';
+
+            // Random pecking behavior
+            if (Math.random() < 0.1) {
+                crow.el.classList.add('pecking');
+            } else if (Math.random() < 0.2) {
+                crow.el.classList.remove('pecking');
+            }
+        });
+    }, 50);
+</script>
+</body>
+</html>

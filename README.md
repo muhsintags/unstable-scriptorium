@@ -1,11 +1,129 @@
-<div align="center">
+# Scriptorium
+#scriptorium
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+**A personal digital library for sacred and classical texts — Torah, Bible, Quran, Sahih al-Bukhari, Talmud, Bhagavad Gita, and translation, all in one place.**
 
-  <h1>Built with AI Studio</h2>
+[![Build Status](https://github.com/muhsintags/Din/actions/workflows/build.yml/badge.svg)](https://github.com/muhsintags/Din/actions) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/muhsintags/Stable-Scriptorium/blob/main/LICENSE) [![Kotlin](https://img.shields.io/badge/Kotlin-100%25-7F52FF?logo=kotlin)](https://kotlinlang.org) [![Latest Release](https://img.shields.io/github/v/release/muhsintags/Din)](https://github.com/muhsintags/Din/releases/latest)
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+[Download](#download) ▸ [Features](#features) ▸ [Tech Stack](#tech-stack) ▸ [Build](#build--run) ▸ [Contributing](#contributing)
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+---
 
-</div>
+## About
+#about
+
+**Scriptorium** *(formerly "Din Kütüphanesi")* is a native Android app that brings sacred and classical texts from multiple traditions together in a single, clean, offline-friendly library — built for reading, comparing, and translating scripture without the clutter.
+
+## Features
+#features
+
+- ▸ **Torah** — full text, downloadable for offline reading
+- ▸ **Bible** — full text, downloadable for offline reading
+- ▸ **Quran** — full text, downloadable for offline reading
+- ▸ **Sahih al-Bukhari** — full text, downloadable for offline reading
+- ▸ **Talmud** — full text, downloadable for offline reading
+- ▸ **Bhagavad Gita** — full text, downloadable for offline reading
+- ▸ **Comparative Reading Mode** — read two texts side by side, with 3 different viewing modes to compare passages across traditions
+- ▸ **Translation** — integrated Google Translate support for cross-language reading
+- ▸ **Offline after first download** — texts are fetched once and stored locally via Room; no connection needed afterward
+- ▸ **Modern UI** — built entirely in Jetpack Compose with Material 3
+
+## Download
+#download
+
+Every push to `main` triggers an automatic build. You can grab an APK two ways:
+
+| Option | What you get | Where |
+| --- | --- | --- |
+| **Latest Release** | Stable, signed release APK | [Releases page](https://github.com/muhsintags/Stable-Scriptorium/releases/latest) |
+| **Dev Build** | Freshest debug build (may be unstable) | [Actions tab](https://github.com/muhsintags/Stable-Scriptorium/actions) → latest run → Artifacts |
+
+Also available on [APKPure](https://apkpure.com/p/com.muhsintags.scriptorium).
+
+## Tech Stack
+#tech-stack
+
+| Layer | Choice |
+| --- | --- |
+| Language | Kotlin |
+| UI | Jetpack Compose (Material 3) |
+| Architecture | MVVM |
+| Local storage | Room |
+| Networking | Retrofit + OkHttp |
+| Async | Kotlin Coroutines |
+| CI/CD | GitHub Actions |
+| Dev environment | GitHub Codespaces |
+
+> This project is built entirely in the cloud — no local Android Studio setup required. Every build, test, and release runs through GitHub Actions and Codespaces.
+
+## Build & Run
+#build--run
+
+**Locally / in Codespaces:**
+
+```
+./gradlew assembleDebug      # debug build
+./gradlew assembleRelease    # signed release build (requires keystore secrets)
+```
+
+**Via GitHub Actions (recommended):** Push to `main` → check the [Actions tab](https://github.com/muhsintags/Stable-Scriptorium/actions) → download `app-debug` or `app-release` from the run's artifacts.
+
+## Project Structure
+#project-structure
+
+```
+Din/
+├── app/                  # Main application module
+├── gradle/               # Gradle wrapper & version catalog
+├── .github/workflows/    # CI/CD build pipeline
+└── Versions/             # Version history / notes
+```
+
+## Version History
+#version-history
+
+| Version | Notes |
+| --- | --- |
+| v1.0 | Initial release |
+| v1.1 | Comparative Reading Mode (3 viewing modes), Firebase dependency cleanup |
+| v2.0 (planned) | 3 new texts planned: Guru Granth Sahib (Sikhism), Book of Mormon, Buddhist texts (Tripitaka / Sutta) |
+
+## Roadmap
+#roadmap
+
+- [x] Publish to APKPure
+- [x] Firebase cleanup (unused dependencies)
+- [x] Comparative reading mode
+- [ ] Google Play release (pending developer account)
+- [ ] Turkish commentary layer for texts
+
+## Contributing
+#contributing
+
+This is currently a solo personal project, but bug reports, suggestions, and feedback are always welcome — open an [Issue](https://github.com/muhsintags/Stable-Scriptorium/issues) any time.
+
+Feel free to fork the repo and build your own version too. Some ideas to get you started:
+
+- ▸ Build a **philosophy library** — Stoic, Confucian, or other classical texts instead of religious ones
+- ▸ **Translate the app into your own language** before official support arrives — a native speaker's translation is often more accurate than a machine one (e.g. Japanese, before it's officially supported)
+- ▸ Add a **new sacred or classical text** not currently included
+- ▸ Extend the **comparative reading mode** with more viewing options or additional traditions
+
+## Built With AI Assistance
+#built-with-ai-assistance
+
+This project was developed with the help of AI tools:
+
+- **Claude** (Anthropic)
+- **ChatGPT** (OpenAI)
+- **Google AI Studio**
+- **Gemini**
+
+## License
+#license
+
+Licensed under the [MIT License](https://github.com/muhsintags/Stable-Scriptorium/blob/main/LICENSE).
+
+---
+
+Made with a lot of coffee and GitHub Actions minutes.
