@@ -157,7 +157,7 @@ class MainActivity : ComponentActivity() {
                             updateInfoState = update
                         }
                     } catch (e: Exception) {
-                        android.util.Log.e("MainActivity", "Güncelleme kontrolü başarısız oldu", e)
+                        android.util.Log.d("MainActivity", "Güncelleme kontrolü atlandı: ${e.message}")
                     }
                 }
 

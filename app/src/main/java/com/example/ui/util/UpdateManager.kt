@@ -59,7 +59,7 @@ object UpdateManager {
 
                 client.newCall(request).execute().use { response ->
                     if (!response.isSuccessful) {
-                        Log.e(TAG, "Failed to fetch update JSON from GitHub (HTTP ${response.code})")
+                        Log.d(TAG, "Update manifest not found or not published on GitHub (HTTP ${response.code})")
                         return@withContext null
                     }
 
@@ -91,7 +91,7 @@ object UpdateManager {
                     }
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Network or parsing error while checking for updates", e)
+                Log.d(TAG, "Could not check for remote updates: ${e.message}")
                 null
             }
         }

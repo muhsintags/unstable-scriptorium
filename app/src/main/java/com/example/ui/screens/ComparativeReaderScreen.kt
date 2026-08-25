@@ -315,14 +315,14 @@ fun ComparativeReaderScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                "M$targetSlotNum",
+                                if (lang == AppLanguage.EN) "T$targetSlotNum" else "M$targetSlotNum",
                                 color = Color.White,
                                 fontWeight = FontWeight.Bold,
                                 style = MaterialTheme.typography.labelMedium
                             )
                         }
                         Text(
-                            text = if (lang == AppLanguage.EN) "Select Source Metin" else "Metin Kaynağı Seçin",
+                            text = if (lang == AppLanguage.EN) "Select Scripture Source" else "Metin Kaynağı Seçin",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             fontFamily = FontFamily.Serif,
@@ -330,7 +330,7 @@ fun ComparativeReaderScreen(
                         )
                     }
                     IconButton(onClick = { slotPickerIndex = null }) {
-                        Icon(Icons.Default.Close, contentDescription = "Kapat")
+                        Icon(Icons.Default.Close, contentDescription = if (lang == AppLanguage.EN) "Close" else "Kapat")
                     }
                 }
 
@@ -603,7 +603,7 @@ fun ComparativeReaderScreen(
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Geri"
+                            contentDescription = if (lang == AppLanguage.EN) "Back" else "Geri"
                         )
                     }
                 },
@@ -614,7 +614,7 @@ fun ComparativeReaderScreen(
                     ) {
                         Icon(
                             imageVector = if (isSearchVisible) Icons.Default.SearchOff else Icons.Default.Search,
-                            contentDescription = "Arama",
+                            contentDescription = if (lang == AppLanguage.EN) "Search" else "Arama",
                             tint = if (isSearchVisible) SacredGold else MaterialTheme.colorScheme.onSurface
                         )
                     }
@@ -624,7 +624,7 @@ fun ComparativeReaderScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.FormatSize,
-                            contentDescription = "Yazı Boyutu",
+                            contentDescription = if (lang == AppLanguage.EN) "Font Size" else "Yazı Boyutu",
                             tint = if (showFontSizeControls) SacredGold else MaterialTheme.colorScheme.onSurface
                         )
                     }
@@ -809,7 +809,7 @@ fun ComparativeReaderScreen(
                                             .background(slotColors[0]),
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        Text("M1", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                        Text(if (lang == AppLanguage.EN) "T1" else "M1", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                                     }
                                     Text(
                                         text = getSlotCategoryName(slot1.category, lang == AppLanguage.EN),
@@ -844,7 +844,7 @@ fun ComparativeReaderScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.SwapHoriz,
-                                contentDescription = "Metinleri Takas Et",
+                                contentDescription = if (lang == AppLanguage.EN) "Swap Texts" else "Metinleri Takas Et",
                                 tint = SacredGold,
                                 modifier = Modifier.size(18.dp)
                             )
@@ -875,7 +875,7 @@ fun ComparativeReaderScreen(
                                             .background(slotColors[1]),
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        Text("M2", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                        Text(if (lang == AppLanguage.EN) "T2" else "M2", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                                     }
                                     Text(
                                         text = getSlotCategoryName(slot2.category, lang == AppLanguage.EN),
@@ -921,7 +921,7 @@ fun ComparativeReaderScreen(
                                                 .background(slotColors[2]),
                                             contentAlignment = Alignment.Center
                                         ) {
-                                            Text("M3", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                            Text(if (lang == AppLanguage.EN) "T3" else "M3", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                                         }
                                         Text(
                                             text = getSlotCategoryName(slot3.category, lang == AppLanguage.EN),
@@ -1107,16 +1107,16 @@ fun ComparativeReaderScreen(
                                                 IconButton(
                                                     onClick = {
                                                         val combinedText = buildString {
-                                                            if (!v1Text.isNullOrBlank()) append("[M1 ${getSlotFormattedTitle(slot1, lang == AppLanguage.EN)}]: $v1Text\n\n")
-                                                            if (!v2Text.isNullOrBlank()) append("[M2 ${getSlotFormattedTitle(slot2, lang == AppLanguage.EN)}]: $v2Text\n\n")
-                                                            if (bookCountMode == 3 && !v3Text.isNullOrBlank()) append("[M3 ${getSlotFormattedTitle(slot3, lang == AppLanguage.EN)}]: $v3Text")
+                                                            if (!v1Text.isNullOrBlank()) append("[${if (lang == AppLanguage.EN) "T1" else "M1"} ${getSlotFormattedTitle(slot1, lang == AppLanguage.EN)}]: $v1Text\n\n")
+                                                            if (!v2Text.isNullOrBlank()) append("[${if (lang == AppLanguage.EN) "T2" else "M2"} ${getSlotFormattedTitle(slot2, lang == AppLanguage.EN)}]: $v2Text\n\n")
+                                                            if (bookCountMode == 3 && !v3Text.isNullOrBlank()) append("[${if (lang == AppLanguage.EN) "T3" else "M3"} ${getSlotFormattedTitle(slot3, lang == AppLanguage.EN)}]: $v3Text")
                                                         }
                                                         clipboardManager.setText(AnnotatedString(combinedText))
                                                         Toast.makeText(context, if (lang == AppLanguage.EN) "Verses copied!" else "Ayetler kopyalandı!", Toast.LENGTH_SHORT).show()
                                                     },
                                                     modifier = Modifier.size(28.dp)
                                                 ) {
-                                                    Icon(Icons.Default.ContentCopy, contentDescription = "Kopyala", tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(16.dp))
+                                                    Icon(Icons.Default.ContentCopy, contentDescription = if (lang == AppLanguage.EN) "Copy" else "Kopyala", tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(16.dp))
                                                 }
 
                                                 IconButton(
@@ -1129,7 +1129,7 @@ fun ComparativeReaderScreen(
                                                     },
                                                     modifier = Modifier.size(28.dp)
                                                 ) {
-                                                    Icon(Icons.Default.EditNote, contentDescription = "Tefekkür Notu Ekle", tint = SacredGold, modifier = Modifier.size(18.dp))
+                                                    Icon(Icons.Default.EditNote, contentDescription = if (lang == AppLanguage.EN) "Add Reflection Note" else "Tefekkür Notu Ekle", tint = SacredGold, modifier = Modifier.size(18.dp))
                                                 }
                                             }
                                         }
