@@ -1571,6 +1571,63 @@ class ScriptureViewModel(application: Application) : AndroidViewModel(applicatio
                 return@withContext cached
             }
 
+            // Step 1: Check if chapter is saved in local disk cache
+            val file = getBibleChapterFile(category, targetBook.id, chapterNumber)
+            if (file.exists()) {
+                try {
+                    val fileContent = file.readText()
+                    val json = JSONObject(fileContent)
+                    val paragraphsJA = json.getJSONArray("paragraphs")
+                    val paragraphsList = mutableListOf<String>()
+                    for (i in 0 until paragraphsJA.length()) {
+                        paragraphsList.add(paragraphsJA.getString(i))
+                    }
+                    val originalJA = json.optJSONArray("originalParagraphs")
+                    val originalParagraphsList = mutableListOf<String>()
+                    if (originalJA != null) {
+                        for (i in 0 until originalJA.length()) {
+                            originalParagraphsList.add(originalJA.getString(i))
+                        }
+                    }
+
+                    if (paragraphsList.isNotEmpty()) {
+                        val isEn = (_readerSettings.value.language == AppLanguage.EN)
+                        val offlineBook = Book(
+                            id = category,
+                            title = when (category) {
+                                "torah" -> if (isEn) "Torah (Tanakh)" else "Tevrat (Tanah)"
+                                "sermon" -> if (isEn) "Gospel (New Testament)" else "İncil (Yeni Ahit)"
+                                "bukhari" -> if (isEn) "Sahih al-Bukhari" else "Sahih-i Buharî"
+                                "gita" -> "Bhagavad Gita"
+                                "talmud" -> "Talmud"
+                                else -> if (isEn) "Sacred Scripture" else "Kutsal Metin"
+                            },
+                            category = if (category == "talmud" || category == "bukhari" || category == "gita") {
+                                if (isEn) "Other Scriptures" else "Diğer Metinler"
+                            } else {
+                                if (isEn) "Sacred Texts" else "Semavi Metinler"
+                            },
+                            description = if (isEn) targetBook.nameEnglish else targetBook.nameTurkish,
+                            authorOrSource = targetBook.sourceLanguage,
+                            iconName = if (isTorah) "menu_book" else "church",
+                            coverUrl = "",
+                            contentTitle = if (isEn) "${targetBook.nameEnglish} Chapter $chapterNumber" else "${targetBook.nameTurkish} $chapterNumber. Bölüm",
+                            subContentTitle = if (isEn) "${targetBook.nameTurkish} $chapterNumber. Bölüm" else "${targetBook.nameEnglish} Chapter $chapterNumber",
+                            introText = if (isEn) "Chapter $chapterNumber of ${targetBook.nameEnglish}." else "${targetBook.nameTurkish} kitabının $chapterNumber. bölümü.",
+                            paragraphs = paragraphsList,
+                            originalLanguageName = targetBook.sourceLanguage,
+                            originalIntroText = "",
+                            originalParagraphs = originalParagraphsList,
+                            footnotes = emptyList()
+                        )
+                        _bibleChapterInMemoryCache[cacheKey] = offlineBook
+                        return@withContext offlineBook
+                    }
+                } catch (e: Exception) {
+                    android.util.Log.w("ScriptureViewModel", "Failed reading disk cache in comparative mode", e)
+                }
+            }
+
             val paragraphsList = mutableListOf<String>()
             val originalParagraphsList = mutableListOf<String>()
             val englishVerses = mutableListOf<String>()
@@ -1593,29 +1650,34 @@ class ScriptureViewModel(application: Application) : AndroidViewModel(applicatio
             }
 
             if (paragraphsList.isEmpty()) {
-                paragraphsList.add("1: Bölüm metni yüklenemedi veya internet bağlantısı yok.")
+                paragraphsList.add(if (_readerSettings.value.language == AppLanguage.EN) "1: Could not load chapter text. Please check connection." else "1: Bölüm metni yüklenemedi veya internet bağlantısı yok.")
             }
 
+            val isEn = (_readerSettings.value.language == AppLanguage.EN)
             val categoryTitle = when (category) {
-                "torah" -> "Tevrat (Tanah)"
-                "sermon" -> "İncil (Yeni Ahit)"
-                "bukhari" -> "Sahih-i Buharî"
+                "torah" -> if (isEn) "Torah (Tanakh)" else "Tevrat (Tanah)"
+                "sermon" -> if (isEn) "Gospel (New Testament)" else "İncil (Yeni Ahit)"
+                "bukhari" -> if (isEn) "Sahih al-Bukhari" else "Sahih-i Buharî"
                 "gita" -> "Bhagavad Gita"
                 "talmud" -> "Talmud"
-                else -> "Kutsal Metin"
+                else -> if (isEn) "Sacred Scripture" else "Kutsal Metin"
             }
 
             val resultBook = Book(
                 id = category,
                 title = categoryTitle,
-                category = "Semavi Metinler",
-                description = targetBook.nameTurkish,
+                category = if (category == "talmud" || category == "bukhari" || category == "gita") {
+                    if (isEn) "Other Scriptures" else "Diğer Metinler"
+                } else {
+                    if (isEn) "Sacred Texts" else "Semavi Metinler"
+                },
+                description = if (isEn) targetBook.nameEnglish else targetBook.nameTurkish,
                 authorOrSource = targetBook.sourceLanguage,
                 iconName = if (isTorah) "menu_book" else "church",
                 coverUrl = "",
-                contentTitle = "${targetBook.nameTurkish} $chapterNumber. Bölüm",
-                subContentTitle = "${targetBook.nameEnglish} Chapter $chapterNumber",
-                introText = "${targetBook.nameTurkish} kitabının $chapterNumber. bölümü.",
+                contentTitle = if (isEn) "${targetBook.nameEnglish} Chapter $chapterNumber" else "${targetBook.nameTurkish} $chapterNumber. Bölüm",
+                subContentTitle = if (isEn) "${targetBook.nameTurkish} $chapterNumber. Bölüm" else "${targetBook.nameEnglish} Chapter $chapterNumber",
+                introText = if (isEn) "Chapter $chapterNumber of ${targetBook.nameEnglish}." else "${targetBook.nameTurkish} kitabının $chapterNumber. bölümü.",
                 paragraphs = paragraphsList,
                 originalLanguageName = targetBook.sourceLanguage,
                 originalIntroText = "",
@@ -1623,6 +1685,27 @@ class ScriptureViewModel(application: Application) : AndroidViewModel(applicatio
                 footnotes = emptyList()
             )
             _bibleChapterInMemoryCache[cacheKey] = resultBook
+
+            // Auto-cache to disk for future zero-latency loads
+            if (paragraphsList.isNotEmpty() && !paragraphsList.first().contains("yüklenemedi", ignoreCase = true)) {
+                try {
+                    val jsonObj = JSONObject().apply {
+                        put("bookId", category)
+                        put("bookName", targetBook.id)
+                        put("chapterNumber", chapterNumber)
+                        val paragraphsJA = org.json.JSONArray()
+                        paragraphsList.forEach { paragraphsJA.put(it) }
+                        put("paragraphs", paragraphsJA)
+                        val originalJA = org.json.JSONArray()
+                        originalParagraphsList.forEach { originalJA.put(it) }
+                        put("originalParagraphs", originalJA)
+                    }
+                    file.writeText(jsonObj.toString())
+                } catch (e: Exception) {
+                    android.util.Log.w("ScriptureViewModel", "Failed to cache comparative book to disk", e)
+                }
+            }
+
             resultBook
         }
     }
@@ -3194,7 +3277,7 @@ class ScriptureViewModel(application: Application) : AndroidViewModel(applicatio
 
     private suspend fun translateVersesBatch(verses: List<String>): List<String> = withContext(Dispatchers.IO) {
         if (verses.isEmpty()) return@withContext emptyList()
-        val chunkSize = 15
+        val chunkSize = 8
         val chunks = verses.chunked(chunkSize)
         val deferredList = chunks.map { chunk ->
             async(Dispatchers.IO) {
@@ -3204,7 +3287,7 @@ class ScriptureViewModel(application: Application) : AndroidViewModel(applicatio
                     val url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=tr&dt=t&q=$encodedText"
                     val request = Request.Builder()
                         .url(url)
-                        .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
+                        .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36")
                         .build()
                     var chunkLines: List<String>? = null
                     okHttpClient.newCall(request).execute().use { response ->
@@ -3228,8 +3311,8 @@ class ScriptureViewModel(application: Application) : AndroidViewModel(applicatio
                             }
                         }
                     }
-                    if (chunkLines != null) {
-                        chunkLines!!
+                    if (chunkLines != null && chunkLines.isNotEmpty()) {
+                        chunkLines
                     } else {
                         chunk.map { translateTextGtx(it) }
                     }

@@ -167,7 +167,7 @@ fun ComparativeReaderScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(lang) {
         loadSlotContent(1)
         loadSlotContent(2)
         loadSlotContent(3)
