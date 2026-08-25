@@ -251,13 +251,7 @@ fun QuranReaderView(
                     IconButton(onClick = {
                         if (currentSelectedSurah != null) {
                             viewModel.stopAudio()
-                            viewModel.selectSurah(QuranRepository.surahs[0]) // Reset or let user select again by setting surah null
-                            // Actually let's clear the selected surah to show list
-                            val clearSurahField = viewModel.javaClass.getDeclaredField("_currentSelectedSurah").apply {
-                                isAccessible = true
-                            }
-                            val mFlow = clearSurahField.get(viewModel) as MutableStateFlow<QuranSurah?>
-                            mFlow.value = null
+                            viewModel.selectSurah(null)
                         } else {
                             onNavigateBack()
                         }

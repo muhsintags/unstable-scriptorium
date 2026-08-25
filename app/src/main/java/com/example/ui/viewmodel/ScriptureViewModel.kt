@@ -189,9 +189,16 @@ class ScriptureViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun selectSurah(surah: QuranSurah) {
+    fun selectSurah(surah: QuranSurah?) {
         _currentSelectedSurah.value = surah
-        loadSurahContent(surah.number)
+        if (surah != null) {
+            loadSurahContent(surah.number)
+        } else {
+            _currentSurahContent.value = null
+            _surahError.value = null
+            _isSurahLoading.value = false
+            stopAudio()
+        }
     }
 
     private fun getQuranFile(surahNumber: Int): java.io.File {
@@ -1155,62 +1162,115 @@ class ScriptureViewModel(application: Application) : AndroidViewModel(applicatio
                         for (i in 0 until paragraphsJA.length()) {
                             paragraphsList.add(paragraphsJA.getString(i))
                         }
-                        val originalJA = json.getJSONArray("originalParagraphs")
+                        val originalJA = json.optJSONArray("originalParagraphs")
                         val originalParagraphsList = mutableListOf<String>()
-                        for (i in 0 until originalJA.length()) {
-                            originalParagraphsList.add(originalJA.getString(i))
+                        if (originalJA != null) {
+                            for (i in 0 until originalJA.length()) {
+                                originalParagraphsList.add(originalJA.getString(i))
+                            }
                         }
                         
-                        val coverUrl = if (isTorah) {
-                            "https://lh3.googleusercontent.com/aida-public/AB6AXuD6rzbh79ixK7IHnjERinDAG9yEjNtC30hCLbuDS7yoxyf6rouqg29nOLf_nzmpU78EwzXJe6p1tWVIWrDlhvum4Iqa6u0TnO-IwrpTIQYRqPExxi16Ec1M-jGgAgowmeBh-zy1rrxHJO0IsoJZT3qbsucxsJyevgd8YJ4Aq8zKLGnL_X-HEcni8iw3mD3Q82EE-LHUXOMtbQi-V4sO8PjSsZ1PgOfvziyUWmZJF9TIO70eO_m89sgKQQ"
-                        } else {
-                            "https://lh3.googleusercontent.com/aida-public/AB6AXuDZLBLFfgfJglvrr0EJpNX0i_-RQKNKoNSaMY1kPDhn7UuXgjODkXTeF01UxWZumZjyTS0JDvfH0iC2YadTAtPekF7mw5qqPWd1vFb_ojcbVuV9hDUWAicnoXjy_iu6S8dWvAOkI8P939gqVGbRS8d_eWsrkLCj81FxRyVfyoj3wbEYaMvnZcWUnMuV90Q3vdJ7Xbt2p3x5-WuTLRP_WQVsmS8ANqNPwHXpkMweu5dRZItKVrxcMUCv6A"
+                        val coverUrl = when (bookId) {
+                            "torah" -> "https://lh3.googleusercontent.com/aida-public/AB6AXuD6rzbh79ixK7IHnjERinDAG9yEjNtC30hCLbuDS7yoxyf6rouqg29nOLf_nzmpU78EwzXJe6p1tWVIWrDlhvum4Iqa6u0TnO-IwrpTIQYRqPExxi16Ec1M-jGgAgowmeBh-zy1rrxHJO0IsoJZT3qbsucxsJyevgd8YJ4Aq8zKLGnL_X-HEcni8iw3mD3Q82EE-LHUXOMtbQi-V4sO8PjSsZ1PgOfvziyUWmZJF9TIO70eO_m89sgKQQ"
+                            "talmud" -> "https://images.unsplash.com/photo-1544947950-fa07a98d237f"
+                            "bukhari" -> "https://images.unsplash.com/photo-1584282479234-df7a6b986872"
+                            "gita" -> "https://images.unsplash.com/photo-1609137144813-7d9921338f24"
+                            else -> "https://lh3.googleusercontent.com/aida-public/AB6AXuDZLBLFfgfJglvrr0EJpNX0i_-RQKNKoNSaMY1kPDhn7UuXgjODkXTeF01UxWZumZjyTS0JDvfH0iC2YadTAtPekF7mw5qqPWd1vFb_ojcbVuV9hDUWAicnoXjy_iu6S8dWvAOkI8P939gqVGbRS8d_eWsrkLCj81FxRyVfyoj3wbEYaMvnZcWUnMuV90Q3vdJ7Xbt2p3x5-WuTLRP_WQVsmS8ANqNPwHXpkMweu5dRZItKVrxcMUCv6A"
                         }
                         
                         Book(
                             id = bookId,
-                            title = if (isTorah) {
-                                if (_readerSettings.value.language == AppLanguage.EN) "Torah" else "Tevrat"
-                            } else {
-                                if (_readerSettings.value.language == AppLanguage.EN) "Gospel" else "İncil"
+                            title = when (bookId) {
+                                "torah" -> if (_readerSettings.value.language == AppLanguage.EN) "Torah" else "Tevrat"
+                                "talmud" -> if (_readerSettings.value.language == AppLanguage.EN) "Talmud Bavli" else "Talmud"
+                                "bukhari" -> if (_readerSettings.value.language == AppLanguage.EN) "Sahih al-Bukhari" else "Sahih-i Buhârî"
+                                "gita" -> "Bhagavad Gita"
+                                "sermon" -> if (_readerSettings.value.language == AppLanguage.EN) "Gospel" else "İncil"
+                                else -> if (_readerSettings.value.language == AppLanguage.EN) "Gospel" else "İncil"
                             },
-                            category = if (_readerSettings.value.language == AppLanguage.EN) "Sacred Texts" else "Kutsal Metinler",
-                            description = if (isTorah) {
-                                if (_readerSettings.value.language == AppLanguage.EN) "Torah (Tanakh) Live Text" else "Tevrat (Tanah) Canlı Metni"
+                            category = if (bookId == "talmud" || bookId == "bukhari" || bookId == "gita") {
+                                if (_readerSettings.value.language == AppLanguage.EN) "Other Scriptures" else "Diğer Metinler"
                             } else {
-                                if (_readerSettings.value.language == AppLanguage.EN) "Gospel Live Text" else "İncil Canlı Metni"
+                                if (_readerSettings.value.language == AppLanguage.EN) "Sacred Texts" else "Kutsal Metinler"
                             },
-                            authorOrSource = if (isTorah) {
-                                if (_readerSettings.value.language == AppLanguage.EN) "Hebrew Tradition" else "İbranî Geleneği"
-                            } else {
-                                if (_readerSettings.value.language == AppLanguage.EN) "Christian Tradition" else "Hristiyan Geleneği"
+                            description = when (bookId) {
+                                "torah" -> if (_readerSettings.value.language == AppLanguage.EN) "Torah (Tanakh)" else "Tevrat (Tanah)"
+                                "sermon" -> if (_readerSettings.value.language == AppLanguage.EN) "Gospel (New Testament)" else "İncil (Yeni Ahit)"
+                                "talmud" -> if (_readerSettings.value.language == AppLanguage.EN) "Talmud Bavli" else "Babil Talmudu"
+                                "bukhari" -> if (_readerSettings.value.language == AppLanguage.EN) "Sahih al-Bukhari Hadith Collection" else "Sahih-i Buhârî Hadis Külliyatı"
+                                "gita" -> if (_readerSettings.value.language == AppLanguage.EN) "Bhagavad Gita" else "Bhagavad Gita Kutsal Metni"
+                                else -> ""
                             },
-                            iconName = if (isTorah) "menu_book" else "church",
+                            authorOrSource = when (bookId) {
+                                "torah" -> if (_readerSettings.value.language == AppLanguage.EN) "Hebrew Tradition" else "İbranî Geleneği"
+                                "sermon" -> if (_readerSettings.value.language == AppLanguage.EN) "Christian Tradition" else "Hristiyan Geleneği"
+                                "talmud" -> if (_readerSettings.value.language == AppLanguage.EN) "Babylonian Academies" else "Babil Akademileri"
+                                "bukhari" -> if (_readerSettings.value.language == AppLanguage.EN) "Imam Bukhari" else "İmam Buharî"
+                                "gita" -> if (_readerSettings.value.language == AppLanguage.EN) "Sanskrit Tradition" else "Sanskrit Geleneği"
+                                else -> ""
+                            },
+                            iconName = when (bookId) {
+                                "torah", "talmud" -> "menu_book"
+                                "bukhari", "gita" -> "auto_stories"
+                                else -> "church"
+                            },
                             coverUrl = coverUrl,
-                            contentTitle = if (_readerSettings.value.language == AppLanguage.EN) "${bibleBook.nameEnglish} $chapterNumber" else "${bibleBook.nameTurkish} $chapterNumber",
-                            subContentTitle = if (_readerSettings.value.language == AppLanguage.EN) "${bibleBook.nameTurkish} $chapterNumber" else "${bibleBook.nameEnglish} $chapterNumber",
+                            contentTitle = if (bookId == "talmud") {
+                                val pageNum = 2 + (chapterNumber - 1) / 2
+                                val side = if (chapterNumber % 2 == 1) "a" else "b"
+                                if (_readerSettings.value.language == AppLanguage.EN) "${bibleBook.nameEnglish} $pageNum$side" else "${bibleBook.nameTurkish} $pageNum$side"
+                            } else if (bookId == "bukhari") {
+                                if (_readerSettings.value.language == AppLanguage.EN) {
+                                    "${bibleBook.nameEnglish} Hadith $chapterNumber"
+                                } else {
+                                    "${bibleBook.nameTurkish} Hadis $chapterNumber"
+                                }
+                            } else {
+                                if (_readerSettings.value.language == AppLanguage.EN) "${bibleBook.nameEnglish} $chapterNumber" else "${bibleBook.nameTurkish} $chapterNumber"
+                            },
+                            subContentTitle = if (bookId == "talmud") {
+                                val pageNum = 2 + (chapterNumber - 1) / 2
+                                val side = if (chapterNumber % 2 == 1) "a" else "b"
+                                "Talmud - $pageNum$side"
+                            } else if (bookId == "bukhari") {
+                                if (_readerSettings.value.language == AppLanguage.EN) "Sahih al-Bukhari - ${bibleBook.nameEnglish}" else "Sahih-i Buharî - ${bibleBook.nameTurkish}"
+                            } else {
+                                if (_readerSettings.value.language == AppLanguage.EN) "${bibleBook.nameEnglish} $chapterNumber" else "${bibleBook.nameTurkish} $chapterNumber"
+                            },
                             introText = if (_readerSettings.value.language == AppLanguage.EN) {
                                 "Chapter $chapterNumber of the book of ${bibleBook.nameEnglish}, loaded from local offline storage."
                             } else {
                                 "${bibleBook.nameTurkish} kitabının $chapterNumber. bölümü cihaz hafızasından çevrimdışı yüklenmiştir."
                             },
                             paragraphs = paragraphsList,
-                            originalLanguageName = if (isTorah) {
-                                if (_readerSettings.value.language == AppLanguage.EN) "Hebrew" else "İbranice (Hebrew)"
-                            } else {
-                                if (_readerSettings.value.language == AppLanguage.EN) "Ancient Greek" else "Grekçe (Ancient Greek)"
+                            originalLanguageName = when (bookId) {
+                                "torah" -> if (_readerSettings.value.language == AppLanguage.EN) "Hebrew" else "İbranice (Hebrew)"
+                                "talmud" -> if (_readerSettings.value.language == AppLanguage.EN) "Aramaic" else "Aramice (Aramaic)"
+                                "bukhari" -> if (_readerSettings.value.language == AppLanguage.EN) "Arabic" else "Arapça (Arabic)"
+                                "gita" -> if (_readerSettings.value.language == AppLanguage.EN) "Sanskrit" else "Sanskritçe (Sanskrit)"
+                                else -> if (_readerSettings.value.language == AppLanguage.EN) "Ancient Greek" else "Grekçe (Ancient Greek)"
                             },
                             originalIntroText = if (originalParagraphsList.isNotEmpty()) originalParagraphsList.first().substringAfter(": ") else "",
                             originalParagraphs = originalParagraphsList,
                             footnotes = if (_readerSettings.value.language == AppLanguage.EN) {
                                 listOf(
                                     "Offline Academic Translation" to "This section was downloaded for offline reading and study.",
-                                    "Source" to if (isTorah) "Sefaria Open Source Project" else "Bible-API Library"
+                                    "Source" to when (bookId) {
+                                        "torah", "talmud" -> "Sefaria Open Source Project"
+                                        "bukhari" -> "Fawaz Ahmed Hadith API"
+                                        "gita" -> "Vedic Scriptures Repository"
+                                        else -> "Bible-API Library"
+                                    }
                                 )
                             } else {
                                 listOf(
                                     "Çevrimdışı Akademik Çeviri" to "Bu bölüm çevrimdışı kullanım ve çalışma için cihazınıza kaydedilmiştir.",
-                                    "Kaynak" to if (isTorah) "Sefaria Açık Kaynak Projesi" else "Bible-API Çevrimdışı/Canlı Kütüphane"
+                                    "Kaynak" to when (bookId) {
+                                        "torah", "talmud" -> "Sefaria Açık Kaynak Projesi"
+                                        "bukhari" -> "Fawaz Ahmed Hadis Kütüphanesi"
+                                        "gita" -> "Vedic Scriptures Açık Kaynak Veritabanı"
+                                        else -> "Bible-API Çevrimdışı/Canlı Kütüphane"
+                                    }
                                 )
                             }
                         )
@@ -1373,6 +1433,27 @@ class ScriptureViewModel(application: Application) : AndroidViewModel(applicatio
                     )
                     
                     _bibleChapterInMemoryCache[cacheKey] = formattedBook
+                    
+                    // Auto-cache to disk for instant zero-latency future reads
+                    try {
+                        val file = getBibleChapterFile(bookId, bibleBook.id, chapterNumber)
+                        val jsonObj = JSONObject().apply {
+                            put("bookId", bookId)
+                            put("bookName", bibleBook.id)
+                            put("chapterNumber", chapterNumber)
+                            val paragraphsJA = org.json.JSONArray()
+                            paragraphsList.forEach { paragraphsJA.put(it) }
+                            put("paragraphs", paragraphsJA)
+                            
+                            val originalJA = org.json.JSONArray()
+                            originalParagraphsList.forEach { originalJA.put(it) }
+                            put("originalParagraphs", originalJA)
+                        }
+                        file.writeText(jsonObj.toString())
+                    } catch (e: Exception) {
+                        android.util.Log.w("ScriptureViewModel", "Failed to auto-cache bible chapter to disk", e)
+                    }
+
                     withContext(Dispatchers.Main) {
                         _activeBookContent.value = formattedBook
                         _isBookLoading.value = false
@@ -3113,58 +3194,57 @@ class ScriptureViewModel(application: Application) : AndroidViewModel(applicatio
 
     private suspend fun translateVersesBatch(verses: List<String>): List<String> = withContext(Dispatchers.IO) {
         if (verses.isEmpty()) return@withContext emptyList()
-        val translatedList = mutableListOf<String>()
-        val chunkSize = 5
-        for (i in verses.indices step chunkSize) {
-            val chunk = verses.subList(i, minOf(i + chunkSize, verses.size))
-            val combinedText = chunk.joinToString("\n")
-            try {
-                val encodedText = java.net.URLEncoder.encode(combinedText, "UTF-8")
-                val url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=tr&dt=t&q=$encodedText"
-                val request = Request.Builder()
-                    .url(url)
-                    .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
-                    .build()
-                var chunkLines: List<String>? = null
-                okHttpClient.newCall(request).execute().use { response ->
-                    if (response.isSuccessful) {
-                        val bodyStr = response.body?.string() ?: ""
-                        val jsonArray = org.json.JSONArray(bodyStr)
-                        val sentencesArray = jsonArray.optJSONArray(0)
-                        if (sentencesArray != null) {
-                            val sb = StringBuilder()
-                            for (j in 0 until sentencesArray.length()) {
-                                val sentence = sentencesArray.optJSONArray(j)
-                                if (sentence != null) {
-                                    sb.append(sentence.optString(0))
+        val chunkSize = 15
+        val chunks = verses.chunked(chunkSize)
+        val deferredList = chunks.map { chunk ->
+            async(Dispatchers.IO) {
+                val combinedText = chunk.joinToString("\n")
+                try {
+                    val encodedText = java.net.URLEncoder.encode(combinedText, "UTF-8")
+                    val url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=tr&dt=t&q=$encodedText"
+                    val request = Request.Builder()
+                        .url(url)
+                        .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
+                        .build()
+                    var chunkLines: List<String>? = null
+                    okHttpClient.newCall(request).execute().use { response ->
+                        if (response.isSuccessful) {
+                            val bodyStr = response.body?.string() ?: ""
+                            val jsonArray = org.json.JSONArray(bodyStr)
+                            val sentencesArray = jsonArray.optJSONArray(0)
+                            if (sentencesArray != null) {
+                                val sb = StringBuilder()
+                                for (j in 0 until sentencesArray.length()) {
+                                    val sentence = sentencesArray.optJSONArray(j)
+                                    if (sentence != null) {
+                                        sb.append(sentence.optString(0))
+                                    }
                                 }
-                            }
-                            val fullTranslated = sb.toString().trim()
-                            val lines = fullTranslated.split("\n").map { it.trim() }.filter { it.isNotEmpty() }
-                            if (lines.size == chunk.size) {
-                                chunkLines = lines
+                                val fullTranslated = sb.toString().trim()
+                                val lines = fullTranslated.split("\n").map { it.trim() }.filter { it.isNotEmpty() }
+                                if (lines.size == chunk.size) {
+                                    chunkLines = lines
+                                }
                             }
                         }
                     }
-                }
-                if (chunkLines != null) {
-                    translatedList.addAll(chunkLines!!)
-                } else {
-                    for (verse in chunk) {
-                        translatedList.add(translateTextGtx(verse))
+                    if (chunkLines != null) {
+                        chunkLines!!
+                    } else {
+                        chunk.map { translateTextGtx(it) }
                     }
-                }
-            } catch (e: Exception) {
-                for (verse in chunk) {
-                    try {
-                        translatedList.add(translateTextGtx(verse))
-                    } catch (_: Exception) {
-                        translatedList.add(verse)
+                } catch (e: Exception) {
+                    chunk.map {
+                        try {
+                            translateTextGtx(it)
+                        } catch (_: Exception) {
+                            it
+                        }
                     }
                 }
             }
         }
-        translatedList
+        deferredList.awaitAll().flatten()
     }
 
     private fun translateTextGtx(text: String, targetLang: String = "tr", sourceLang: String = "en"): String {
@@ -3302,76 +3382,55 @@ class ScriptureViewModel(application: Application) : AndroidViewModel(applicatio
                     }
                 }
                 "gita" -> {
-                    val cacheFileGita = java.io.File(getApplication<Application>().filesDir, "gita-verses.min.json")
-                    if (!cacheFileGita.exists()) {
-                        val gitaUrl = "https://raw.githubusercontent.com/gita/gita/main/data/verse.json"
-                        try { downloadFileToLocal(gitaUrl, cacheFileGita) } catch (e: Exception) { android.util.Log.e("ScriptureViewModel", "Failed to download Gita verses", e) }
-                    }
-
-                    val cacheFileGitaTrans = java.io.File(getApplication<Application>().filesDir, "gita-translations.min.json")
-                    if (!cacheFileGitaTrans.exists()) {
-                        val gitaTransUrl = "https://raw.githubusercontent.com/gita/gita/main/data/translation.json"
-                        try { downloadFileToLocal(gitaTransUrl, cacheFileGitaTrans) } catch (e: Exception) { android.util.Log.e("ScriptureViewModel", "Failed to download Gita translations", e) }
-                    }
-
-                    val sivanandaTranslations = mutableMapOf<Int, String>()
-                    if (cacheFileGitaTrans.exists()) {
-                        try {
-                            val transJsonStr = cacheFileGitaTrans.readText()
-                            val transJA = org.json.JSONArray(transJsonStr)
-                            for (i in 0 until transJA.length()) {
-                                val tObj = transJA.getJSONObject(i)
-                                if (tObj.optInt("author_id") == 16) {
-                                    val vId = tObj.optInt("verse_id")
-                                    val desc = tObj.optString("description").trim()
-                                    if (vId > 0 && desc.isNotBlank()) {
-                                        sivanandaTranslations[vId] = desc
+                    var loadedFromApi = false
+                    try {
+                        val gitaChapterUrl = "https://vedicscriptures.github.io/chapter/$chapterNumber"
+                        val req = Request.Builder().url(gitaChapterUrl).build()
+                        okHttpClient.newCall(req).execute().use { response ->
+                            if (response.isSuccessful) {
+                                val bodyStr = response.body?.string() ?: ""
+                                val cObj = JSONObject(bodyStr)
+                                val versesCount = cObj.optInt("verses_count", 0)
+                                if (versesCount > 0) {
+                                    val deferredVerses = (1..versesCount).map { vNum ->
+                                        async(Dispatchers.IO) {
+                                            try {
+                                                val vUrl = "https://vedicscriptures.github.io/slok/$chapterNumber/$vNum"
+                                                val vReq = Request.Builder().url(vUrl).build()
+                                                okHttpClient.newCall(vReq).execute().use { vResp ->
+                                                    if (vResp.isSuccessful) {
+                                                        val vBody = vResp.body?.string() ?: ""
+                                                        val vObj = JSONObject(vBody)
+                                                        val slok = vObj.optString("slok", "").replace("\n", " ").trim()
+                                                        val siva = vObj.optJSONObject("siva")
+                                                        val engTrans = siva?.optString("et", "")?.trim() 
+                                                            ?: vObj.optJSONObject("purohit")?.optString("et", "")?.trim()
+                                                            ?: vObj.optJSONObject("chinmay")?.optString("hc", "")?.trim()
+                                                            ?: slok
+                                                        Pair(vNum, Pair("$vNum: $engTrans", "$vNum: $slok"))
+                                                    } else null
+                                                }
+                                            } catch (e: Exception) {
+                                                null
+                                            }
+                                        }
+                                    }
+                                    val results = deferredVerses.awaitAll().filterNotNull().sortedBy { it.first }
+                                    if (results.isNotEmpty()) {
+                                        results.forEach { (_, pair) ->
+                                            englishVerses.add(pair.first)
+                                            originalParagraphsList.add(pair.second)
+                                        }
+                                        loadedFromApi = true
                                     }
                                 }
                             }
-                        } catch (e: Exception) {
-                            android.util.Log.e("ScriptureViewModel", "Error reading gita translations json", e)
                         }
+                    } catch (e: Exception) {
+                        android.util.Log.w("ScriptureViewModel", "Fast Gita API fetch error", e)
                     }
 
-                    var loadedFromGitaJson = false
-                    if (cacheFileGita.exists()) {
-                        try {
-                            val jsonStr = cacheFileGita.readText()
-                            val versesJA = org.json.JSONArray(jsonStr)
-                            for (i in 0 until versesJA.length()) {
-                                val vObj = versesJA.getJSONObject(i)
-                                if (vObj.optInt("chapter_number") == chapterNumber) {
-                                    val vNum = vObj.optInt("verse_number")
-                                    val vId = vObj.optInt("id")
-                                    val sanskritText = vObj.optString("text").replace("\n", " ").trim()
-                                    
-                                    val englishTrans = sivanandaTranslations[vId]
-                                    val verseText = if (!englishTrans.isNullOrBlank()) {
-                                        englishTrans
-                                    } else {
-                                        val translit = vObj.optString("transliteration").replace("\n", " ").trim()
-                                        val meanings = vObj.optString("word_meanings").replace("\n", " ").trim()
-                                        if (translit.isNotBlank()) translit else meanings
-                                    }
-
-                                    if (verseText.isNotBlank()) {
-                                        englishVerses.add("$vNum: $verseText")
-                                    } else {
-                                        englishVerses.add("$vNum: $sanskritText")
-                                    }
-                                    originalParagraphsList.add("$vNum: $sanskritText")
-                                }
-                            }
-                            if (englishVerses.isNotEmpty()) {
-                                loadedFromGitaJson = true
-                            }
-                        } catch (e: Exception) {
-                            android.util.Log.e("ScriptureViewModel", "Error reading gita json", e)
-                        }
-                    }
-
-                    if (!loadedFromGitaJson) {
+                    if (!loadedFromApi) {
                         for ((idx, p) in com.example.data.model.books.GitaContent.paragraphs.withIndex()) {
                             englishVerses.add(p)
                             val orig = com.example.data.model.books.GitaContent.originalParagraphs.getOrNull(idx) ?: p

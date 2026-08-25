@@ -280,15 +280,23 @@ fun BibleReaderView(
                         Text(
                             text = if (currentSelectedBook != null && currentSelectedChapter != null) {
                                 val name = if (lang == AppLanguage.EN) currentSelectedBook?.nameEnglish else currentSelectedBook?.nameTurkish
-                                "$name $currentSelectedChapter"
+                                if (book.id == "talmud") {
+                                    val pageNum = 2 + ((currentSelectedChapter ?: 1) - 1) / 2
+                                    val side = if ((currentSelectedChapter ?: 1) % 2 == 1) "a" else "b"
+                                    "$name $pageNum$side"
+                                } else {
+                                    "$name $currentSelectedChapter"
+                                }
                             } else if (currentSelectedBook != null) {
                                 if (lang == AppLanguage.EN) currentSelectedBook!!.nameEnglish else currentSelectedBook!!.nameTurkish
                             } else {
                                 when (book.id) {
-                                    "torah" -> if (lang == AppLanguage.EN) "Torah (Tanakh)" else "Tevrat (Tanah)"
-                                    "talmud" -> if (lang == AppLanguage.EN) "Talmud Bavli" else "Talmud (Babil)"
+                                    "torah" -> if (lang == AppLanguage.EN) "Torah" else "Tevrat"
+                                    "talmud" -> if (lang == AppLanguage.EN) "Talmud Bavli" else "Talmud"
                                     "bukhari" -> if (lang == AppLanguage.EN) "Sahih al-Bukhari" else "Sahih-i Buhârî"
-                                    else -> if (lang == AppLanguage.EN) "Gospel (Bible)" else "İncil (Ahit)"
+                                    "gita" -> "Bhagavad Gita"
+                                    "sermon" -> if (lang == AppLanguage.EN) "Gospel" else "İncil"
+                                    else -> if (lang == AppLanguage.EN) book.title else (if (book.id == "torah") "Tevrat" else book.title)
                                 }
                             },
                             fontFamily = FontFamily.Serif,
@@ -300,7 +308,7 @@ fun BibleReaderView(
                         )
                         if (currentSelectedBook != null) {
                             Text(
-                                text = "${currentSelectedBook?.nameEnglish} • ${currentSelectedBook?.sourceLanguage}",
+                                text = "${if (lang == AppLanguage.EN) currentSelectedBook?.nameEnglish else currentSelectedBook?.nameTurkish} • ${currentSelectedBook?.sourceLanguage}",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 maxLines = 1,
