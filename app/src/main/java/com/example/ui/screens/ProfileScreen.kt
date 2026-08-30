@@ -92,7 +92,11 @@ fun ProfileScreen(
             onDismissRequest = { showAboutDialog = false },
             title = {
                 Text(
-                    text = if (lang == AppLanguage.EN) "About Us" else "Hakkımızda",
+                    text = when (lang) {
+                        AppLanguage.RU -> "О нас"
+                        AppLanguage.EN -> "About Us"
+                        AppLanguage.TR -> "Hakkımızda"
+                    },
                     fontFamily = FontFamily.Serif,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
@@ -107,10 +111,10 @@ fun ProfileScreen(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = if (lang == AppLanguage.EN) {
-                            "This application is a modern sanctuary of reading, gathering the most rooted and ancient sources of wisdom in human history. It is designed to offer simplicity, tranquility, and a deep reading experience."
-                        } else {
-                            "Bu uygulama, insanlık tarihinin en köklü ve kadim bilgelik kaynaklarını bir araya getiren modern bir okuma mabedidir. Sadelik, sükûnet ve derin okuma deneyimi sunmak amacıyla tasarlanmıştır."
+                        text = when (lang) {
+                            AppLanguage.RU -> "Это приложение — современное святилище чтения, объединяющее древнейшие и глубочайшие источники мудрости в истории человечества. Оно создано для простоты, спокойствия и глубокого погружения в текст."
+                            AppLanguage.EN -> "This application is a modern sanctuary of reading, gathering the most rooted and ancient sources of wisdom in human history. It is designed to offer simplicity, tranquility, and a deep reading experience."
+                            AppLanguage.TR -> "Bu uygulama, insanlık tarihinin en köklü ve kadim bilgelik kaynaklarını bir araya getiren modern bir okuma mabedidir. Sadelik, sükûnet ve derin okuma deneyimi sunmak amacıyla tasarlanmıştır."
                         },
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -120,7 +124,14 @@ fun ProfileScreen(
             },
             confirmButton = {
                 TextButton(onClick = { showAboutDialog = false }) {
-                    Text(if (lang == AppLanguage.EN) "Close" else "Kapat", color = SacredGold)
+                    Text(
+                        text = when (lang) {
+                            AppLanguage.RU -> "Закрыть"
+                            AppLanguage.EN -> "Close"
+                            AppLanguage.TR -> "Kapat"
+                        },
+                        color = SacredGold
+                    )
                 }
             },
             shape = RoundedCornerShape(12.dp),
@@ -130,17 +141,49 @@ fun ProfileScreen(
 
     if (showEditProfileDialog) {
         val presets = listOf(
-            Pair(if (lang == AppLanguage.EN) "Lotus / Peace" else "Lotus / Dinginlik", "https://images.unsplash.com/photo-1542362567-b07eac79094d?w=200&auto=format&fit=crop&q=60"),
-            Pair(if (lang == AppLanguage.EN) "Mountain / Fortitude" else "Dağ / Metanet", "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=200&auto=format&fit=crop&q=60"),
-            Pair(if (lang == AppLanguage.EN) "Universe / Contemplation" else "Evren / Tefekkür", "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=200&auto=format&fit=crop&q=60"),
-            Pair(if (lang == AppLanguage.EN) "Forest / Serenity" else "Orman / Sükunet", "https://images.unsplash.com/photo-1448375240586-882707db888b?w=200&auto=format&fit=crop&q=60")
+            Pair(
+                when (lang) {
+                    AppLanguage.RU -> "Лотос / Спокойствие"
+                    AppLanguage.EN -> "Lotus / Peace"
+                    AppLanguage.TR -> "Lotus / Dinginlik"
+                },
+                "https://images.unsplash.com/photo-1542362567-b07eac79094d?w=200&auto=format&fit=crop&q=60"
+            ),
+            Pair(
+                when (lang) {
+                    AppLanguage.RU -> "Гора / Стойкость"
+                    AppLanguage.EN -> "Mountain / Fortitude"
+                    AppLanguage.TR -> "Dağ / Metanet"
+                },
+                "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=200&auto=format&fit=crop&q=60"
+            ),
+            Pair(
+                when (lang) {
+                    AppLanguage.RU -> "Вселенная / Размышление"
+                    AppLanguage.EN -> "Universe / Contemplation"
+                    AppLanguage.TR -> "Evren / Tefekkür"
+                },
+                "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=200&auto=format&fit=crop&q=60"
+            ),
+            Pair(
+                when (lang) {
+                    AppLanguage.RU -> "Лес / Умиротворение"
+                    AppLanguage.EN -> "Forest / Serenity"
+                    AppLanguage.TR -> "Orman / Sükunet"
+                },
+                "https://images.unsplash.com/photo-1448375240586-882707db888b?w=200&auto=format&fit=crop&q=60"
+            )
         )
 
         AlertDialog(
             onDismissRequest = { showEditProfileDialog = false },
             title = {
                 Text(
-                    text = if (lang == AppLanguage.EN) "Edit Profile" else "Profili Düzenle",
+                    text = when (lang) {
+                        AppLanguage.RU -> "Редактировать профиль"
+                        AppLanguage.EN -> "Edit Profile"
+                        AppLanguage.TR -> "Profili Düzenle"
+                    },
                     fontFamily = FontFamily.Serif,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
@@ -197,7 +240,14 @@ fun ProfileScreen(
                                     contentDescription = null,
                                     modifier = Modifier.size(16.dp).padding(end = 4.dp)
                                 )
-                                Text(if (lang == AppLanguage.EN) "Select from Gallery" else "Galeriden Seç", style = MaterialTheme.typography.labelLarge)
+                                Text(
+                                    text = when (lang) {
+                                        AppLanguage.RU -> "Выбрать из галереи"
+                                        AppLanguage.EN -> "Select from Gallery"
+                                        AppLanguage.TR -> "Galeriden Seç"
+                                    },
+                                    style = MaterialTheme.typography.labelLarge
+                                )
                             }
 
                             if (tempPhotoUrl.isNotEmpty()) {
@@ -212,7 +262,14 @@ fun ProfileScreen(
                                         contentDescription = null,
                                         modifier = Modifier.size(14.dp).padding(end = 4.dp)
                                     )
-                                    Text(if (lang == AppLanguage.EN) "Remove Photo" else "Fotoğrafı Kaldır", style = MaterialTheme.typography.bodySmall)
+                                    Text(
+                                        text = when (lang) {
+                                            AppLanguage.RU -> "Удалить фото"
+                                            AppLanguage.EN -> "Remove Photo"
+                                            AppLanguage.TR -> "Fotoğrafı Kaldır"
+                                        },
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
                                 }
                             }
                         }
@@ -221,14 +278,30 @@ fun ProfileScreen(
                     OutlinedTextField(
                         value = tempName,
                         onValueChange = { tempName = it },
-                        label = { Text(if (lang == AppLanguage.EN) "Name" else "İsim") },
+                        label = {
+                            Text(
+                                when (lang) {
+                                    AppLanguage.RU -> "Имя"
+                                    AppLanguage.EN -> "Name"
+                                    AppLanguage.TR -> "İsim"
+                                }
+                            )
+                        },
                         modifier = Modifier.fillMaxWidth().testTag("edit_profile_name_input")
                     )
 
                     OutlinedTextField(
                         value = tempBio,
                         onValueChange = { tempBio = it },
-                        label = { Text(if (lang == AppLanguage.EN) "Biography / Bio" else "Biyografi / Bio") },
+                        label = {
+                            Text(
+                                when (lang) {
+                                    AppLanguage.RU -> "О себе / Биография"
+                                    AppLanguage.EN -> "Biography / Bio"
+                                    AppLanguage.TR -> "Biyografi / Bio"
+                                }
+                            )
+                        },
                         modifier = Modifier.fillMaxWidth().testTag("edit_profile_bio_input"),
                         maxLines = 3
                     )
@@ -236,13 +309,25 @@ fun ProfileScreen(
                     OutlinedTextField(
                         value = tempPhotoUrl,
                         onValueChange = { tempPhotoUrl = it },
-                        label = { Text(if (lang == AppLanguage.EN) "Profile Picture URL or File Path" else "Profil Resmi URL'si veya Dosya Yolu") },
+                        label = {
+                            Text(
+                                when (lang) {
+                                    AppLanguage.RU -> "URL фото профиля или путь к файлу"
+                                    AppLanguage.EN -> "Profile Picture URL or File Path"
+                                    AppLanguage.TR -> "Profil Resmi URL'si veya Dosya Yolu"
+                                }
+                            )
+                        },
                         placeholder = { Text("https://example.com/image.jpg") },
                         modifier = Modifier.fillMaxWidth().testTag("edit_profile_photo_url_input")
                     )
 
                     Text(
-                        text = if (lang == AppLanguage.EN) "Or select a preset avatar:" else "Veya hazır bir avatar seçin:",
+                        text = when (lang) {
+                            AppLanguage.RU -> "Или выберите готовый аватар:"
+                            AppLanguage.EN -> "Or select a preset avatar:"
+                            AppLanguage.TR -> "Veya hazır bir avatar seçin:"
+                        },
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -297,12 +382,20 @@ fun ProfileScreen(
                     },
                     modifier = Modifier.testTag("save_profile_button")
                 ) {
-                    Text(if (lang == AppLanguage.EN) "Save" else "Kaydet", color = SacredGold, fontWeight = FontWeight.Bold)
+                    Text(
+                        text = when (lang) {
+                            AppLanguage.RU -> "Сохранить"
+                            AppLanguage.EN -> "Save"
+                            AppLanguage.TR -> "Kaydet"
+                        },
+                        color = SacredGold,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showEditProfileDialog = false }) {
-                    Text(if (lang == AppLanguage.EN) "Cancel" else "İptal", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(Loc.get("cancel", lang), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             },
             shape = RoundedCornerShape(12.dp),
@@ -349,9 +442,17 @@ fun ProfileScreen(
         ) {
             // 1. Profile Header
             item {
-                val displayName = userState.displayName ?: (if (lang == AppLanguage.EN) "Journey of Wisdom" else "Bilgelik Yolcusu")
+                val displayName = userState.displayName ?: when (lang) {
+                    AppLanguage.RU -> "Искатель мудрости"
+                    AppLanguage.EN -> "Journey of Wisdom"
+                    AppLanguage.TR -> "Bilgelik Yolcusu"
+                }
                 val email = if (userState.isDemo || userState.email == "misafir@Scriptorium.org") {
-                    if (lang == AppLanguage.EN) "Guest Reader" else "Misafir Okuyucu"
+                    when (lang) {
+                        AppLanguage.RU -> "Гость"
+                        AppLanguage.EN -> "Guest Reader"
+                        AppLanguage.TR -> "Misafir Okuyucu"
+                    }
                 } else {
                     userState.email ?: "yolcu@Scriptorium.org"
                 }
@@ -379,7 +480,7 @@ fun ProfileScreen(
                         if (userState.photoUrl != null) {
                             AsyncImage(
                                 model = userState.photoUrl,
-                                contentDescription = if (lang == AppLanguage.EN) "Profile Picture" else "Profil Resmi",
+                                contentDescription = Loc.get("profile", lang),
                                 contentScale = androidx.compose.ui.layout.ContentScale.Crop,
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -436,7 +537,14 @@ fun ProfileScreen(
                                 contentDescription = null,
                                 modifier = Modifier.size(16.dp).padding(end = 4.dp)
                             )
-                            Text(if (lang == AppLanguage.EN) "Edit Profile" else "Profili Düzenle", style = MaterialTheme.typography.labelLarge)
+                            Text(
+                                text = when (lang) {
+                                    AppLanguage.RU -> "Редактировать профиль"
+                                    AppLanguage.EN -> "Edit Profile"
+                                    AppLanguage.TR -> "Profili Düzenle"
+                                },
+                                style = MaterialTheme.typography.labelLarge
+                            )
                         }
                     }
                 }
@@ -447,8 +555,8 @@ fun ProfileScreen(
                 val notesHighlights by viewModel.notesHighlights.collectAsState()
                 val readingHistory by viewModel.readingHistory.collectAsState()
 
-                val pagesRead = readingHistory.filter { it.bookTitle != "Sessiz Tefekkür" && it.bookTitle != "Silent Meditation" }.sumOf { if (it.pagesRead > 0) it.pagesRead else it.progressPercent / 10 }
-                val completedCount = readingHistory.filter { it.bookTitle != "Sessiz Tefekkür" && it.bookTitle != "Silent Meditation" }.count { it.isCompleted || it.progressPercent >= 100 }
+                val pagesRead = readingHistory.filter { it.bookTitle != "Sessiz Tefekkür" && it.bookTitle != "Silent Meditation" && it.bookTitle != "Тихое размышление" }.sumOf { if (it.pagesRead > 0) it.pagesRead else it.progressPercent / 10 }
+                val completedCount = readingHistory.filter { it.bookTitle != "Sessiz Tefekkür" && it.bookTitle != "Silent Meditation" && it.bookTitle != "Тихое размышление" }.count { it.isCompleted || it.progressPercent >= 100 }
                 val reflectionMinutes = readingHistory.sumOf { it.contemplationMinutes }
 
                 Row(
@@ -458,7 +566,14 @@ fun ProfileScreen(
                     val stats = listOf(
                         Pair(pagesRead.toString(), Loc.get("pages_read", lang)),
                         Pair(completedCount.toString(), Loc.get("books_completed", lang)),
-                        Pair(reflectionMinutes.toString(), if (lang == AppLanguage.EN) "Meditation (Min)" else "Tefekkür (Dk)")
+                        Pair(
+                            reflectionMinutes.toString(),
+                            when (lang) {
+                                AppLanguage.RU -> "Размышление (мин)"
+                                AppLanguage.EN -> "Meditation (Min)"
+                                AppLanguage.TR -> "Tefekkür (Dk)"
+                            }
+                        )
                     )
 
                     stats.forEach { (value, label) ->
@@ -569,9 +684,22 @@ fun ProfileScreen(
                                     colors = ButtonDefaults.buttonColors(containerColor = SacredGold),
                                     shape = RoundedCornerShape(8.dp)
                                 ) {
-                                    Icon(Icons.Filled.PlayArrow, contentDescription = if (lang == AppLanguage.EN) "Start" else "Başlat")
+                                    Icon(
+                                        Icons.Filled.PlayArrow,
+                                        contentDescription = when (lang) {
+                                            AppLanguage.RU -> "Старт"
+                                            AppLanguage.EN -> "Start"
+                                            AppLanguage.TR -> "Başlat"
+                                        }
+                                    )
                                     Spacer(modifier = Modifier.width(4.dp))
-                                    Text(if (lang == AppLanguage.EN) "Start" else "Başlat")
+                                    Text(
+                                        text = when (lang) {
+                                            AppLanguage.RU -> "Старт"
+                                            AppLanguage.EN -> "Start"
+                                            AppLanguage.TR -> "Başlat"
+                                        }
+                                    )
                                 }
                             } else {
                                 Button(
@@ -579,9 +707,22 @@ fun ProfileScreen(
                                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
                                     shape = RoundedCornerShape(8.dp)
                                 ) {
-                                    Icon(Icons.Filled.Pause, contentDescription = if (lang == AppLanguage.EN) "Stop" else "Durdur")
+                                    Icon(
+                                        Icons.Filled.Pause,
+                                        contentDescription = when (lang) {
+                                            AppLanguage.RU -> "Стоп"
+                                            AppLanguage.EN -> "Stop"
+                                            AppLanguage.TR -> "Durdur"
+                                        }
+                                    )
                                     Spacer(modifier = Modifier.width(4.dp))
-                                    Text(if (lang == AppLanguage.EN) "Stop" else "Durdur")
+                                    Text(
+                                        text = when (lang) {
+                                            AppLanguage.RU -> "Стоп"
+                                            AppLanguage.EN -> "Stop"
+                                            AppLanguage.TR -> "Durdur"
+                                        }
+                                    )
                                 }
                             }
 
@@ -591,10 +732,22 @@ fun ProfileScreen(
                                         isTimerRunning = false
                                         val minutes = (tefekkürTimeSeconds + 30) / 60
                                         viewModel.updateReadingSessionProgress(
-                                            bookTitle = if (lang == AppLanguage.EN) "Silent Meditation" else "Sessiz Tefekkür",
-                                            subtitle = if (lang == AppLanguage.EN) "Meditation Timer Session" else "Tefekkür Kronometresi Seansı",
+                                            bookTitle = when (lang) {
+                                                AppLanguage.RU -> "Тихое размышление"
+                                                AppLanguage.EN -> "Silent Meditation"
+                                                AppLanguage.TR -> "Sessiz Tefekkür"
+                                            },
+                                            subtitle = when (lang) {
+                                                AppLanguage.RU -> "Сеанс таймера размышления"
+                                                AppLanguage.EN -> "Meditation Timer Session"
+                                                AppLanguage.TR -> "Tefekkür Kronometresi Seansı"
+                                            },
                                             progress = 100,
-                                            surahOrChapter = (if (lang == AppLanguage.EN) "Meditation Session (" else "Tefekkür Seansı (") + String.format("%02d:%02d", tefekkürTimeSeconds / 60, tefekkürTimeSeconds % 60) + ")",
+                                            surahOrChapter = (when (lang) {
+                                                AppLanguage.RU -> "Сеанс размышления ("
+                                                AppLanguage.EN -> "Meditation Session ("
+                                                AppLanguage.TR -> "Tefekkür Seansı ("
+                                            }) + String.format("%02d:%02d", tefekkürTimeSeconds / 60, tefekkürTimeSeconds % 60) + ")",
                                             pagesRead = 0,
                                             isCompleted = true,
                                             contemplationMinutes = minutes
@@ -619,7 +772,13 @@ fun ProfileScreen(
                                     colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
                                     shape = RoundedCornerShape(8.dp)
                                 ) {
-                                    Text(if (lang == AppLanguage.EN) "Reset" else "Sıfırla")
+                                    Text(
+                                        text = when (lang) {
+                                            AppLanguage.RU -> "Сброс"
+                                            AppLanguage.EN -> "Reset"
+                                            AppLanguage.TR -> "Sıfırla"
+                                        }
+                                    )
                                 }
                             }
                         }
@@ -698,7 +857,11 @@ fun ProfileScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text(
-                        text = if (lang == AppLanguage.EN) "SETTINGS & SUPPORT" else "AYARLAR VE DESTEK",
+                        text = when (lang) {
+                            AppLanguage.RU -> "НАСТРОЙКИ И ПОДДЕРЖКА"
+                            AppLanguage.EN -> "SETTINGS & SUPPORT"
+                            AppLanguage.TR -> "AYARLAR VE DESTEK"
+                        },
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                         letterSpacing = 1.5.sp,
@@ -784,16 +947,28 @@ fun ProfileScreen(
                                     )
                                     Column {
                                         Text(
-                                            text = if (lang == AppLanguage.EN) "Religion, Sect & Prayer Preferences" else "Din, Mezhep ve İbadet Ayarları",
+                                            text = when (lang) {
+                                                AppLanguage.RU -> "Настройки религии, традиции и молитвы"
+                                                AppLanguage.EN -> "Religion, Sect & Prayer Preferences"
+                                                AppLanguage.TR -> "Din, Mezhep ve İbadet Ayarları"
+                                            },
                                             style = MaterialTheme.typography.titleMedium,
                                             fontWeight = FontWeight.Bold,
                                             color = MaterialTheme.colorScheme.primary
                                         )
                                         Text(
                                             text = if (isReligionCardExpanded) {
-                                                if (lang == AppLanguage.EN) "Select your faith tradition to receive personalized prayer & reflection notifications." else "İnanç geleneğinizi seçerek kişiselleştirilmiş namaz, dua ve tefekkür bildirimleri alın."
+                                                when (lang) {
+                                                    AppLanguage.RU -> "Выберите вашу духовную традицию для получения персонализированных молитв и напоминаний о размышлении."
+                                                    AppLanguage.EN -> "Select your faith tradition to receive personalized prayer & reflection notifications."
+                                                    AppLanguage.TR -> "İnanç geleneğinizi seçerek kişiselleştirilmiş namaz, dua ve tefekkür bildirimleri alın."
+                                                }
                                             } else {
-                                                "${if (lang == AppLanguage.EN) "Selected" else "Seçili"}: ${userReligion.getTitle(lang)} • ${userSect.getTitle(lang)}"
+                                                "${when (lang) {
+                                                    AppLanguage.RU -> "Выбрано"
+                                                    AppLanguage.EN -> "Selected"
+                                                    AppLanguage.TR -> "Seçili"
+                                                }}: ${userReligion.getTitle(lang)} • ${userSect.getTitle(lang)}"
                                             },
                                             style = MaterialTheme.typography.bodySmall,
                                             color = if (isReligionCardExpanded) MaterialTheme.colorScheme.onSurfaceVariant else SacredGold,
@@ -828,7 +1003,11 @@ fun ProfileScreen(
 
                                     // 1. Religion Selector
                                     Text(
-                                        text = if (lang == AppLanguage.EN) "SELECT RELIGION" else "DİN SEÇİMİ",
+                                        text = when (lang) {
+                                            AppLanguage.RU -> "ВЫБОР РЕЛИГИИ"
+                                            AppLanguage.EN -> "SELECT RELIGION"
+                                            AppLanguage.TR -> "DİN SEÇİMİ"
+                                        },
                                         style = MaterialTheme.typography.labelSmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         letterSpacing = 1.sp
@@ -859,7 +1038,11 @@ fun ProfileScreen(
 
                                     // 2. Sect / Denomination Selector
                                     Text(
-                                        text = if (lang == AppLanguage.EN) "SELECT SECT / TRADITION" else "MEZHEP / GELENEK SEÇİMİ",
+                                        text = when (lang) {
+                                            AppLanguage.RU -> "ВЫБОР ТРАДИЦИИ / НАПРАВЛЕНИЯ"
+                                            AppLanguage.EN -> "SELECT SECT / TRADITION"
+                                            AppLanguage.TR -> "MEZHEP / GELENEK SEÇİMİ"
+                                        },
                                         style = MaterialTheme.typography.labelSmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         letterSpacing = 1.sp
@@ -909,7 +1092,11 @@ fun ProfileScreen(
                                             )
                                             Column(modifier = Modifier.weight(1f)) {
                                                 Text(
-                                                    text = if (userLocationInfo != null) "${userLocationInfo?.cityName}, ${userLocationInfo?.countryName}" else if (lang == AppLanguage.EN) "Detecting Location..." else "Konum Tespit Ediliyor...",
+                                                    text = if (userLocationInfo != null) "${userLocationInfo?.cityName}, ${userLocationInfo?.countryName}" else when (lang) {
+                                                        AppLanguage.RU -> "Определение местоположения..."
+                                                        AppLanguage.EN -> "Detecting Location..."
+                                                        AppLanguage.TR -> "Konum Tespit Ediliyor..."
+                                                    },
                                                     style = MaterialTheme.typography.bodyMedium,
                                                     fontWeight = FontWeight.Bold,
                                                     color = MaterialTheme.colorScheme.onSurface,
@@ -917,7 +1104,19 @@ fun ProfileScreen(
                                                     overflow = TextOverflow.Ellipsis
                                                 )
                                                 Text(
-                                                    text = if (userLocationInfo != null) (if (lang == AppLanguage.EN) "Location-based Prayer Times" else "Konuma Göre Namaz Vakitleri") else (if (lang == AppLanguage.EN) "Otomatik Konum Tespiti" else "Otomatik Konum Tespiti"),
+                                                    text = if (userLocationInfo != null) {
+                                                        when (lang) {
+                                                            AppLanguage.RU -> "Расписание молитв по местоположению"
+                                                            AppLanguage.EN -> "Location-based Prayer Times"
+                                                            AppLanguage.TR -> "Konuma Göre Namaz Vakitleri"
+                                                        }
+                                                    } else {
+                                                        when (lang) {
+                                                            AppLanguage.RU -> "Автоматическое определение"
+                                                            AppLanguage.EN -> "Automatic Location Detection"
+                                                            AppLanguage.TR -> "Otomatik Konum Tespiti"
+                                                        }
+                                                    },
                                                     style = MaterialTheme.typography.labelSmall,
                                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                                     maxLines = 1,
@@ -948,7 +1147,11 @@ fun ProfileScreen(
 
                                     // 4. Prayer / Worship Schedule Overview
                                     Text(
-                                        text = if (lang == AppLanguage.EN) "PRAYER & WORSHIP SCHEDULE" else "İBADET & NAMAZ VAKİTLERİ ÇİZELGESİ",
+                                        text = when (lang) {
+                                            AppLanguage.RU -> "РАСПИСАНИЕ МОЛИТВ И СЛУЖЕНИЙ"
+                                            AppLanguage.EN -> "PRAYER & WORSHIP SCHEDULE"
+                                            AppLanguage.TR -> "İBADET & NAMAZ VAKİTLERİ ÇİZELGESİ"
+                                        },
                                         style = MaterialTheme.typography.labelSmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         letterSpacing = 1.sp
@@ -1055,9 +1258,17 @@ fun ProfileScreen(
                                         )
                                         Text(
                                             text = if (notificationsEnabled) {
-                                                if (lang == AppLanguage.EN) "Active • Interval: $currentIntervalMinutes min" else "Aktif • Sıklık: $currentIntervalMinutes dk"
+                                                when (lang) {
+                                                    AppLanguage.RU -> "Активно • Интервал: $currentIntervalMinutes мин"
+                                                    AppLanguage.EN -> "Active • Interval: $currentIntervalMinutes min"
+                                                    AppLanguage.TR -> "Aktif • Sıklık: $currentIntervalMinutes dk"
+                                                }
                                             } else {
-                                                if (lang == AppLanguage.EN) "Disabled" else "Kapalı"
+                                                when (lang) {
+                                                    AppLanguage.RU -> "Отключено"
+                                                    AppLanguage.EN -> "Disabled"
+                                                    AppLanguage.TR -> "Kapalı"
+                                                }
                                             },
                                             style = MaterialTheme.typography.bodySmall,
                                             color = if (notificationsEnabled) SacredGold else MaterialTheme.colorScheme.onSurfaceVariant
@@ -1097,7 +1308,11 @@ fun ProfileScreen(
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
                                         Text(
-                                            text = if (lang == AppLanguage.EN) "Enable Daily Verses" else "Günlük Ayet Bildirimlerini Aç",
+                                            text = when (lang) {
+                                                AppLanguage.RU -> "Уведомления со стихами дня"
+                                                AppLanguage.EN -> "Enable Daily Verses"
+                                                AppLanguage.TR -> "Günlük Ayet Bildirimlerini Aç"
+                                            },
                                             style = MaterialTheme.typography.bodyLarge,
                                             fontWeight = FontWeight.Medium,
                                             color = MaterialTheme.colorScheme.onSurface
@@ -1139,7 +1354,11 @@ fun ProfileScreen(
                                             verticalArrangement = Arrangement.spacedBy(12.dp)
                                         ) {
                                             Text(
-                                                text = if (lang == AppLanguage.EN) "NOTIFICATION FREQUENCY" else "BİLDİRİM SIKLIĞI",
+                                                text = when (lang) {
+                                                    AppLanguage.RU -> "ЧАСТОТА УВЕДОМЛЕНИЙ"
+                                                    AppLanguage.EN -> "NOTIFICATION FREQUENCY"
+                                                    AppLanguage.TR -> "BİLDİRİM SIKLIĞI"
+                                                },
                                                 style = MaterialTheme.typography.labelSmall,
                                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                                                 letterSpacing = 1.sp,
@@ -1158,7 +1377,15 @@ fun ProfileScreen(
                                                             intervalInput = newValue
                                                         }
                                                     },
-                                                    label = { Text(if (lang == AppLanguage.EN) "Interval Value" else "Süre Değeri") },
+                                                    label = {
+                                                        Text(
+                                                            when (lang) {
+                                                                AppLanguage.RU -> "Значение интервала"
+                                                                AppLanguage.EN -> "Interval Value"
+                                                                AppLanguage.TR -> "Süre Değeri"
+                                                            }
+                                                        )
+                                                    },
                                                     keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
                                                         keyboardType = androidx.compose.ui.text.input.KeyboardType.Number
                                                     ),
@@ -1173,12 +1400,28 @@ fun ProfileScreen(
                                                     FilterChip(
                                                         selected = !intervalUnitIsHours,
                                                         onClick = { intervalUnitIsHours = false },
-                                                        label = { Text(if (lang == AppLanguage.EN) "Minutes" else "Dakika") }
+                                                        label = {
+                                                            Text(
+                                                                when (lang) {
+                                                                    AppLanguage.RU -> "Минуты"
+                                                                    AppLanguage.EN -> "Minutes"
+                                                                    AppLanguage.TR -> "Dakika"
+                                                                }
+                                                            )
+                                                        }
                                                     )
                                                     FilterChip(
                                                         selected = intervalUnitIsHours,
                                                         onClick = { intervalUnitIsHours = true },
-                                                        label = { Text(if (lang == AppLanguage.EN) "Hours" else "Saat") }
+                                                        label = {
+                                                            Text(
+                                                                when (lang) {
+                                                                    AppLanguage.RU -> "Часы"
+                                                                    AppLanguage.EN -> "Hours"
+                                                                    AppLanguage.TR -> "Saat"
+                                                                }
+                                                            )
+                                                        }
                                                     )
                                                 }
                                             }
@@ -1186,11 +1429,23 @@ fun ProfileScreen(
                                             val parsedValue = intervalInput.toIntOrNull() ?: 0
                                             val isInputValid = if (intervalUnitIsHours) parsedValue >= 1 else parsedValue >= 2
                                             val errorText = when {
-                                                intervalInput.isEmpty() -> if (lang == AppLanguage.EN) "Please enter a valid number." else "Lütfen geçerli bir sayı girin."
+                                                intervalInput.isEmpty() -> when (lang) {
+                                                    AppLanguage.RU -> "Пожалуйста, введите число."
+                                                    AppLanguage.EN -> "Please enter a valid number."
+                                                    AppLanguage.TR -> "Lütfen geçerli bir sayı girin."
+                                                }
                                                 !isInputValid -> if (intervalUnitIsHours) {
-                                                    if (lang == AppLanguage.EN) "At least 1 hour must be selected." else "En az 1 saat seçilmelidir."
+                                                    when (lang) {
+                                                        AppLanguage.RU -> "Необходимо выбрать как минимум 1 час."
+                                                        AppLanguage.EN -> "At least 1 hour must be selected."
+                                                        AppLanguage.TR -> "En az 1 saat seçilmelidir."
+                                                    }
                                                 } else {
-                                                    if (lang == AppLanguage.EN) "At least 2 minutes must be selected." else "En az 2 dakika seçilmelidir."
+                                                    when (lang) {
+                                                        AppLanguage.RU -> "Необходимо выбрать как минимум 2 минуты."
+                                                        AppLanguage.EN -> "At least 2 minutes must be selected."
+                                                        AppLanguage.TR -> "En az 2 dakika seçilmelidir."
+                                                    }
                                                 }
                                                 else -> null
                                             }
@@ -1212,7 +1467,13 @@ fun ProfileScreen(
                                                 modifier = Modifier.fillMaxWidth().testTag("save_interval_button"),
                                                 shape = RoundedCornerShape(8.dp)
                                             ) {
-                                                Text(if (lang == AppLanguage.EN) "Update Notification Interval" else "Bildirim Sıklığını Güncelle")
+                                                Text(
+                                                    when (lang) {
+                                                        AppLanguage.RU -> "Обновить интервал уведомлений"
+                                                        AppLanguage.EN -> "Update Notification Interval"
+                                                        AppLanguage.TR -> "Bildirim Sıklığını Güncelle"
+                                                    }
+                                                )
                                             }
 
                                             Spacer(modifier = Modifier.height(8.dp))
@@ -1243,7 +1504,13 @@ fun ProfileScreen(
                                                     contentDescription = "Test",
                                                     modifier = Modifier.padding(end = 8.dp).size(18.dp)
                                                 )
-                                                Text(if (lang == AppLanguage.EN) "Send Test Notification" else "Test Bildirimi Gönder")
+                                                Text(
+                                                    when (lang) {
+                                                        AppLanguage.RU -> "Отправить тестовое уведомление"
+                                                        AppLanguage.EN -> "Send Test Notification"
+                                                        AppLanguage.TR -> "Test Bildirimi Gönder"
+                                                    }
+                                                )
                                             }
                                             
                                             HorizontalDivider(
@@ -1252,7 +1519,11 @@ fun ProfileScreen(
                                             )
 
                                             Text(
-                                                text = if (lang == AppLanguage.EN) "NOTIFICATION SOURCES" else "BİLDİRİM GELECEK KAYNAKLAR",
+                                                text = when (lang) {
+                                                    AppLanguage.RU -> "ИСТОЧНИКИ УВЕДОМЛЕНИЙ"
+                                                    AppLanguage.EN -> "NOTIFICATION SOURCES"
+                                                    AppLanguage.TR -> "BİLDİRİM GELECEK KAYNAKLAR"
+                                                },
                                                 style = MaterialTheme.typography.labelSmall,
                                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                                                 letterSpacing = 1.sp,
@@ -1335,11 +1606,19 @@ fun ProfileScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Filled.Info,
-                                    contentDescription = if (lang == AppLanguage.EN) "About Us" else "Hakkımızda",
+                                    contentDescription = when (lang) {
+                                        AppLanguage.RU -> "О нас"
+                                        AppLanguage.EN -> "About Us"
+                                        AppLanguage.TR -> "Hakkımızda"
+                                    },
                                     tint = MaterialTheme.colorScheme.primary
                                 )
                                 Text(
-                                    text = if (lang == AppLanguage.EN) "About Us" else "Hakkımızda",
+                                    text = when (lang) {
+                                        AppLanguage.RU -> "О нас"
+                                        AppLanguage.EN -> "About Us"
+                                        AppLanguage.TR -> "Hakkımızda"
+                                    },
                                     style = MaterialTheme.typography.bodyLarge,
                                     fontWeight = FontWeight.Medium,
                                     color = MaterialTheme.colorScheme.onSurface
@@ -1400,16 +1679,21 @@ fun ProfileScreen(
                             verticalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
                             Text(
-                                text = if (lang == AppLanguage.EN) "Forget Me (!)" else "Beni Unut (!)",
+                                text = when (lang) {
+                                    AppLanguage.RU -> "Забыть меня (!)"
+                                    AppLanguage.EN -> "Forget Me (!)"
+                                    AppLanguage.TR -> "Beni Unut (!)"
+                                },
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.error
                             )
                             Text(
-                                text = if (lang == AppLanguage.EN)
-                                    "Permanently delete all reading history, notes, downloaded books, settings, and external memory backup files from this phone."
-                                else
-                                    "Cihazınızdaki ve harici bellekteki tüm okuma geçmişini, notları, indirilen kitapları ve yedek dosyasını kalıcı olarak siler.",
+                                text = when (lang) {
+                                    AppLanguage.RU -> "Безвозвратно удаляет всю историю чтения, заметки, скачанные книги, настройки и резервные копии с этого устройства."
+                                    AppLanguage.EN -> "Permanently delete all reading history, notes, downloaded books, settings, and external memory backup files from this phone."
+                                    AppLanguage.TR -> "Cihazınızdaki ve harici bellekteki tüm okuma geçmişini, notları, indirilen kitapları ve yedek dosyasını kalıcı olarak siler."
+                                },
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -1439,11 +1723,19 @@ fun ProfileScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Logout,
-                            contentDescription = if (lang == AppLanguage.EN) "Log Out" else "Oturumu Kapat",
+                            contentDescription = when (lang) {
+                                AppLanguage.RU -> "Выйти из профиля"
+                                AppLanguage.EN -> "Log Out"
+                                AppLanguage.TR -> "Oturumu Kapat"
+                            },
                             modifier = Modifier.size(20.dp)
                         )
                         Text(
-                            text = if (lang == AppLanguage.EN) "Log Out" else "Oturumu Kapat",
+                            text = when (lang) {
+                                AppLanguage.RU -> "Выйти из профиля"
+                                AppLanguage.EN -> "Log Out"
+                                AppLanguage.TR -> "Oturumu Kapat"
+                            },
                             style = MaterialTheme.typography.labelLarge,
                             fontWeight = FontWeight.Bold
                         )
@@ -1474,7 +1766,11 @@ fun ProfileScreen(
             },
             title = {
                 Text(
-                    text = if (lang == AppLanguage.EN) "Forget Me & Erase Data (!)" else "Beni Unut ve Tüm Verileri Sil (!)",
+                    text = when (lang) {
+                        AppLanguage.RU -> "Забыть меня и удалить все данные (!)"
+                        AppLanguage.EN -> "Forget Me & Erase Data (!)"
+                        AppLanguage.TR -> "Beni Unut ve Tüm Verileri Sil (!)"
+                    },
                     fontFamily = FontFamily.Serif,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.error,
@@ -1484,10 +1780,11 @@ fun ProfileScreen(
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text(
-                        text = if (lang == AppLanguage.EN)
-                            "ARE YOU SURE?\n\nThis action will PERMANENTLY DELETE:\n• All reading history & progress\n• All notes & highlighted verses\n• All downloaded offline books & surahs\n• Language, font & theme settings\n• External memory backup file (scriptorium_user_backup.json)\n\nEven if you reinstall the app, these files will be gone permanently!"
-                        else
-                            "EMİN MİSİNİZ?\n\nBu işlem aşağıdakileri KALICI OLARAK SİLECEKTİR:\n• Tüm okuma geçmişi ve ilerleme kayıtları\n• Tüm notlar ve fosforlu ayetler\n• İndirilen tüm çevrimdışı kitaplar ve sureler\n• Dil, yazı tipi ve görünüm ayarları\n• Telefon hafızasındaki yedek dosyası (scriptorium_user_backup.json)\n\nUygulama silinip tekrar yüklense bile bu veriler bir daha geri getirilemez!",
+                        text = when (lang) {
+                            AppLanguage.RU -> "ВЫ УВЕРЕНЫ?\n\nЭто действие БЕЗВОЗВРАТНО УДАЛИТ:\n• Всю историю чтения и прогресс\n• Все заметки и выделенные стихи\n• Все загруженные офлайн-книги и суры\n• Настройки языка, шрифта и темы\n• Файл резервной копии (scriptorium_user_backup.json)\n\nДаже если вы переустановите приложение, эти данные нельзя будет восстановить!"
+                            AppLanguage.EN -> "ARE YOU SURE?\n\nThis action will PERMANENTLY DELETE:\n• All reading history & progress\n• All notes & highlighted verses\n• All downloaded offline books & surahs\n• Language, font & theme settings\n• External memory backup file (scriptorium_user_backup.json)\n\nEven if you reinstall the app, these files will be gone permanently!"
+                            AppLanguage.TR -> "EMİN MİSİNİZ?\n\nBu işlem aşağıdakileri KALICI OLARAK SİLECEKTİR:\n• Tüm okuma geçmişi ve ilerleme kayıtları\n• Tüm notlar ve fosforlu ayetler\n• İndirilen tüm çevrimdışı kitaplar ve sureler\n• Dil, yazı tipi ve görünüm ayarları\n• Telefon hafızasındaki yedek dosyası (scriptorium_user_backup.json)\n\nUygulama silinip tekrar yüklense bile bu veriler bir daha geri getirilemez!"
+                        },
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface,
                         lineHeight = 20.sp
@@ -1501,7 +1798,11 @@ fun ProfileScreen(
                         viewModel.forgetMeAndClearAllData {
                             android.widget.Toast.makeText(
                                 ctx,
-                                if (lang == AppLanguage.EN) "All data and external memory backups have been permanently erased." else "Tüm verileriniz ve harici bellek yedeği kalıcı olarak silindi.",
+                                when (lang) {
+                                    AppLanguage.RU -> "Все ваши данные и резервные копии были безвозвратно удалены."
+                                    AppLanguage.EN -> "All data and external memory backups have been permanently erased."
+                                    AppLanguage.TR -> "Tüm verileriniz ve harici bellek yedeği kalıcı olarak silindi."
+                                },
                                 android.widget.Toast.LENGTH_LONG
                             ).show()
                         }
@@ -1514,7 +1815,11 @@ fun ProfileScreen(
                     modifier = Modifier.testTag("confirm_forget_me_button")
                 ) {
                     Text(
-                        text = if (lang == AppLanguage.EN) "Yes, Forget Me" else "Evet, Beni Unut",
+                        text = when (lang) {
+                            AppLanguage.RU -> "Да, забыть меня"
+                            AppLanguage.EN -> "Yes, Forget Me"
+                            AppLanguage.TR -> "Evet, Beni Unut"
+                        },
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -1524,7 +1829,7 @@ fun ProfileScreen(
                     onClick = { showForgetMeDialog = false },
                     shape = RoundedCornerShape(8.dp)
                 ) {
-                    Text(if (lang == AppLanguage.EN) "Cancel" else "Vazgeç")
+                    Text(Loc.get("cancel", lang))
                 }
             },
             shape = RoundedCornerShape(16.dp),

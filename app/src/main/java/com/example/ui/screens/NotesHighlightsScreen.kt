@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.data.model.NoteHighlight
 import com.example.ui.theme.SacredGold
+import com.example.ui.util.AppLanguage
+import com.example.ui.util.Loc
 import com.example.ui.viewmodel.ScriptureViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,12 +37,31 @@ fun NotesHighlightsScreen(
     onNavigateBack: () -> Unit
 ) {
     val items by viewModel.notesHighlights.collectAsState()
-    var selectedFilter by remember { mutableStateOf("Tümü") } // "Tümü", "Notlar", "İşaretlemeler"
+    val readerSettings by viewModel.readerSettings.collectAsState()
+    val lang = readerSettings.language
+
+    val filterAll = when (lang) {
+        AppLanguage.RU -> "Все"
+        AppLanguage.EN -> "All"
+        AppLanguage.TR -> "Tümü"
+    }
+    val filterNotes = when (lang) {
+        AppLanguage.RU -> "Заметки"
+        AppLanguage.EN -> "Notes"
+        AppLanguage.TR -> "Notlar"
+    }
+    val filterHighlights = when (lang) {
+        AppLanguage.RU -> "Выделения"
+        AppLanguage.EN -> "Highlights"
+        AppLanguage.TR -> "İşaretlemeler"
+    }
+
+    var selectedFilter by remember(lang) { mutableStateOf(filterAll) }
 
     val filteredItems = items.filter { item ->
         when (selectedFilter) {
-            "Notlar" -> item.type == "Note"
-            "İşaretlemeler" -> item.type == "Highlight"
+            filterNotes -> item.type == "Note"
+            filterHighlights -> item.type == "Highlight"
             else -> true
         }
     }
@@ -50,7 +71,11 @@ fun NotesHighlightsScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Notlarım ve İşaretlemelerim",
+                        text = when (lang) {
+                            AppLanguage.RU -> "Мои заметки и выделения"
+                            AppLanguage.EN -> "My Notes & Highlights"
+                            AppLanguage.TR -> "Notlarım ve İşaretlemelerim"
+                        },
                         fontFamily = FontFamily.Serif,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
@@ -60,7 +85,7 @@ fun NotesHighlightsScreen(
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.Filled.ChevronLeft,
-                            contentDescription = "Geri",
+                            contentDescription = Loc.get("back", lang),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -84,13 +109,21 @@ fun NotesHighlightsScreen(
             item {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(
-                        text = "Tefekkür ve Keşifler",
+                        text = when (lang) {
+                            AppLanguage.RU -> "Размышления и открытия"
+                            AppLanguage.EN -> "Contemplations & Insights"
+                            AppLanguage.TR -> "Tefekkür ve Keşifler"
+                        },
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
                     )
                     Text(
-                        text = "Düşüncelerinizin ve keşiflerinizin kronolojik dökümü.",
+                        text = when (lang) {
+                            AppLanguage.RU -> "Хронологическая лента ваших мыслей и духовных озарений."
+                            AppLanguage.EN -> "A chronological record of your insights and sacred discoveries."
+                            AppLanguage.TR -> "Düşüncelerinizin ve keşiflerinizin kronolojik dökümü."
+                        },
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -103,7 +136,7 @@ fun NotesHighlightsScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    val filters = listOf("Tümü", "Notlar", "İşaretlemeler")
+                    val filters = listOf(filterAll, filterNotes, filterHighlights)
                     filters.forEach { filter ->
                         FilterChip(
                             selected = selectedFilter == filter,
@@ -138,7 +171,11 @@ fun NotesHighlightsScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Bu filtreyle eşleşen not veya işaretleme bulunamadı.",
+                            text = when (lang) {
+                                AppLanguage.RU -> "Заметок или выделений с таким фильтром не найдено."
+                                AppLanguage.EN -> "No notes or highlights match this filter."
+                                AppLanguage.TR -> "Bu filtreyle eşleşen not veya işaretleme bulunamadı."
+                            },
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -246,7 +283,7 @@ fun NotesHighlightsScreen(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Filled.Delete,
-                                        contentDescription = "Sil",
+                                        contentDescription = Loc.get("delete", lang),
                                         tint = MaterialTheme.colorScheme.error.copy(alpha = 0.7f),
                                         modifier = Modifier.size(18.dp)
                                     )

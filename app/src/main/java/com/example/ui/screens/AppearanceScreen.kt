@@ -405,7 +405,11 @@ fun AppearanceScreen(
                                     color = if (isSerif) SacredGold else MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
-                                    text = if (lang == AppLanguage.EN) "Serif (Classic)" else "Serif (Klasik)",
+                                    text = when (lang) {
+                                        AppLanguage.RU -> "С засечками (Классический)"
+                                        AppLanguage.EN -> "Serif (Classic)"
+                                        AppLanguage.TR -> "Serif (Klasik)"
+                                    },
                                     style = MaterialTheme.typography.labelMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = if (isSerif) SacredGold else MaterialTheme.colorScheme.onSurfaceVariant
@@ -444,7 +448,11 @@ fun AppearanceScreen(
                                     color = if (isSans) SacredGold else MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
-                                    text = if (lang == AppLanguage.EN) "Sans-serif" else "Sans-serif (Modern)",
+                                    text = when (lang) {
+                                        AppLanguage.RU -> "Без засечек (Современный)"
+                                        AppLanguage.EN -> "Sans-serif"
+                                        AppLanguage.TR -> "Sans-serif (Modern)"
+                                    },
                                     style = MaterialTheme.typography.labelMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = if (isSans) SacredGold else MaterialTheme.colorScheme.onSurfaceVariant
@@ -570,7 +578,8 @@ fun AppearanceScreen(
                     ) {
                         val languages = listOf(
                             "Türkçe" to AppLanguage.TR,
-                            "English" to AppLanguage.EN
+                            "English" to AppLanguage.EN,
+                            "Русский" to AppLanguage.RU
                         )
                         languages.forEach { (label, setting) ->
                             val isSelected = lang == setting
@@ -649,17 +658,22 @@ fun AppearanceScreen(
                                 modifier = Modifier.size(18.dp)
                             )
                             Text(
-                                text = if (lang == AppLanguage.EN) "Show Original Script" else "Orijinal Alfabeyi Göster",
+                                text = when (lang) {
+                                    AppLanguage.RU -> "Показывать оригинальный алфавит"
+                                    AppLanguage.EN -> "Show Original Script"
+                                    AppLanguage.TR -> "Orijinal Alfabeyi Göster"
+                                },
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                         }
                         Text(
-                            text = if (lang == AppLanguage.EN)
-                                "Display original Arabic, Hebrew, and Greek text above translations in Quran, Torah, and Gospel."
-                            else
-                                "Kur'an, Tevrat ve İncil metinlerinde orijinal Arapça, İbranice ve Grekçe yazıları mealin üstünde gösterir.",
+                            text = when (lang) {
+                                AppLanguage.RU -> "Отображает оригинальный арабский текст, иврит и греческий текст над переводом в Коране, Торе и Евангелии."
+                                AppLanguage.EN -> "Display original Arabic, Hebrew, and Greek text above translations in Quran, Torah, and Gospel."
+                                AppLanguage.TR -> "Kur'an, Tevrat ve İncil metinlerinde orijinal Arapça, İbranice ve Grekçe yazıları mealin üstünde gösterir."
+                            },
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -722,16 +736,21 @@ fun AppearanceScreen(
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
-                            text = if (lang == AppLanguage.EN) "Forget Me (!)" else "Beni Unut (!)",
+                            text = when (lang) {
+                                AppLanguage.RU -> "Забыть меня (!)"
+                                AppLanguage.EN -> "Forget Me (!)"
+                                AppLanguage.TR -> "Beni Unut (!)"
+                            },
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.error
                         )
                         Text(
-                            text = if (lang == AppLanguage.EN)
-                                "Permanently delete all reading history, notes, downloaded books, settings, and external memory backup files from this phone."
-                            else
-                                "Cihazınızdaki ve harici bellekteki tüm okuma geçmişini, notları, indirilen kitapları ve yedek dosyasını kalıcı olarak siler.",
+                            text = when (lang) {
+                                AppLanguage.RU -> "Безвозвратно удаляет всю историю чтения, заметки, скачанные книги, настройки и резервные копии с этого устройства."
+                                AppLanguage.EN -> "Permanently delete all reading history, notes, downloaded books, settings, and external memory backup files from this phone."
+                                AppLanguage.TR -> "Cihazınızdaki ve harici bellekteki tüm okuma geçmişini, notları, indirilen kitapları ve yedek dosyasını kalıcı olarak siler."
+                            },
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -764,7 +783,11 @@ fun AppearanceScreen(
             },
             title = {
                 Text(
-                    text = if (lang == AppLanguage.EN) "Forget Me & Erase Data (!)" else "Beni Unut ve Tüm Verileri Sil (!)",
+                    text = when (lang) {
+                        AppLanguage.RU -> "Забыть меня и удалить все данные (!)"
+                        AppLanguage.EN -> "Forget Me & Erase Data (!)"
+                        AppLanguage.TR -> "Beni Unut ve Tüm Verileri Sil (!)"
+                    },
                     fontFamily = FontFamily.Serif,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.error,
@@ -774,10 +797,11 @@ fun AppearanceScreen(
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text(
-                        text = if (lang == AppLanguage.EN)
-                            "ARE YOU SURE?\n\nThis action will PERMANENTLY DELETE:\n• All reading history & progress\n• All notes & highlighted verses\n• All downloaded offline books & surahs\n• Language, font & theme settings\n• External memory backup file (scriptorium_user_backup.json)\n\nEven if you reinstall the app, these files will be gone permanently!"
-                        else
-                            "EMİN MİSİNİZ?\n\nBu işlem aşağıdakileri KALICI OLARAK SİLECEKTİR:\n• Tüm okuma geçmişi ve ilerleme kayıtları\n• Tüm notlar ve fosforlu ayetler\n• İndirilen tüm çevrimdışı kitaplar ve sureler\n• Dil, yazı tipi ve görünüm ayarları\n• Telefon hafızasındaki yedek dosyası (scriptorium_user_backup.json)\n\nUygulama silinip tekrar yüklense bile bu veriler bir daha geri getirilemez!",
+                        text = when (lang) {
+                            AppLanguage.RU -> "ВЫ УВЕРЕНЫ?\n\nЭто действие БЕЗВОЗВРАТНО УДАЛИТ:\n• Всю историю чтения и прогресс\n• Все заметки и выделенные стихи\n• Все загруженные офлайн-книги и суры\n• Настройки языка, шрифта и темы\n• Файл резервной копии (scriptorium_user_backup.json)\n\nДаже если вы переустановите приложение, эти данные нельзя будет восстановить!"
+                            AppLanguage.EN -> "ARE YOU SURE?\n\nThis action will PERMANENTLY DELETE:\n• All reading history & progress\n• All notes & highlighted verses\n• All downloaded offline books & surahs\n• Language, font & theme settings\n• External memory backup file (scriptorium_user_backup.json)\n\nEven if you reinstall the app, these files will be gone permanently!"
+                            AppLanguage.TR -> "EMİN MİSİNİZ?\n\nBu işlem aşağıdakileri KALICI OLARAK SİLECEKTİR:\n• Tüm okuma geçmişi ve ilerleme kayıtları\n• Tüm notlar ve fosforlu ayetler\n• İndirilen tüm çevrimdışı kitaplar ve sureler\n• Dil, yazı tipi ve görünüm ayarları\n• Telefon hafızasındaki yedek dosyası (scriptorium_user_backup.json)\n\nUygulama silinip tekrar yüklense bile bu veriler bir daha geri getirilemez!"
+                        },
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface,
                         lineHeight = 20.sp
@@ -791,7 +815,11 @@ fun AppearanceScreen(
                         viewModel.forgetMeAndClearAllData {
                             android.widget.Toast.makeText(
                                 ctx,
-                                if (lang == AppLanguage.EN) "All data and external memory backups have been permanently erased." else "Tüm verileriniz ve harici bellek yedeği kalıcı olarak silindi.",
+                                when (lang) {
+                                    AppLanguage.RU -> "Все ваши данные и резервные копии были безвозвратно удалены."
+                                    AppLanguage.EN -> "All data and external memory backups have been permanently erased."
+                                    AppLanguage.TR -> "Tüm verileriniz ve harici bellek yedeği kalıcı olarak silindi."
+                                },
                                 android.widget.Toast.LENGTH_LONG
                             ).show()
                         }
@@ -804,7 +832,11 @@ fun AppearanceScreen(
                     modifier = Modifier.testTag("appearance_confirm_forget_me_button")
                 ) {
                     Text(
-                        text = if (lang == AppLanguage.EN) "Yes, Forget Me" else "Evet, Beni Unut",
+                        text = when (lang) {
+                            AppLanguage.RU -> "Да, забыть меня"
+                            AppLanguage.EN -> "Yes, Forget Me"
+                            AppLanguage.TR -> "Evet, Beni Unut"
+                        },
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -814,7 +846,7 @@ fun AppearanceScreen(
                     onClick = { showForgetMeDialog = false },
                     shape = RoundedCornerShape(8.dp)
                 ) {
-                    Text(if (lang == AppLanguage.EN) "Cancel" else "Vazgeç")
+                    Text(Loc.get("cancel", lang))
                 }
             },
             shape = RoundedCornerShape(16.dp),

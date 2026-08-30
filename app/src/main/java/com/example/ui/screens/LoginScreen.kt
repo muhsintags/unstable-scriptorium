@@ -47,10 +47,18 @@ fun LoginScreen(
     var showError by remember { mutableStateOf(false) }
 
     fun performLogin(name: String) {
-        val defaultName = if (lang == AppLanguage.EN) "Wisdom Pilgrim" else "Bilgelik Yolcusu"
+        val defaultName = when (lang) {
+            AppLanguage.RU -> "Искатель мудрости"
+            AppLanguage.EN -> "Wisdom Pilgrim"
+            AppLanguage.TR -> "Bilgelik Yolcusu"
+        }
         val finalName = name.trim().ifEmpty { defaultName }
         viewModel.signInWithDemo("misafir@Scriptorium.org", finalName)
-        val toastText = if (lang == AppLanguage.EN) "Welcome, $finalName!" else "Hoş geldiniz, $finalName!"
+        val toastText = when (lang) {
+            AppLanguage.RU -> "Добро пожаловать, $finalName!"
+            AppLanguage.EN -> "Welcome, $finalName!"
+            AppLanguage.TR -> "Hoş geldiniz, $finalName!"
+        }
         Toast.makeText(context, toastText, Toast.LENGTH_SHORT).show()
         onLoginSuccess()
     }
@@ -76,14 +84,22 @@ fun LoginScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 FilterChip(
-                    selected = lang == AppLanguage.EN,
+                    selected = true,
                     onClick = {
-                        val newLang = if (lang == AppLanguage.EN) AppLanguage.TR else AppLanguage.EN
+                        val newLang = when (lang) {
+                            AppLanguage.TR -> AppLanguage.EN
+                            AppLanguage.EN -> AppLanguage.RU
+                            AppLanguage.RU -> AppLanguage.TR
+                        }
                         viewModel.updateLanguage(newLang)
                     },
                     label = {
                         Text(
-                            text = if (lang == AppLanguage.EN) "🌐 English" else "🌐 Türkçe",
+                            text = when (lang) {
+                                AppLanguage.RU -> "🌐 Русский"
+                                AppLanguage.EN -> "🌐 English"
+                                AppLanguage.TR -> "🌐 Türkçe"
+                            },
                             fontWeight = FontWeight.Bold,
                             style = MaterialTheme.typography.labelMedium
                         )
@@ -120,7 +136,11 @@ fun LoginScreen(
                 }
 
                 Text(
-                    text = if (lang == AppLanguage.EN) "Sacred Scriptures" else "Kutsal Metinler",
+                    text = when (lang) {
+                        AppLanguage.RU -> "Священные Писания"
+                        AppLanguage.EN -> "Sacred Scriptures"
+                        AppLanguage.TR -> "Kutsal Metinler"
+                    },
                     fontFamily = FontFamily.Serif,
                     fontWeight = FontWeight.Bold,
                     fontSize = 32.sp,
@@ -129,7 +149,11 @@ fun LoginScreen(
                 )
 
                 Text(
-                    text = if (lang == AppLanguage.EN) "Welcome to humanity's ancient library of wisdom." else "İnsanlığın kadim bilgelik kütüphanesine hoş geldiniz.",
+                    text = when (lang) {
+                        AppLanguage.RU -> "Добро пожаловать в библиотеку древней мудрости человечества."
+                        AppLanguage.EN -> "Welcome to humanity's ancient library of wisdom."
+                        AppLanguage.TR -> "İnsanlığın kadim bilgelik kütüphanesine hoş geldiniz."
+                    },
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
@@ -160,13 +184,21 @@ fun LoginScreen(
                 ) {
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Text(
-                            text = if (lang == AppLanguage.EN) "Create Profile" else "Profil Oluşturun",
+                            text = when (lang) {
+                                AppLanguage.RU -> "Создать профиль"
+                                AppLanguage.EN -> "Create Profile"
+                                AppLanguage.TR -> "Profil Oluşturun"
+                            },
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary
                         )
                         Text(
-                            text = if (lang == AppLanguage.EN) "Enter your name to personalize your reading experience." else "Okuma deneyiminizi kişiselleştirmek için isminizi belirleyin.",
+                            text = when (lang) {
+                                AppLanguage.RU -> "Введите ваше имя, чтобы персонализировать чтение."
+                                AppLanguage.EN -> "Enter your name to personalize your reading experience."
+                                AppLanguage.TR -> "Okuma deneyiminizi kişiselleştirmek için isminizi belirleyin."
+                            },
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -178,8 +210,24 @@ fun LoginScreen(
                             nameInput = it
                             if (showError && it.isNotBlank()) showError = false
                         },
-                        label = { Text(if (lang == AppLanguage.EN) "Full Name" else "Ad Soyad") },
-                        placeholder = { Text(if (lang == AppLanguage.EN) "e.g., John Doe" else "Örn: Ahmet Yılmaz") },
+                        label = {
+                            Text(
+                                when (lang) {
+                                    AppLanguage.RU -> "Имя и фамилия"
+                                    AppLanguage.EN -> "Full Name"
+                                    AppLanguage.TR -> "Ad Soyad"
+                                }
+                            )
+                        },
+                        placeholder = {
+                            Text(
+                                when (lang) {
+                                    AppLanguage.RU -> "Например: Иван Иванов"
+                                    AppLanguage.EN -> "e.g., John Doe"
+                                    AppLanguage.TR -> "Örn: Ahmet Yılmaz"
+                                }
+                            )
+                        },
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Filled.Person,
@@ -190,7 +238,15 @@ fun LoginScreen(
                         singleLine = true,
                         isError = showError,
                         supportingText = if (showError) {
-                            { Text(if (lang == AppLanguage.EN) "Please enter your name." else "Lütfen adınızı ve soyadınızı girin.") }
+                            {
+                                Text(
+                                    when (lang) {
+                                        AppLanguage.RU -> "Пожалуйста, введите ваше имя."
+                                        AppLanguage.EN -> "Please enter your name."
+                                        AppLanguage.TR -> "Lütfen adınızı ve soyadınızı girin."
+                                    }
+                                )
+                            }
                         } else null,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -241,7 +297,11 @@ fun LoginScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = if (lang == AppLanguage.EN) "Sign In & Begin" else "Giriş Yap ve Başla",
+                                text = when (lang) {
+                                    AppLanguage.RU -> "Войти и начать"
+                                    AppLanguage.EN -> "Sign In & Begin"
+                                    AppLanguage.TR -> "Giriş Yap ve Başla"
+                                },
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold
                             )
@@ -256,7 +316,11 @@ fun LoginScreen(
                     // Anonymous quick entry option
                     TextButton(
                         onClick = {
-                            val guestName = if (lang == AppLanguage.EN) "Wisdom Pilgrim" else "Bilgelik Yolcusu"
+                            val guestName = when (lang) {
+                                AppLanguage.RU -> "Искатель мудрости"
+                                AppLanguage.EN -> "Wisdom Pilgrim"
+                                AppLanguage.TR -> "Bilgelik Yolcusu"
+                            }
                             performLogin(guestName)
                         },
                         modifier = Modifier
@@ -267,7 +331,11 @@ fun LoginScreen(
                         )
                     ) {
                         Text(
-                            text = if (lang == AppLanguage.EN) "Continue as Guest" else "Misafir Olarak Devam Et",
+                            text = when (lang) {
+                                AppLanguage.RU -> "Продолжить как гость"
+                                AppLanguage.EN -> "Continue as Guest"
+                                AppLanguage.TR -> "Misafir Olarak Devam Et"
+                            },
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Medium
                         )
@@ -293,7 +361,11 @@ fun LoginScreen(
                         modifier = Modifier.size(16.dp)
                     )
                     Text(
-                        text = if (lang == AppLanguage.EN) "Sacred Scriptures Library" else "Kutsal Metinler Kitaplığı",
+                        text = when (lang) {
+                            AppLanguage.RU -> "Библиотека Священных Писаний"
+                            AppLanguage.EN -> "Sacred Scriptures Library"
+                            AppLanguage.TR -> "Kutsal Metinler Kitaplığı"
+                        },
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )

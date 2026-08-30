@@ -198,7 +198,11 @@ fun ComparativeReaderScreen(
             onDismissRequest = { showAddNoteDialog = false },
             title = {
                 Text(
-                    text = if (lang == AppLanguage.EN) "Add Comparative Reflection" else "Karşılaştırmalı Not Ekle",
+                    text = when (lang) {
+                        AppLanguage.RU -> "Добавить сравнительную заметку"
+                        AppLanguage.EN -> "Add Comparative Reflection"
+                        AppLanguage.TR -> "Karşılaştırmalı Not Ekle"
+                    },
                     fontFamily = FontFamily.Serif,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
@@ -207,7 +211,11 @@ fun ComparativeReaderScreen(
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text(
-                        text = if (lang == AppLanguage.EN) "Selected Scripture Passage:" else "Seçili Karşılaştırmalı Pasaj:",
+                        text = when (lang) {
+                            AppLanguage.RU -> "Выбранный отрывок:"
+                            AppLanguage.EN -> "Selected Scripture Passage:"
+                            AppLanguage.TR -> "Seçili Karşılaştırmalı Pasaj:"
+                        },
                         style = MaterialTheme.typography.labelLarge,
                         color = SacredGold
                     )
@@ -229,8 +237,20 @@ fun ComparativeReaderScreen(
                     OutlinedTextField(
                         value = noteTextQuery,
                         onValueChange = { noteTextQuery = it },
-                        label = { Text(if (lang == AppLanguage.EN) "Your Reflection" else "Tefekkür Notunuz") },
-                        placeholder = { Text(if (lang == AppLanguage.EN) "Write your thoughts comparing these verses..." else "Metinler arasındaki paralellikleri veya farkları not edin...") },
+                        label = {
+                            Text(when (lang) {
+                                AppLanguage.RU -> "Ваше размышление"
+                                AppLanguage.EN -> "Your Reflection"
+                                AppLanguage.TR -> "Tefekkür Notunuz"
+                            })
+                        },
+                        placeholder = {
+                            Text(when (lang) {
+                                AppLanguage.RU -> "Запишите параллели или различия между текстами..."
+                                AppLanguage.EN -> "Write your thoughts comparing these verses..."
+                                AppLanguage.TR -> "Metinler arasındaki paralellikleri veya farkları not edin..."
+                            })
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(110.dp)
@@ -243,7 +263,7 @@ fun ComparativeReaderScreen(
             confirmButton = {
                 Button(
                     onClick = {
-                        val title = "${getSlotFormattedTitle(slot1, lang == AppLanguage.EN)} & ${getSlotFormattedTitle(slot2, lang == AppLanguage.EN)}"
+                        val title = "${getSlotFormattedTitle(slot1, lang)} & ${getSlotFormattedTitle(slot2, lang)}"
                         viewModel.addNoteOrHighlight(
                             bookTitle = title,
                             quoteText = noteQuoteText,
@@ -254,18 +274,30 @@ fun ComparativeReaderScreen(
                         noteTextQuery = ""
                         Toast.makeText(
                             context,
-                            if (lang == AppLanguage.EN) "Note saved to profile!" else "Karşılaştırma notu profilinize kaydedildi!",
+                            when (lang) {
+                                AppLanguage.RU -> "Заметка сохранена в профиль!"
+                                AppLanguage.EN -> "Note saved to profile!"
+                                AppLanguage.TR -> "Karşılaştırma notu profilinize kaydedildi!"
+                            },
                             Toast.LENGTH_SHORT
                         ).show()
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
-                    Text(if (lang == AppLanguage.EN) "Save" else "Kaydet")
+                    Text(when (lang) {
+                        AppLanguage.RU -> "Сохранить"
+                        AppLanguage.EN -> "Save"
+                        AppLanguage.TR -> "Kaydet"
+                    })
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showAddNoteDialog = false }) {
-                    Text(if (lang == AppLanguage.EN) "Cancel" else "İptal")
+                    Text(when (lang) {
+                        AppLanguage.RU -> "Отмена"
+                        AppLanguage.EN -> "Cancel"
+                        AppLanguage.TR -> "İptal"
+                    })
                 }
             },
             shape = RoundedCornerShape(16.dp)
@@ -315,14 +347,22 @@ fun ComparativeReaderScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                if (lang == AppLanguage.EN) "T$targetSlotNum" else "M$targetSlotNum",
+                                when (lang) {
+                                    AppLanguage.RU -> "Т$targetSlotNum"
+                                    AppLanguage.EN -> "T$targetSlotNum"
+                                    AppLanguage.TR -> "M$targetSlotNum"
+                                },
                                 color = Color.White,
                                 fontWeight = FontWeight.Bold,
                                 style = MaterialTheme.typography.labelMedium
                             )
                         }
                         Text(
-                            text = if (lang == AppLanguage.EN) "Select Scripture Source" else "Metin Kaynağı Seçin",
+                            text = when (lang) {
+                                AppLanguage.RU -> "Выберите источник текста"
+                                AppLanguage.EN -> "Select Scripture Source"
+                                AppLanguage.TR -> "Metin Kaynağı Seçin"
+                            },
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             fontFamily = FontFamily.Serif,
@@ -330,16 +370,39 @@ fun ComparativeReaderScreen(
                         )
                     }
                     IconButton(onClick = { slotPickerIndex = null }) {
-                        Icon(Icons.Default.Close, contentDescription = if (lang == AppLanguage.EN) "Close" else "Kapat")
+                        Icon(
+                            Icons.Default.Close,
+                            contentDescription = when (lang) {
+                                AppLanguage.RU -> "Закрыть"
+                                AppLanguage.EN -> "Close"
+                                AppLanguage.TR -> "Kapat"
+                            }
+                        )
                     }
                 }
 
                 // Category Tabs
                 val categories = listOf(
-                    "quran" to (if (lang == AppLanguage.EN) "Qur'an" else "Kur'an-ı Kerim"),
-                    "sermon" to (if (lang == AppLanguage.EN) "Gospel (Injil)" else "İncil"),
-                    "torah" to (if (lang == AppLanguage.EN) "Torah & Psalms" else "Tevrat & Zebur"),
-                    "bukhari" to (if (lang == AppLanguage.EN) "Hadith" else "Hadis-i Şerif"),
+                    "quran" to when (lang) {
+                        AppLanguage.RU -> "Коран"
+                        AppLanguage.EN -> "Qur'an"
+                        AppLanguage.TR -> "Kur'an-ı Kerim"
+                    },
+                    "sermon" to when (lang) {
+                        AppLanguage.RU -> "Евангелие (Инджиль)"
+                        AppLanguage.EN -> "Gospel (Injil)"
+                        AppLanguage.TR -> "İncil"
+                    },
+                    "torah" to when (lang) {
+                        AppLanguage.RU -> "Тора и Псалмы"
+                        AppLanguage.EN -> "Torah & Psalms"
+                        AppLanguage.TR -> "Tevrat & Zebur"
+                    },
+                    "bukhari" to when (lang) {
+                        AppLanguage.RU -> "Хадисы"
+                        AppLanguage.EN -> "Hadith"
+                        AppLanguage.TR -> "Hadis-i Şerif"
+                    },
                     "gita" to "Bhagavad Gita",
                     "talmud" to "Talmud"
                 )
@@ -381,9 +444,17 @@ fun ComparativeReaderScreen(
                     placeholder = {
                         Text(
                             if (selectedCategory == "quran") {
-                                if (lang == AppLanguage.EN) "Search Surah name or number..." else "Sûre adı veya numarası ara..."
+                                when (lang) {
+                                    AppLanguage.RU -> "Поиск названия или номера суры..."
+                                    AppLanguage.EN -> "Search Surah name or number..."
+                                    AppLanguage.TR -> "Sûre adı veya numarası ara..."
+                                }
                             } else {
-                                if (lang == AppLanguage.EN) "Search book name..." else "Kitap adı ara..."
+                                when (lang) {
+                                    AppLanguage.RU -> "Поиск названия книги..."
+                                    AppLanguage.EN -> "Search book name..."
+                                    AppLanguage.TR -> "Kitap adı ara..."
+                                }
                             }
                         )
                     },
@@ -400,6 +471,7 @@ fun ComparativeReaderScreen(
                                 it.nameArabic.contains(searchQuery, ignoreCase = true) ||
                                 it.nameEnglish.contains(searchQuery, ignoreCase = true) ||
                                 it.nameTurkish.contains(searchQuery, ignoreCase = true) ||
+                                it.getName(lang).contains(searchQuery, ignoreCase = true) ||
                                 it.number.toString() == searchQuery.trim()
                     }
 
@@ -450,12 +522,20 @@ fun ComparativeReaderScreen(
                                         }
                                         Column {
                                             Text(
-                                                text = if (lang == AppLanguage.EN) "${s.number}. ${s.nameEnglish}" else "${s.number}. ${s.nameEnglish} (${s.nameTurkish})",
+                                                text = when (lang) {
+                                                    AppLanguage.RU -> "${s.number}. ${s.getName(lang)}"
+                                                    AppLanguage.EN -> "${s.number}. ${s.nameEnglish}"
+                                                    AppLanguage.TR -> "${s.number}. ${s.nameEnglish} (${s.nameTurkish})"
+                                                },
                                                 fontWeight = FontWeight.Bold,
                                                 style = MaterialTheme.typography.bodyMedium
                                             )
                                             Text(
-                                                text = if (lang == AppLanguage.EN) "${s.ayahCount} verses" else "${s.ayahCount} ayet",
+                                                text = when (lang) {
+                                                    AppLanguage.RU -> "${s.ayahCount} аятов"
+                                                    AppLanguage.EN -> "${s.ayahCount} verses"
+                                                    AppLanguage.TR -> "${s.ayahCount} ayet"
+                                                },
                                                 style = MaterialTheme.typography.bodySmall,
                                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                                             )
@@ -479,7 +559,8 @@ fun ComparativeReaderScreen(
                     val filteredBooks = booksList.filter {
                         searchQuery.isBlank() ||
                                 it.nameTurkish.contains(searchQuery, ignoreCase = true) ||
-                                it.nameEnglish.contains(searchQuery, ignoreCase = true)
+                                it.nameEnglish.contains(searchQuery, ignoreCase = true) ||
+                                it.nameRussian.contains(searchQuery, ignoreCase = true)
                     }
 
                     LazyColumn(
@@ -511,12 +592,20 @@ fun ComparativeReaderScreen(
                                 ) {
                                     Column {
                                         Text(
-                                            text = if (lang == AppLanguage.EN) b.nameEnglish else "${b.nameTurkish} (${b.nameEnglish})",
+                                            text = when (lang) {
+                                                AppLanguage.RU -> b.getName(lang)
+                                                AppLanguage.EN -> b.nameEnglish
+                                                AppLanguage.TR -> "${b.nameTurkish} (${b.nameEnglish})"
+                                            },
                                             fontWeight = FontWeight.Bold,
                                             style = MaterialTheme.typography.bodyMedium
                                         )
                                         Text(
-                                            text = if (lang == AppLanguage.EN) "${b.chaptersCount} Chapters" else "${b.chaptersCount} Bölüm",
+                                            text = when (lang) {
+                                                AppLanguage.RU -> "${b.chaptersCount} глав"
+                                                AppLanguage.EN -> "${b.chaptersCount} Chapters"
+                                                AppLanguage.TR -> "${b.chaptersCount} Bölüm"
+                                            },
                                             style = MaterialTheme.typography.bodySmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -531,7 +620,11 @@ fun ComparativeReaderScreen(
 
                     val selectedBookObj = booksList.find { it.id == selectedSubBookId } ?: booksList.first()
                     Text(
-                        text = if (lang == AppLanguage.EN) "SELECT CHAPTER (1 - ${selectedBookObj.chaptersCount}):" else "BÖLÜM SEÇİN (1 - ${selectedBookObj.chaptersCount}):",
+                        text = when (lang) {
+                            AppLanguage.RU -> "ВЫБЕРИТЕ ГЛАВУ (1 - ${selectedBookObj.chaptersCount}):"
+                            AppLanguage.EN -> "SELECT CHAPTER (1 - ${selectedBookObj.chaptersCount}):"
+                            AppLanguage.TR -> "BÖLÜM SEÇİN (1 - ${selectedBookObj.chaptersCount}):"
+                        },
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
                         color = SacredGold,
@@ -587,13 +680,21 @@ fun ComparativeReaderScreen(
                 title = {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = if (lang == AppLanguage.EN) "Comparative Reading" else "Karşılaştırmalı Okuma",
+                            text = when (lang) {
+                                AppLanguage.RU -> "Сравнительное чтение"
+                                AppLanguage.EN -> "Comparative Reading"
+                                AppLanguage.TR -> "Karşılaştırmalı Okuma"
+                            },
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             fontFamily = FontFamily.Serif
                         )
                         Text(
-                            text = if (lang == AppLanguage.EN) "Intertextual Scripture Analysis" else "Metinlerarası Kutsal Analiz",
+                            text = when (lang) {
+                                AppLanguage.RU -> "Межтекстовый сакральный анализ"
+                                AppLanguage.EN -> "Intertextual Scripture Analysis"
+                                AppLanguage.TR -> "Metinlerarası Kutsal Analiz"
+                            },
                             style = MaterialTheme.typography.labelSmall,
                             color = SacredGold
                         )
@@ -603,7 +704,11 @@ fun ComparativeReaderScreen(
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = if (lang == AppLanguage.EN) "Back" else "Geri"
+                            contentDescription = when (lang) {
+                                AppLanguage.RU -> "Назад"
+                                AppLanguage.EN -> "Back"
+                                AppLanguage.TR -> "Geri"
+                            }
                         )
                     }
                 },
@@ -614,7 +719,11 @@ fun ComparativeReaderScreen(
                     ) {
                         Icon(
                             imageVector = if (isSearchVisible) Icons.Default.SearchOff else Icons.Default.Search,
-                            contentDescription = if (lang == AppLanguage.EN) "Search" else "Arama",
+                            contentDescription = when (lang) {
+                                AppLanguage.RU -> "Поиск"
+                                AppLanguage.EN -> "Search"
+                                AppLanguage.TR -> "Arama"
+                            },
                             tint = if (isSearchVisible) SacredGold else MaterialTheme.colorScheme.onSurface
                         )
                     }
@@ -624,7 +733,11 @@ fun ComparativeReaderScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.FormatSize,
-                            contentDescription = if (lang == AppLanguage.EN) "Font Size" else "Yazı Boyutu",
+                            contentDescription = when (lang) {
+                                AppLanguage.RU -> "Размер шрифта"
+                                AppLanguage.EN -> "Font Size"
+                                AppLanguage.TR -> "Yazı Boyutu"
+                            },
                             tint = if (showFontSizeControls) SacredGold else MaterialTheme.colorScheme.onSurface
                         )
                     }
@@ -664,7 +777,11 @@ fun ComparativeReaderScreen(
                         shape = RoundedCornerShape(10.dp)
                     ) {
                         Icon(Icons.Default.ChevronLeft, contentDescription = null, modifier = Modifier.size(18.dp))
-                        Text(if (lang == AppLanguage.EN) "Prev" else "Önceki")
+                        Text(when (lang) {
+                            AppLanguage.RU -> "Назад"
+                            AppLanguage.EN -> "Prev"
+                            AppLanguage.TR -> "Önceki"
+                        })
                     }
 
                     TextButton(
@@ -676,7 +793,11 @@ fun ComparativeReaderScreen(
                         ) {
                             Icon(Icons.Default.SwapHoriz, contentDescription = null, tint = SacredGold, modifier = Modifier.size(18.dp))
                             Text(
-                                text = if (lang == AppLanguage.EN) "Change Texts" else "Metin Değiştir",
+                                text = when (lang) {
+                                    AppLanguage.RU -> "Сменить текст"
+                                    AppLanguage.EN -> "Change Texts"
+                                    AppLanguage.TR -> "Metin Değiştir"
+                                },
                                 style = MaterialTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = SacredGold
@@ -693,7 +814,11 @@ fun ComparativeReaderScreen(
                         },
                         shape = RoundedCornerShape(10.dp)
                     ) {
-                        Text(if (lang == AppLanguage.EN) "Next" else "Sonraki")
+                        Text(when (lang) {
+                            AppLanguage.RU -> "Далее"
+                            AppLanguage.EN -> "Next"
+                            AppLanguage.TR -> "Sonraki"
+                        })
                         Icon(Icons.Default.ChevronRight, contentDescription = null, modifier = Modifier.size(18.dp))
                     }
                 }
@@ -732,8 +857,16 @@ fun ComparativeReaderScreen(
                             horizontalArrangement = Arrangement.spacedBy(2.dp)
                         ) {
                             listOf(
-                                2 to (if (lang == AppLanguage.EN) "2 Texts" else "2 Metin"),
-                                3 to (if (lang == AppLanguage.EN) "3 Texts" else "3 Metin")
+                                2 to when (lang) {
+                                    AppLanguage.RU -> "2 текста"
+                                    AppLanguage.EN -> "2 Texts"
+                                    AppLanguage.TR -> "2 Metin"
+                                },
+                                3 to when (lang) {
+                                    AppLanguage.RU -> "3 текста"
+                                    AppLanguage.EN -> "3 Texts"
+                                    AppLanguage.TR -> "3 Metin"
+                                }
                             ).forEach { (count, label) ->
                                 val isSel = (bookCountMode == count)
                                 Box(
@@ -766,14 +899,14 @@ fun ComparativeReaderScreen(
                                 onClick = { layoutMode = ComparisonLayoutMode.PARALLEL_CARDS },
                                 shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2)
                             ) {
-                                Icon(Icons.Default.ViewAgenda, contentDescription = "Kart", modifier = Modifier.size(16.dp))
+                                Icon(Icons.Default.ViewAgenda, contentDescription = "Карты", modifier = Modifier.size(16.dp))
                             }
                             SegmentedButton(
                                 selected = layoutMode == ComparisonLayoutMode.SIDE_BY_SIDE,
                                 onClick = { layoutMode = ComparisonLayoutMode.SIDE_BY_SIDE },
                                 shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2)
                             ) {
-                                Icon(Icons.Default.ViewColumn, contentDescription = "Sütun", modifier = Modifier.size(16.dp))
+                                Icon(Icons.Default.ViewColumn, contentDescription = "Колонки", modifier = Modifier.size(16.dp))
                             }
                         }
                     }
@@ -809,17 +942,26 @@ fun ComparativeReaderScreen(
                                             .background(slotColors[0]),
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        Text(if (lang == AppLanguage.EN) "T1" else "M1", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                        Text(
+                                            when (lang) {
+                                                AppLanguage.RU -> "Т1"
+                                                AppLanguage.EN -> "T1"
+                                                AppLanguage.TR -> "M1"
+                                            },
+                                            color = Color.White,
+                                            fontSize = 10.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
                                     }
                                     Text(
-                                        text = getSlotCategoryName(slot1.category, lang == AppLanguage.EN),
+                                        text = getSlotCategoryName(slot1.category, lang),
                                         style = MaterialTheme.typography.labelSmall,
                                         color = slotColors[0],
                                         fontWeight = FontWeight.Bold
                                     )
                                 }
                                 Text(
-                                    text = getSlotFormattedTitle(slot1, lang == AppLanguage.EN),
+                                    text = getSlotFormattedTitle(slot1, lang),
                                     style = MaterialTheme.typography.bodySmall,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurface,
@@ -844,7 +986,11 @@ fun ComparativeReaderScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.SwapHoriz,
-                                contentDescription = if (lang == AppLanguage.EN) "Swap Texts" else "Metinleri Takas Et",
+                                contentDescription = when (lang) {
+                                    AppLanguage.RU -> "Поменять местами"
+                                    AppLanguage.EN -> "Swap Texts"
+                                    AppLanguage.TR -> "Metinleri Takas Et"
+                                },
                                 tint = SacredGold,
                                 modifier = Modifier.size(18.dp)
                             )
@@ -875,17 +1021,26 @@ fun ComparativeReaderScreen(
                                             .background(slotColors[1]),
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        Text(if (lang == AppLanguage.EN) "T2" else "M2", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                        Text(
+                                            when (lang) {
+                                                AppLanguage.RU -> "Т2"
+                                                AppLanguage.EN -> "T2"
+                                                AppLanguage.TR -> "M2"
+                                            },
+                                            color = Color.White,
+                                            fontSize = 10.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
                                     }
                                     Text(
-                                        text = getSlotCategoryName(slot2.category, lang == AppLanguage.EN),
+                                        text = getSlotCategoryName(slot2.category, lang),
                                         style = MaterialTheme.typography.labelSmall,
                                         color = slotColors[1],
                                         fontWeight = FontWeight.Bold
                                     )
                                 }
                                 Text(
-                                    text = getSlotFormattedTitle(slot2, lang == AppLanguage.EN),
+                                    text = getSlotFormattedTitle(slot2, lang),
                                     style = MaterialTheme.typography.bodySmall,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurface,
@@ -921,17 +1076,26 @@ fun ComparativeReaderScreen(
                                                 .background(slotColors[2]),
                                             contentAlignment = Alignment.Center
                                         ) {
-                                            Text(if (lang == AppLanguage.EN) "T3" else "M3", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                            Text(
+                                                when (lang) {
+                                                    AppLanguage.RU -> "Т3"
+                                                    AppLanguage.EN -> "T3"
+                                                    AppLanguage.TR -> "M3"
+                                                },
+                                                color = Color.White,
+                                                fontSize = 10.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
                                         }
                                         Text(
-                                            text = getSlotCategoryName(slot3.category, lang == AppLanguage.EN),
+                                            text = getSlotCategoryName(slot3.category, lang),
                                             style = MaterialTheme.typography.labelSmall,
                                             color = slotColors[2],
                                             fontWeight = FontWeight.Bold
                                         )
                                     }
                                     Text(
-                                        text = getSlotFormattedTitle(slot3, lang == AppLanguage.EN),
+                                        text = getSlotFormattedTitle(slot3, lang),
                                         style = MaterialTheme.typography.bodySmall,
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.onSurface,
@@ -959,7 +1123,11 @@ fun ComparativeReaderScreen(
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         Text(
-                            text = if (lang == AppLanguage.EN) "Font Size:" else "Yazı Boyutu:",
+                            text = when (lang) {
+                                AppLanguage.RU -> "Размер шрифта:"
+                                AppLanguage.EN -> "Font Size:"
+                                AppLanguage.TR -> "Yazı Boyutu:"
+                            },
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Medium
                         )
@@ -988,12 +1156,18 @@ fun ComparativeReaderScreen(
                     OutlinedTextField(
                         value = verseFilterQuery,
                         onValueChange = { verseFilterQuery = it },
-                        placeholder = { Text(if (lang == AppLanguage.EN) "Filter verses by keyword..." else "Ayet metinlerinde kelime ara...") },
+                        placeholder = {
+                            Text(when (lang) {
+                                AppLanguage.RU -> "Фильтр стихов по ключевым словам..."
+                                AppLanguage.EN -> "Filter verses by keyword..."
+                                AppLanguage.TR -> "Ayet metinlerinde kelime ara..."
+                            })
+                        },
                         leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = SacredGold) },
                         trailingIcon = {
                             if (verseFilterQuery.isNotEmpty()) {
                                 IconButton(onClick = { verseFilterQuery = "" }) {
-                                    Icon(Icons.Default.Clear, contentDescription = "Temizle")
+                                    Icon(Icons.Default.Clear, contentDescription = "Очистить")
                                 }
                             }
                         },
@@ -1020,7 +1194,11 @@ fun ComparativeReaderScreen(
                     ) {
                         CircularProgressIndicator(color = SacredGold)
                         Text(
-                            text = if (lang == AppLanguage.EN) "Loading comparative scriptures..." else "Kutsal metinler karşılaştırma için yükleniyor...",
+                            text = when (lang) {
+                                AppLanguage.RU -> "Священные тексты загружаются для сравнения..."
+                                AppLanguage.EN -> "Loading comparative scriptures..."
+                                AppLanguage.TR -> "Kutsal metinler karşılaştırma için yükleniyor..."
+                            },
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -1045,7 +1223,11 @@ fun ComparativeReaderScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = if (lang == AppLanguage.EN) "No scripture content found for selected chapters." else "Seçilen bölümler için içerik bulunamadı.",
+                            text = when (lang) {
+                                AppLanguage.RU -> "Для выбранных глав текст не найден."
+                                AppLanguage.EN -> "No scripture content found for selected chapters."
+                                AppLanguage.TR -> "Seçilen bölümler için içerik bulunamadı."
+                            },
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -1094,8 +1276,13 @@ fun ComparativeReaderScreen(
                                                 shape = RoundedCornerShape(8.dp),
                                                 border = BorderStroke(1.dp, SacredGold.copy(alpha = 0.3f))
                                             ) {
+                                                val labelPrefix = when (lang) {
+                                                    AppLanguage.RU -> "Отрывок"
+                                                    AppLanguage.EN -> "Passage"
+                                                    AppLanguage.TR -> "Ayet / Pasaj"
+                                                }
                                                 Text(
-                                                    text = "${if (lang == AppLanguage.EN) "Passage" else "Ayet / Pasaj"} #${verseIdx + 1}",
+                                                    text = "$labelPrefix #${verseIdx + 1}",
                                                     style = MaterialTheme.typography.labelMedium,
                                                     fontWeight = FontWeight.Bold,
                                                     color = SacredGold,
@@ -1106,30 +1293,59 @@ fun ComparativeReaderScreen(
                                             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                                                 IconButton(
                                                     onClick = {
+                                                        val t1 = when (lang) { AppLanguage.RU -> "Т1"; AppLanguage.EN -> "T1"; AppLanguage.TR -> "M1" }
+                                                        val t2 = when (lang) { AppLanguage.RU -> "Т2"; AppLanguage.EN -> "T2"; AppLanguage.TR -> "M2" }
+                                                        val t3 = when (lang) { AppLanguage.RU -> "Т3"; AppLanguage.EN -> "T3"; AppLanguage.TR -> "M3" }
                                                         val combinedText = buildString {
-                                                            if (!v1Text.isNullOrBlank()) append("[${if (lang == AppLanguage.EN) "T1" else "M1"} ${getSlotFormattedTitle(slot1, lang == AppLanguage.EN)}]: $v1Text\n\n")
-                                                            if (!v2Text.isNullOrBlank()) append("[${if (lang == AppLanguage.EN) "T2" else "M2"} ${getSlotFormattedTitle(slot2, lang == AppLanguage.EN)}]: $v2Text\n\n")
-                                                            if (bookCountMode == 3 && !v3Text.isNullOrBlank()) append("[${if (lang == AppLanguage.EN) "T3" else "M3"} ${getSlotFormattedTitle(slot3, lang == AppLanguage.EN)}]: $v3Text")
+                                                            if (!v1Text.isNullOrBlank()) append("[$t1 ${getSlotFormattedTitle(slot1, lang)}]: $v1Text\n\n")
+                                                            if (!v2Text.isNullOrBlank()) append("[$t2 ${getSlotFormattedTitle(slot2, lang)}]: $v2Text\n\n")
+                                                            if (bookCountMode == 3 && !v3Text.isNullOrBlank()) append("[$t3 ${getSlotFormattedTitle(slot3, lang)}]: $v3Text")
                                                         }
                                                         clipboardManager.setText(AnnotatedString(combinedText))
-                                                        Toast.makeText(context, if (lang == AppLanguage.EN) "Verses copied!" else "Ayetler kopyalandı!", Toast.LENGTH_SHORT).show()
+                                                        Toast.makeText(
+                                                            context,
+                                                            when (lang) {
+                                                                AppLanguage.RU -> "Стихи скопированы!"
+                                                                AppLanguage.EN -> "Verses copied!"
+                                                                AppLanguage.TR -> "Ayetler kopyalandı!"
+                                                            },
+                                                            Toast.LENGTH_SHORT
+                                                        ).show()
                                                     },
                                                     modifier = Modifier.size(28.dp)
                                                 ) {
-                                                    Icon(Icons.Default.ContentCopy, contentDescription = if (lang == AppLanguage.EN) "Copy" else "Kopyala", tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(16.dp))
+                                                    Icon(
+                                                        Icons.Default.ContentCopy,
+                                                        contentDescription = when (lang) {
+                                                            AppLanguage.RU -> "Копировать"
+                                                            AppLanguage.EN -> "Copy"
+                                                            AppLanguage.TR -> "Kopyala"
+                                                        },
+                                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                        modifier = Modifier.size(16.dp)
+                                                    )
                                                 }
 
                                                 IconButton(
                                                     onClick = {
                                                         noteQuoteText = buildString {
-                                                            if (!v1Text.isNullOrBlank()) append("• ${getSlotFormattedTitle(slot1, lang == AppLanguage.EN)}:\n$v1Text\n\n")
-                                                            if (!v2Text.isNullOrBlank()) append("• ${getSlotFormattedTitle(slot2, lang == AppLanguage.EN)}:\n$v2Text")
+                                                            if (!v1Text.isNullOrBlank()) append("• ${getSlotFormattedTitle(slot1, lang)}:\n$v1Text\n\n")
+                                                            if (!v2Text.isNullOrBlank()) append("• ${getSlotFormattedTitle(slot2, lang)}:\n$v2Text")
                                                         }
                                                         showAddNoteDialog = true
                                                     },
                                                     modifier = Modifier.size(28.dp)
                                                 ) {
-                                                    Icon(Icons.Default.EditNote, contentDescription = if (lang == AppLanguage.EN) "Add Reflection Note" else "Tefekkür Notu Ekle", tint = SacredGold, modifier = Modifier.size(18.dp))
+                                                    Icon(
+                                                        Icons.Default.EditNote,
+                                                        contentDescription = when (lang) {
+                                                            AppLanguage.RU -> "Добавить заметку"
+                                                            AppLanguage.EN -> "Add Reflection Note"
+                                                            AppLanguage.TR -> "Tefekkür Notu Ekle"
+                                                        },
+                                                        tint = SacredGold,
+                                                        modifier = Modifier.size(18.dp)
+                                                    )
                                                 }
                                             }
                                         }
@@ -1138,7 +1354,7 @@ fun ComparativeReaderScreen(
                                         if (!v1Text.isNullOrBlank()) {
                                             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                                 Text(
-                                                    text = getSlotFormattedTitle(slot1, lang == AppLanguage.EN),
+                                                    text = getSlotFormattedTitle(slot1, lang),
                                                     style = MaterialTheme.typography.labelSmall,
                                                     fontWeight = FontWeight.Bold,
                                                     color = slotColors[0]
@@ -1161,7 +1377,7 @@ fun ComparativeReaderScreen(
                                         if (!v2Text.isNullOrBlank()) {
                                             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                                 Text(
-                                                    text = getSlotFormattedTitle(slot2, lang == AppLanguage.EN),
+                                                    text = getSlotFormattedTitle(slot2, lang),
                                                     style = MaterialTheme.typography.labelSmall,
                                                     fontWeight = FontWeight.Bold,
                                                     color = slotColors[1]
@@ -1183,7 +1399,7 @@ fun ComparativeReaderScreen(
                                             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
                                             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                                 Text(
-                                                    text = getSlotFormattedTitle(slot3, lang == AppLanguage.EN),
+                                                    text = getSlotFormattedTitle(slot3, lang),
                                                     style = MaterialTheme.typography.labelSmall,
                                                     fontWeight = FontWeight.Bold,
                                                     color = slotColors[2]
@@ -1223,7 +1439,7 @@ fun ComparativeReaderScreen(
                         ) {
                             Column(modifier = Modifier.padding(10.dp)) {
                                 Text(
-                                    text = getSlotFormattedTitle(slot1, lang == AppLanguage.EN),
+                                    text = getSlotFormattedTitle(slot1, lang),
                                     style = MaterialTheme.typography.titleSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = slotColors[0],
@@ -1263,7 +1479,7 @@ fun ComparativeReaderScreen(
                         ) {
                             Column(modifier = Modifier.padding(10.dp)) {
                                 Text(
-                                    text = getSlotFormattedTitle(slot2, lang == AppLanguage.EN),
+                                    text = getSlotFormattedTitle(slot2, lang),
                                     style = MaterialTheme.typography.titleSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = slotColors[1],
@@ -1304,7 +1520,7 @@ fun ComparativeReaderScreen(
                             ) {
                                 Column(modifier = Modifier.padding(10.dp)) {
                                     Text(
-                                        text = getSlotFormattedTitle(slot3, lang == AppLanguage.EN),
+                                        text = getSlotFormattedTitle(slot3, lang),
                                         style = MaterialTheme.typography.titleSmall,
                                         fontWeight = FontWeight.Bold,
                                         color = slotColors[2],
@@ -1341,27 +1557,51 @@ fun ComparativeReaderScreen(
     }
 }
 
-private fun getSlotCategoryName(category: String, isEn: Boolean): String {
+private fun getSlotCategoryName(category: String, lang: AppLanguage): String {
     return when (category) {
-        "quran" -> if (isEn) "Qur'an" else "Kur'an-ı Kerim"
-        "sermon" -> if (isEn) "Gospel" else "İncil"
-        "torah" -> if (isEn) "Torah / Psalms" else "Tevrat / Zebur"
-        "bukhari" -> if (isEn) "Hadith" else "Hadis-i Şerif"
+        "quran" -> when (lang) {
+            AppLanguage.RU -> "Коран"
+            AppLanguage.EN -> "Qur'an"
+            AppLanguage.TR -> "Kur'an-ı Kerim"
+        }
+        "sermon" -> when (lang) {
+            AppLanguage.RU -> "Евангелие"
+            AppLanguage.EN -> "Gospel"
+            AppLanguage.TR -> "İncil"
+        }
+        "torah" -> when (lang) {
+            AppLanguage.RU -> "Тора / Псалмы"
+            AppLanguage.EN -> "Torah / Psalms"
+            AppLanguage.TR -> "Tevrat / Zebur"
+        }
+        "bukhari" -> when (lang) {
+            AppLanguage.RU -> "Хадисы"
+            AppLanguage.EN -> "Hadith"
+            AppLanguage.TR -> "Hadis-i Şerif"
+        }
         "gita" -> "Bhagavad Gita"
         "talmud" -> "Talmud"
-        else -> category.capitalize()
+        else -> category.replaceFirstChar { it.uppercase() }
     }
 }
 
-private fun getSlotFormattedTitle(slot: SlotConfig, isEn: Boolean): String {
+private fun getSlotFormattedTitle(slot: SlotConfig, lang: AppLanguage): String {
     val category = slot.category
     val subBookId = slot.subBookId
     val chNum = slot.chapterNumber
 
     if (category == "quran") {
         val surah = QuranRepository.surahs.find { it.number == chNum }
-        val name = if (isEn) surah?.nameEnglish ?: "Surah $chNum" else "${surah?.number ?: chNum}. ${surah?.nameEnglish ?: "Sûre $chNum"} (${surah?.nameTurkish ?: ""})"
-        return if (isEn) "Surah $name" else "Sûre: $name"
+        val name = when (lang) {
+            AppLanguage.RU -> "${surah?.number ?: chNum}. ${surah?.getName(lang) ?: "Сура $chNum"}"
+            AppLanguage.EN -> surah?.nameEnglish ?: "Surah $chNum"
+            AppLanguage.TR -> "${surah?.number ?: chNum}. ${surah?.nameEnglish ?: "Sûre $chNum"} (${surah?.nameTurkish ?: ""})"
+        }
+        return when (lang) {
+            AppLanguage.RU -> "Сура: $name"
+            AppLanguage.EN -> "Surah $name"
+            AppLanguage.TR -> "Sûre: $name"
+        }
     }
 
     val bookList: List<BibleBook> = when (category) {
@@ -1374,7 +1614,11 @@ private fun getSlotFormattedTitle(slot: SlotConfig, isEn: Boolean): String {
     }
 
     val bookObj = bookList.find { it.id == subBookId } ?: bookList.firstOrNull()
-    val bookName = if (isEn) bookObj?.nameEnglish ?: subBookId ?: "" else bookObj?.nameTurkish ?: subBookId ?: ""
+    val bookName = bookObj?.getName(lang) ?: subBookId ?: ""
 
-    return "$bookName ${chNum}. ${if (isEn) "Chapter" else "Bölüm"}"
+    return when (lang) {
+        AppLanguage.RU -> "$bookName Глава $chNum"
+        AppLanguage.EN -> "$bookName Chapter $chNum"
+        AppLanguage.TR -> "$bookName $chNum. Bölüm"
+    }
 }

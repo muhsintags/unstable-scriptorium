@@ -99,7 +99,11 @@ fun LibraryScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = if (lang == AppLanguage.EN) "Holy Scriptures Library" else "Kutsal Metinler Kütüphanesi",
+                        text = when (lang) {
+                            AppLanguage.RU -> "Библиотека Священных Писаний"
+                            AppLanguage.EN -> "Holy Scriptures Library"
+                            AppLanguage.TR -> "Kutsal Metinler Kütüphanesi"
+                        },
                         style = MaterialTheme.typography.headlineLarge,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
@@ -158,7 +162,11 @@ fun LibraryScreen(
                                     .padding(horizontal = 8.dp, vertical = 2.dp)
                             ) {
                                 Text(
-                                    text = if (lang == AppLanguage.EN) "NEW • 2 & 3 BOOKS MODE" else "YENİ • 2 VE 3 KİTAP MODU",
+                                    text = when (lang) {
+                                        AppLanguage.RU -> "НОВОЕ • РЕЖИМ 2 И 3 КНИГ"
+                                        AppLanguage.EN -> "NEW • 2 & 3 BOOKS MODE"
+                                        AppLanguage.TR -> "YENİ • 2 VE 3 KİTAP MODU"
+                                    },
                                     style = MaterialTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = SacredGold,
@@ -167,7 +175,11 @@ fun LibraryScreen(
                             }
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = if (lang == AppLanguage.EN) "Comparative Reading" else "Karşılaştırmalı Okuma",
+                                text = when (lang) {
+                                    AppLanguage.RU -> "Сравнительное чтение"
+                                    AppLanguage.EN -> "Comparative Reading"
+                                    AppLanguage.TR -> "Karşılaştırmalı Okuma"
+                                },
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Bold,
                                 fontFamily = FontFamily.Serif,
@@ -175,7 +187,11 @@ fun LibraryScreen(
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = if (lang == AppLanguage.EN) "Read and compare 2 or 3 scriptures side-by-side or in parallel verse cards." else "Aynı anda 2 veya 3 kutsal metni (Kur'an, Tevrat, İncil vb.) yan yana veya paralel kartlarla okuyun.",
+                                text = when (lang) {
+                                    AppLanguage.RU -> "Читайте и сравнивайте 2 или 3 священных текста (Коран, Тора, Евангелие и др.) бок о бок или параллельными карточками."
+                                    AppLanguage.EN -> "Read and compare 2 or 3 scriptures side-by-side or in parallel verse cards."
+                                    AppLanguage.TR -> "Aynı anda 2 veya 3 kutsal metni (Kur'an, Tevrat, İncil vb.) yan yana veya paralel kartlarla okuyun."
+                                },
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -202,8 +218,16 @@ fun LibraryScreen(
                         Column(modifier = Modifier.fillMaxWidth()) {
                             // Category Title Header
                             val categoryTranslated = when (category) {
-                                "Diğer Metinler" -> if (lang == AppLanguage.EN) "Other Scriptures" else "Diğer Metinler"
-                                "Kutsal Metinler" -> if (lang == AppLanguage.EN) "Holy Scriptures" else "Kutsal Metinler"
+                                "Diğer Metinler" -> when (lang) {
+                                    AppLanguage.RU -> "Другие Писания"
+                                    AppLanguage.EN -> "Other Scriptures"
+                                    AppLanguage.TR -> "Diğer Metinler"
+                                }
+                                "Kutsal Metinler" -> when (lang) {
+                                    AppLanguage.RU -> "Священные Писания"
+                                    AppLanguage.EN -> "Holy Scriptures"
+                                    AppLanguage.TR -> "Kutsal Metinler"
+                                }
                                 "Kur'an-ı Kerim" -> Loc.get("quran", lang)
                                 "Kitab-ı Mukaddes" -> Loc.get("bible", lang)
                                 else -> category
@@ -224,7 +248,7 @@ fun LibraryScreen(
                                         .weight(1f)
                                         .height(1.dp)
                                         .background(MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
-                                )
+                                 )
                             }
 
                             // Book items in category
@@ -232,12 +256,36 @@ fun LibraryScreen(
                                 categoryBooks.forEach { book ->
                                     val bookTitle = Loc.get(book.id, lang)
                                     val bookDescription = when (book.id) {
-                                        "quran" -> if (lang == AppLanguage.EN) "The holy book of Islam." else "İslam'ın kutsal kitabı."
-                                        "torah" -> if (lang == AppLanguage.EN) "The holy book of Judaism." else "Yahudiliğin kutsal kitabı."
-                                        "sermon", "gospel" -> if (lang == AppLanguage.EN) "The holy book of Christianity." else "Hristiyanlığın kutsal kitabı."
-                                        "talmud" -> if (lang == AppLanguage.EN) "Jewish oral tradition, law, and philosophy." else "Yahudi sözlü geleneği, hukuku ve felsefesi."
-                                        "bukhari" -> if (lang == AppLanguage.EN) "Primary collection of Hadith in Islamic tradition." else "İslam geleneğinde temel hadis külliyatı."
-                                        "gita" -> if (lang == AppLanguage.EN) "Sacred Hindu scripture on duty, devotion, and wisdom." else "Hindu felsefesinin görev, adanmışlık ve bilgelik metni."
+                                        "quran" -> when (lang) {
+                                            AppLanguage.RU -> "Священная книга ислама."
+                                            AppLanguage.EN -> "The holy book of Islam."
+                                            AppLanguage.TR -> "İslam'ın kutsal kitabı."
+                                        }
+                                        "torah" -> when (lang) {
+                                            AppLanguage.RU -> "Священная книга иудаизма."
+                                            AppLanguage.EN -> "The holy book of Judaism."
+                                            AppLanguage.TR -> "Yahudiliğin kutsal kitabı."
+                                        }
+                                        "sermon", "gospel" -> when (lang) {
+                                            AppLanguage.RU -> "Священная книга христианства."
+                                            AppLanguage.EN -> "The holy book of Christianity."
+                                            AppLanguage.TR -> "Hristiyanlığın kutsal kitabı."
+                                        }
+                                        "talmud" -> when (lang) {
+                                            AppLanguage.RU -> "Устная традиция, право и философия иудаизма."
+                                            AppLanguage.EN -> "Jewish oral tradition, law, and philosophy."
+                                            AppLanguage.TR -> "Yahudi sözlü geleneği, hukuku ve felsefesi."
+                                        }
+                                        "bukhari" -> when (lang) {
+                                            AppLanguage.RU -> "Основной свод хадисов в исламской традиции."
+                                            AppLanguage.EN -> "Primary collection of Hadith in Islamic tradition."
+                                            AppLanguage.TR -> "İslam geleneğinde temel hadis külliyatı."
+                                        }
+                                        "gita" -> when (lang) {
+                                            AppLanguage.RU -> "Священный индуистский текст о долге, преданности и мудрости."
+                                            AppLanguage.EN -> "Sacred Hindu scripture on duty, devotion, and wisdom."
+                                            AppLanguage.TR -> "Hindu felsefesinin görev, adanmışlık ve bilgelik metni."
+                                        }
                                         else -> book.description
                                     }
                                     Card(
@@ -336,19 +384,31 @@ fun ScriptureBookCover(bookId: String, lang: AppLanguage = AppLanguage.EN, modif
             androidx.compose.ui.graphics.Brush.verticalGradient(listOf(androidx.compose.ui.graphics.Color(0xFF0F5A32), androidx.compose.ui.graphics.Color(0xFF063B1E))),
             Icons.Filled.AutoStories,
             SacredGold,
-            if (lang == AppLanguage.EN) "QUR" else "K.K"
+            when (lang) {
+                AppLanguage.RU -> "КОР"
+                AppLanguage.EN -> "QUR"
+                AppLanguage.TR -> "K.K"
+            }
         )
         "torah" -> Quadruple(
             androidx.compose.ui.graphics.Brush.verticalGradient(listOf(androidx.compose.ui.graphics.Color(0xFF1B365D), androidx.compose.ui.graphics.Color(0xFF0F1E3D))),
             Icons.Filled.MenuBook,
             androidx.compose.ui.graphics.Color(0xFFE5A93B),
-            if (lang == AppLanguage.EN) "TOR" else "TEV"
+            when (lang) {
+                AppLanguage.RU -> "ТОР"
+                AppLanguage.EN -> "TOR"
+                AppLanguage.TR -> "TEV"
+            }
         )
         "sermon" -> Quadruple(
             androidx.compose.ui.graphics.Brush.verticalGradient(listOf(androidx.compose.ui.graphics.Color(0xFF8B1E1E), androidx.compose.ui.graphics.Color(0xFF4A1010))),
             Icons.Filled.MenuBook,
             androidx.compose.ui.graphics.Color(0xFFF1C40F),
-            if (lang == AppLanguage.EN) "GOS" else "İNC"
+            when (lang) {
+                AppLanguage.RU -> "ЕВН"
+                AppLanguage.EN -> "GOS"
+                AppLanguage.TR -> "İNC"
+            }
         )
         "talmud" -> Quadruple(
             androidx.compose.ui.graphics.Brush.verticalGradient(listOf(androidx.compose.ui.graphics.Color(0xFF3F3B5C), androidx.compose.ui.graphics.Color(0xFF24213B))),

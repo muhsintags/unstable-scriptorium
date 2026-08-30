@@ -180,7 +180,11 @@ class MainActivity : ComponentActivity() {
                                     tint = SacredGold
                                 )
                                 Text(
-                                    text = if (lang == AppLanguage.EN) "Update Available!" else "Güncelleme Mevcut!",
+                                    text = when (lang) {
+                                        AppLanguage.RU -> "Доступно обновление!"
+                                        AppLanguage.EN -> "Update Available!"
+                                        AppLanguage.TR -> "Güncelleme Mevcut!"
+                                    },
                                     fontFamily = FontFamily.Serif,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.primary,
@@ -193,10 +197,10 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Text(
-                                    text = if (lang == AppLanguage.EN) {
-                                        "A new version of Scriptorium is available. Update now to experience the latest features and stability enhancements."
-                                    } else {
-                                        "Scriptorium için yeni bir sürüm mevcut. En son özellikleri ve kararlılık iyileştirmelerini deneyimlemek için şimdi güncelleyin."
+                                    text = when (lang) {
+                                        AppLanguage.RU -> "Доступна новая версия Scriptorium. Обновите приложение сейчас, чтобы получить доступ к новым функциям и улучшениям."
+                                        AppLanguage.EN -> "A new version of Scriptorium is available. Update now to experience the latest features and stability enhancements."
+                                        AppLanguage.TR -> "Scriptorium için yeni bir sürüm mevcut. En son özellikleri ve kararlılık iyileştirmelerini deneyimlemek için şimdi güncelleyin."
                                     },
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurface
@@ -216,20 +220,20 @@ class MainActivity : ComponentActivity() {
                                 ) {
                                     Column {
                                         Text(
-                                            text = if (lang == AppLanguage.EN) {
-                                                "Current: v${BuildConfig.VERSION_NAME} (Build ${BuildConfig.VERSION_CODE})"
-                                            } else {
-                                                "Mevcut: v${BuildConfig.VERSION_NAME} (Kod ${BuildConfig.VERSION_CODE})"
+                                            text = when (lang) {
+                                                AppLanguage.RU -> "Текущая: v${BuildConfig.VERSION_NAME} (Сборка ${BuildConfig.VERSION_CODE})"
+                                                AppLanguage.EN -> "Current: v${BuildConfig.VERSION_NAME} (Build ${BuildConfig.VERSION_CODE})"
+                                                AppLanguage.TR -> "Mevcut: v${BuildConfig.VERSION_NAME} (Kod ${BuildConfig.VERSION_CODE})"
                                             },
                                             style = MaterialTheme.typography.labelSmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                         Spacer(modifier = Modifier.height(4.dp))
                                         Text(
-                                            text = if (lang == AppLanguage.EN) {
-                                                "New Version: v${updateInfo.versionName} (Build ${updateInfo.versionCode})"
-                                            } else {
-                                                "Yeni Sürüm: v${updateInfo.versionName} (Kod ${updateInfo.versionCode})"
+                                            text = when (lang) {
+                                                AppLanguage.RU -> "Новая версия: v${updateInfo.versionName} (Сборка ${updateInfo.versionCode})"
+                                                AppLanguage.EN -> "New Version: v${updateInfo.versionName} (Build ${updateInfo.versionCode})"
+                                                AppLanguage.TR -> "Yeni Sürüm: v${updateInfo.versionName} (Kod ${updateInfo.versionCode})"
                                             },
                                             style = MaterialTheme.typography.labelMedium,
                                             fontWeight = FontWeight.Bold,
@@ -238,11 +242,15 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
                                 
-                                val changelog = if (lang == AppLanguage.EN) updateInfo.changelogEn else updateInfo.changelogTr
+                                val changelog = if (lang == AppLanguage.EN || lang == AppLanguage.RU) updateInfo.changelogEn else updateInfo.changelogTr
                                 if (changelog.isNotEmpty()) {
                                     Spacer(modifier = Modifier.height(12.dp))
                                     Text(
-                                        text = if (lang == AppLanguage.EN) "What's New:" else "Yenilikler:",
+                                        text = when (lang) {
+                                            AppLanguage.RU -> "Что нового:"
+                                            AppLanguage.EN -> "What's New:"
+                                            AppLanguage.TR -> "Yenilikler:"
+                                        },
                                         fontWeight = FontWeight.Bold,
                                         style = MaterialTheme.typography.labelMedium,
                                         color = MaterialTheme.colorScheme.primary
@@ -269,7 +277,11 @@ class MainActivity : ComponentActivity() {
                                 shape = RoundedCornerShape(10.dp)
                             ) {
                                 Text(
-                                    text = if (lang == AppLanguage.EN) "Update Now" else "Şimdi Güncelle",
+                                    text = when (lang) {
+                                        AppLanguage.RU -> "Обновить сейчас"
+                                        AppLanguage.EN -> "Update Now"
+                                        AppLanguage.TR -> "Şimdi Güncelle"
+                                    },
                                     color = Color.White,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -281,7 +293,11 @@ class MainActivity : ComponentActivity() {
                                     onClick = { updateInfoState = null }
                                 ) {
                                     Text(
-                                        text = if (lang == AppLanguage.EN) "Later" else "Daha Sonra",
+                                        text = when (lang) {
+                                            AppLanguage.RU -> "Позже"
+                                            AppLanguage.EN -> "Later"
+                                            AppLanguage.TR -> "Daha Sonra"
+                                        },
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }

@@ -25,6 +25,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ui.theme.SacredGold
+import com.example.ui.util.AppLanguage
+import com.example.ui.util.Loc
 import com.example.ui.viewmodel.ScriptureViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,13 +36,19 @@ fun ReadingHistoryScreen(
     onNavigateBack: () -> Unit
 ) {
     val history by viewModel.readingHistory.collectAsState()
+    val readerSettings by viewModel.readerSettings.collectAsState()
+    val lang = readerSettings.language
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        text = "Okuma Geçmişi",
+                        text = when (lang) {
+                            AppLanguage.RU -> "История чтения"
+                            AppLanguage.EN -> "Reading History"
+                            AppLanguage.TR -> "Okuma Geçmişi"
+                        },
                         fontFamily = FontFamily.Serif,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
@@ -50,7 +58,7 @@ fun ReadingHistoryScreen(
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.Filled.ChevronLeft,
-                            contentDescription = "Geri",
+                            contentDescription = Loc.get("back", lang),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -74,13 +82,21 @@ fun ReadingHistoryScreen(
             item {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(
-                        text = "Okuma Kayıtları",
+                        text = when (lang) {
+                            AppLanguage.RU -> "Журнал чтения"
+                            AppLanguage.EN -> "Reading Logs"
+                            AppLanguage.TR -> "Okuma Kayıtları"
+                        },
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
                     )
                     Text(
-                        text = "Düşüncelerinizin ve okumalarınızın sessiz bir kaydı.",
+                        text = when (lang) {
+                            AppLanguage.RU -> "Тихий отчет о ваших размышлениях и прочитанных текстах."
+                            AppLanguage.EN -> "A silent record of your contemplative journeys and readings."
+                            AppLanguage.TR -> "Düşüncelerinizin ve okumalarınızın sessiz bir kaydı."
+                        },
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -88,12 +104,23 @@ fun ReadingHistoryScreen(
             }
 
             // Dün (Yesterday) items
-            val yesterdayItems = history.filter { it.dateText.contains("Dün", ignoreCase = true) || it.dateText.contains("Bugün", ignoreCase = true) }
+            val yesterdayItems = history.filter { 
+                it.dateText.contains("Dün", ignoreCase = true) || 
+                it.dateText.contains("Bugün", ignoreCase = true) ||
+                it.dateText.contains("Yesterday", ignoreCase = true) ||
+                it.dateText.contains("Today", ignoreCase = true) ||
+                it.dateText.contains("Вчера", ignoreCase = true) ||
+                it.dateText.contains("Сегодня", ignoreCase = true)
+            }
             if (yesterdayItems.isNotEmpty()) {
                 item {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         Text(
-                            text = "DÜN",
+                            text = when (lang) {
+                                AppLanguage.RU -> "ВЧЕРА И СЕГОДНЯ"
+                                AppLanguage.EN -> "RECENT"
+                                AppLanguage.TR -> "DÜN VE BUGÜN"
+                            },
                             style = MaterialTheme.typography.labelLarge,
                             color = SacredGold,
                             letterSpacing = 1.5.sp,
@@ -105,6 +132,7 @@ fun ReadingHistoryScreen(
                                 HistoryItemRow(
                                     hist = hist,
                                     isFirst = index == 0,
+                                    lang = lang,
                                     onDelete = { viewModel.deleteHistory(hist.id) }
                                 )
                             }
@@ -114,12 +142,23 @@ fun ReadingHistoryScreen(
             }
 
             // Bu Hafta (This Week) items
-            val otherItems = history.filter { !it.dateText.contains("Dün", ignoreCase = true) && !it.dateText.contains("Bugün", ignoreCase = true) }
+            val otherItems = history.filter { 
+                !it.dateText.contains("Dün", ignoreCase = true) && 
+                !it.dateText.contains("Bugün", ignoreCase = true) &&
+                !it.dateText.contains("Yesterday", ignoreCase = true) &&
+                !it.dateText.contains("Today", ignoreCase = true) &&
+                !it.dateText.contains("Вчера", ignoreCase = true) &&
+                !it.dateText.contains("Сегодня", ignoreCase = true)
+            }
             if (otherItems.isNotEmpty()) {
                 item {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         Text(
-                            text = "BU HAFTA",
+                            text = when (lang) {
+                                AppLanguage.RU -> "НА ЭТОЙ НЕДЕЛЕ"
+                                AppLanguage.EN -> "THIS WEEK"
+                                AppLanguage.TR -> "BU HAFTA"
+                            },
                             style = MaterialTheme.typography.labelLarge,
                             color = SacredGold,
                             letterSpacing = 1.5.sp,
@@ -131,6 +170,7 @@ fun ReadingHistoryScreen(
                                 HistoryItemRow(
                                     hist = hist,
                                     isFirst = index == 0,
+                                    lang = lang,
                                     onDelete = { viewModel.deleteHistory(hist.id) }
                                 )
                             }
@@ -149,7 +189,11 @@ fun ReadingHistoryScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Henüz bir okuma geçmişi bulunmamaktadır.",
+                            text = when (lang) {
+                                AppLanguage.RU -> "История чтения пока пуста."
+                                AppLanguage.EN -> "No reading history recorded yet."
+                                AppLanguage.TR -> "Henüz bir okuma geçmişi bulunmamaktadır."
+                            },
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -165,6 +209,7 @@ fun ReadingHistoryScreen(
 fun HistoryItemRow(
     hist: com.example.data.model.ReadingHistory,
     isFirst: Boolean,
+    lang: AppLanguage = AppLanguage.TR,
     onDelete: () -> Unit
 ) {
     Card(
@@ -235,7 +280,7 @@ fun HistoryItemRow(
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Delete,
-                            contentDescription = "Sil",
+                            contentDescription = Loc.get("delete", lang),
                             tint = MaterialTheme.colorScheme.error.copy(alpha = 0.8f),
                             modifier = Modifier.size(16.dp)
                         )
@@ -251,23 +296,38 @@ fun HistoryItemRow(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     if (hist.pagesRead > 0) {
+                        val pageLabel = when (lang) {
+                            AppLanguage.RU -> "${hist.pagesRead} стр."
+                            AppLanguage.EN -> "${hist.pagesRead} Pages"
+                            AppLanguage.TR -> "${hist.pagesRead} Sayfa"
+                        }
                         SuggestionChip(
                             onClick = {},
-                            label = { Text("${hist.pagesRead} Sayfa", maxLines = 1, softWrap = false) },
+                            label = { Text(pageLabel, maxLines = 1, softWrap = false) },
                             icon = { Icon(Icons.Filled.MenuBook, contentDescription = null, modifier = Modifier.size(16.dp)) }
                         )
                     }
                     if (hist.contemplationMinutes > 0) {
+                        val minLabel = when (lang) {
+                            AppLanguage.RU -> "${hist.contemplationMinutes} мин. размышлений"
+                            AppLanguage.EN -> "${hist.contemplationMinutes} min Contemplation"
+                            AppLanguage.TR -> "${hist.contemplationMinutes} Dk Tefekkür"
+                        }
                         SuggestionChip(
                             onClick = {},
-                            label = { Text("${hist.contemplationMinutes} Dk Tefekkür", maxLines = 1, softWrap = false) },
+                            label = { Text(minLabel, maxLines = 1, softWrap = false) },
                             icon = { Icon(Icons.Filled.HourglassEmpty, contentDescription = null, modifier = Modifier.size(16.dp)) }
                         )
                     }
                     if (hist.isCompleted) {
+                        val doneLabel = when (lang) {
+                            AppLanguage.RU -> "Завершено"
+                            AppLanguage.EN -> "Completed"
+                            AppLanguage.TR -> "Tamamlandı"
+                        }
                         SuggestionChip(
                             onClick = {},
-                            label = { Text("Tamamlandı", maxLines = 1, softWrap = false) },
+                            label = { Text(doneLabel, maxLines = 1, softWrap = false) },
                             icon = { Icon(Icons.Filled.Check, contentDescription = null, modifier = Modifier.size(16.dp)) },
                             colors = SuggestionChipDefaults.suggestionChipColors(
                                 labelColor = SacredGold

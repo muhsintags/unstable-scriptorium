@@ -144,7 +144,11 @@ fun HomeScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Filled.AutoAwesome,
-                                    contentDescription = "Şablonla Paylaş",
+                                    contentDescription = when (lang) {
+                                        AppLanguage.RU -> "Поделиться шаблоном"
+                                        AppLanguage.EN -> "Share Template"
+                                        AppLanguage.TR -> "Şablonla Paylaş"
+                                    },
                                     tint = SacredGold,
                                     modifier = Modifier.size(20.dp)
                                 )
@@ -166,7 +170,11 @@ fun HomeScreen(
 
                     // Selection Row for Holy Books
                     Text(
-                        text = if (lang == AppLanguage.EN) "Select the source for daily verses:" else "Ayetlerin geleceği kaynakları seçin:",
+                        text = when (lang) {
+                            AppLanguage.RU -> "Выберите источники для ежедневных стихов:"
+                            AppLanguage.EN -> "Select the source for daily verses:"
+                            AppLanguage.TR -> "Ayetlerin geleceği kaynakları seçin:"
+                        },
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(bottom = 8.dp)
@@ -484,7 +492,11 @@ fun HomeScreen(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = if (lang == AppLanguage.EN) "Your reading history will be listed here." else "Okuma geçmişiniz burada listelenecektir.",
+                                    text = when (lang) {
+                                        AppLanguage.RU -> "Ваша история чтения будет отображаться здесь."
+                                        AppLanguage.EN -> "Your reading history will be listed here."
+                                        AppLanguage.TR -> "Okuma geçmişiniz burada listelenecektir."
+                                    },
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -505,7 +517,7 @@ fun HomeScreen(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clickable {
-                                            correspondingBook?.let { onNavigateToBook(it) }
+                                             correspondingBook?.let { onNavigateToBook(it) }
                                         },
                                     colors = CardDefaults.cardColors(
                                         containerColor = MaterialTheme.colorScheme.surface
@@ -544,19 +556,34 @@ fun HomeScreen(
                                                     fontWeight = FontWeight.Bold,
                                                     color = MaterialTheme.colorScheme.onSurface
                                                 )
-                                                val subtitleTranslated = if (lang == AppLanguage.EN) {
-                                                    hist.subtitle
-                                                        .replace("Suresi", "Surah")
-                                                        .replace("Sure", "Surah")
-                                                        .replace("Bölüm", "Chapter")
-                                                        .replace("Ayet", "Verse")
-                                                        .replace("sayfa", "pages")
-                                                } else {
-                                                    hist.subtitle
-                                                        .replace("Surah", "Suresi")
-                                                        .replace("Chapter", "Bölüm")
-                                                        .replace("Verse", "Ayet")
-                                                        .replace("pages", "sayfa")
+                                                val subtitleTranslated = when (lang) {
+                                                    AppLanguage.RU -> {
+                                                        hist.subtitle
+                                                            .replace("Suresi", "Сура")
+                                                            .replace("Sure", "Сура")
+                                                            .replace("Surah", "Сура")
+                                                            .replace("Bölüm", "Глава")
+                                                            .replace("Chapter", "Глава")
+                                                            .replace("Ayet", "Стих")
+                                                            .replace("Verse", "Стих")
+                                                            .replace("sayfa", "стр.")
+                                                            .replace("pages", "стр.")
+                                                    }
+                                                    AppLanguage.EN -> {
+                                                        hist.subtitle
+                                                            .replace("Suresi", "Surah")
+                                                            .replace("Sure", "Surah")
+                                                            .replace("Bölüm", "Chapter")
+                                                            .replace("Ayet", "Verse")
+                                                            .replace("sayfa", "pages")
+                                                    }
+                                                    AppLanguage.TR -> {
+                                                        hist.subtitle
+                                                            .replace("Surah", "Suresi")
+                                                            .replace("Chapter", "Bölüm")
+                                                            .replace("Verse", "Ayet")
+                                                            .replace("pages", "sayfa")
+                                                    }
                                                 }
                                                 Text(
                                                     text = subtitleTranslated,

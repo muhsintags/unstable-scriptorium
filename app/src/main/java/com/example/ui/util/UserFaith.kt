@@ -1,61 +1,69 @@
 package com.example.ui.util
 
-enum class UserReligion(val id: String, val titleTr: String, val titleEn: String, val iconName: String) {
-    ISLAM("islam", "İslam", "Islam", "mosque"),
-    CHRISTIANITY("christianity", "Hristiyanlık", "Christianity", "church"),
-    JUDAISM("judaism", "Yahudilik", "Judaism", "synagogue"),
-    HINDUISM("hinduism", "Hinduizm", "Hinduism", "om"),
-    BUDDHISM("buddhism", "Budizm", "Buddhism", "dharma_wheel"),
-    UNIVERSAL("universal", "Evrensel / Ruhani", "Universal / Spiritual", "auto_awesome"),
-    SECULAR("secular", "İnançsız / Seküler", "Non-Religious / Secular", "psychology");
+enum class UserReligion(val id: String, val titleTr: String, val titleEn: String, val titleRu: String, val iconName: String) {
+    ISLAM("islam", "İslam", "Islam", "Ислам", "mosque"),
+    CHRISTIANITY("christianity", "Hristiyanlık", "Christianity", "Христианство", "church"),
+    JUDAISM("judaism", "Yahudilik", "Judaism", "Иудаизм", "synagogue"),
+    HINDUISM("hinduism", "Hinduizm", "Hinduism", "Индуизм", "om"),
+    BUDDHISM("buddhism", "Budizm", "Buddhism", "Буддизм", "dharma_wheel"),
+    UNIVERSAL("universal", "Evrensel / Ruhani", "Universal / Spiritual", "Универсальный / Духовный", "auto_awesome"),
+    SECULAR("secular", "İnançsız / Seküler", "Non-Religious / Secular", "Светский / Неконфессиональный", "psychology");
 
-    fun getTitle(lang: AppLanguage): String = if (lang == AppLanguage.EN) titleEn else titleTr
+    fun getTitle(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> titleEn
+        AppLanguage.RU -> titleRu
+        AppLanguage.TR -> titleTr
+    }
 
     companion object {
         fun fromId(id: String?): UserReligion = values().find { it.id.equals(id, ignoreCase = true) } ?: ISLAM
     }
 }
 
-enum class UserSect(val id: String, val religionId: String, val titleTr: String, val titleEn: String) {
+enum class UserSect(val id: String, val religionId: String, val titleTr: String, val titleEn: String, val titleRu: String) {
     // Islam
-    SUNNI("sunni", "islam", "Sünnî", "Sunni"),
-    SHIA("shia", "islam", "Şiî / Caferî", "Shia"),
-    SUFI("sufi", "islam", "Tasavvufî / Sufi", "Sufi"),
-    ISLAM_GENERAL("islam_general", "islam", "Genel İslam", "General Islam"),
+    SUNNI("sunni", "islam", "Sünnî", "Sunni", "Суннизм"),
+    SHIA("shia", "islam", "Şiî / Caferî", "Shia", "Шиизм"),
+    SUFI("sufi", "islam", "Tasavvufî / Sufi", "Sufi", "Суфизм"),
+    ISLAM_GENERAL("islam_general", "islam", "Genel İslam", "General Islam", "Общий ислам"),
 
     // Christianity
-    CATHOLIC("catholic", "christianity", "Katolik", "Catholic"),
-    ORTHODOX("orthodox", "christianity", "Doğu Ortodoks", "Eastern Orthodox"),
-    PROTESTANT("protestant", "christianity", "Protestan", "Protestant"),
-    CHRISTIANITY_GENERAL("christianity_general", "christianity", "Genel Hristiyanlık", "General Christianity"),
+    CATHOLIC("catholic", "christianity", "Katolik", "Catholic", "Католицизм"),
+    ORTHODOX("orthodox", "christianity", "Doğu Ortodoks", "Eastern Orthodox", "Православие"),
+    PROTESTANT("protestant", "christianity", "Protestan", "Protestant", "Протестантизм"),
+    CHRISTIANITY_GENERAL("christianity_general", "christianity", "Genel Hristiyanlık", "General Christianity", "Общее христианство"),
 
     // Judaism
-    ORTHODOX_JUDAISM("orthodox_judaism", "judaism", "Ortodoks Yahudilik", "Orthodox Judaism"),
-    CONSERVATIVE_JUDAISM("conservative_judaism", "judaism", "Muhafazakâr Yahudilik", "Conservative Judaism"),
-    REFORM_JUDAISM("reform_judaism", "judaism", "Reformist Yahudilik", "Reform Judaism"),
-    JUDAISM_GENERAL("judaism_general", "judaism", "Genel Yahudilik", "General Judaism"),
+    ORTHODOX_JUDAISM("orthodox_judaism", "judaism", "Ortodoks Yahudilik", "Orthodox Judaism", "Ортодоксальный иудаизм"),
+    CONSERVATIVE_JUDAISM("conservative_judaism", "judaism", "Muhafazakâr Yahudilik", "Conservative Judaism", "Консервативный иудаизм"),
+    REFORM_JUDAISM("reform_judaism", "judaism", "Reformist Yahudilik", "Reform Judaism", "Реформистский иудаизм"),
+    JUDAISM_GENERAL("judaism_general", "judaism", "Genel Yahudilik", "General Judaism", "Общий иудаизм"),
 
     // Hinduism
-    VAISHNAVISM("vaishnavism", "hinduism", "Vaişnavizm (Vishnu)", "Vaishnavism"),
-    SHAIVISM("shaivism", "hinduism", "Şaivism (Shiva)", "Shaivism"),
-    HINDUISM_GENERAL("hinduism_general", "hinduism", "Genel / Advaita Vedānta", "General / Advaita Vedanta"),
+    VAISHNAVISM("vaishnavism", "hinduism", "Vaişnavizm (Vishnu)", "Vaishnavism", "Вайшнавизм"),
+    SHAIVISM("shaivism", "hinduism", "Şaivism (Shiva)", "Shaivism", "Шайвизм"),
+    HINDUISM_GENERAL("hinduism_general", "hinduism", "Genel / Advaita Vedānta", "General / Advaita Vedanta", "Общий / Адвайта-веданта"),
 
     // Buddhism
-    THERAVADA("theravada", "buddhism", "Theravada", "Theravada"),
-    MAHAYANA("mahayana", "buddhism", "Mahayana", "Mahayana"),
-    ZEN("zen", "buddhism", "Zen", "Zen"),
-    BUDDHISM_GENERAL("buddhism_general", "buddhism", "Genel Budizm", "General Buddhism"),
+    THERAVADA("theravada", "buddhism", "Theravada", "Theravada", "Тхеравада"),
+    MAHAYANA("mahayana", "buddhism", "Mahayana", "Mahayana", "Махаяна"),
+    ZEN("zen", "buddhism", "Zen", "Zen", "Дзен"),
+    BUDDHISM_GENERAL("buddhism_general", "buddhism", "Genel Budizm", "General Buddhism", "Общий буддизм"),
 
     // Universal
-    UNIVERSAL_GENERAL("universal_general", "universal", "Genel Tefekkür & Hikmet", "General Reflection & Wisdom"),
+    UNIVERSAL_GENERAL("universal_general", "universal", "Genel Tefekkür & Hikmet", "General Reflection & Wisdom", "Размышление и мудрость"),
 
     // Secular / Non-Religious
-    ATHEISM("atheism", "secular", "Ateizm", "Atheism"),
-    DEISM("deism", "secular", "Deizm", "Deism"),
-    AGNOSTICISM("agnosticism", "secular", "Agnostisizm", "Agnosticism"),
-    FREE_THOUGHT("free_thought", "secular", "Seküler Hümanizm & Serbest Düşünce", "Secular Humanism & Free Thought");
+    ATHEISM("atheism", "secular", "Ateizm", "Atheism", "Атеизм"),
+    DEISM("deism", "secular", "Deizm", "Deism", "Деизм"),
+    AGNOSTICISM("agnosticism", "secular", "Agnostisizm", "Agnosticism", "Агностицизм"),
+    FREE_THOUGHT("free_thought", "secular", "Seküler Hümanizm & Serbest Düşünce", "Secular Humanism & Free Thought", "Светский гуманизм и свободомыслие");
 
-    fun getTitle(lang: AppLanguage): String = if (lang == AppLanguage.EN) titleEn else titleTr
+    fun getTitle(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> titleEn
+        AppLanguage.RU -> titleRu
+        AppLanguage.TR -> titleTr
+    }
 
     companion object {
         fun getSectsForReligion(religion: UserReligion): List<UserSect> {
@@ -75,10 +83,20 @@ data class PrayerTimeInfo(
     val nameEn: String,
     val timeStr: String,
     val messageTr: String,
-    val messageEn: String
+    val messageEn: String,
+    val nameRu: String = nameEn,
+    val messageRu: String = messageEn
 ) {
-    fun getName(lang: AppLanguage) = if (lang == AppLanguage.EN) nameEn else nameTr
-    fun getMessage(lang: AppLanguage) = if (lang == AppLanguage.EN) messageEn else messageTr
+    fun getName(lang: AppLanguage) = when (lang) {
+        AppLanguage.EN -> nameEn
+        AppLanguage.RU -> nameRu
+        AppLanguage.TR -> nameTr
+    }
+    fun getMessage(lang: AppLanguage) = when (lang) {
+        AppLanguage.EN -> messageEn
+        AppLanguage.RU -> messageRu
+        AppLanguage.TR -> messageTr
+    }
 }
 
 object FaithPrayerSchedule {
@@ -88,64 +106,262 @@ object FaithPrayerSchedule {
                 val isShia = sect == UserSect.SHIA
                 if (isShia) {
                     listOf(
-                        PrayerTimeInfo("Sabah (Fecr) Namazı", "Fajr Prayer", "05:15", "Sabah Kur'an okuyuşu şahitlidir. (İsrâ 78)", "Indeed, the recitation of dawn is ever witnessed. (17:78)"),
-                        PrayerTimeInfo("Öğle (Zuhr) Namazı", "Dhuhr Prayer", "12:45", "Kıl namazı güneşin batıya kaymasından gecenin kararmasına kadar. (İsrâ 78)", "Perform prayer from the decline of the sun until the darkness of the night. (17:78)"),
-                        PrayerTimeInfo("İkindi (Asr) Namazı", "Asr Prayer", "13:15 / 16:30", "Namazı dosdoğru kılın, zekâtı verin ve rükû edenlerle rükû edin. (Bakara 43) [Öğle ile birleştirilebilir]", "Establish prayer and bow with those who bow. (2:43) [Can be combined with Dhuhr]"),
-                        PrayerTimeInfo("Akşam (Maghrib) Namazı", "Maghrib Prayer", "19:35", "Gündüzün iki tarafında ve gecenin gündüze yakın saatlerinde namaz kıl. (Hûd 114)", "Establish prayer at the two ends of the day and at the approach of the night. (11:114)"),
-                        PrayerTimeInfo("Yatsı (Isha) Namazı", "Isha Prayer", "20:00 / 21:00", "Gecenin bir kısmında secde et ve O'nu uzun gece tesbih et. (İnsân 26) [Akşam ile birleştirilebilir]", "And during the night prostrate to Him and exalt Him. (76:26) [Can be combined with Maghrib]")
+                        PrayerTimeInfo(
+                            "Sabah (Fecr) Namazı", "Fajr Prayer", "05:15",
+                            "Sabah Kur'an okuyuşu şahitlidir. (İsrâ 78)",
+                            "Indeed, the recitation of dawn is ever witnessed. (17:78)",
+                            "Утренняя молитва (Фаджр)",
+                            "Воистину, чтение на рассвете свидетельствуется. (17:78)"
+                        ),
+                        PrayerTimeInfo(
+                            "Öğle (Zuhr) Namazı", "Dhuhr Prayer", "12:45",
+                            "Kıl namazı güneşin batıya kaymasından gecenin kararmasına kadar. (İsrâ 78)",
+                            "Perform prayer from the decline of the sun until the darkness of the night. (17:78)",
+                            "Полуденная молитва (Зухр)",
+                            "Совершай молитву от полудня до наступления ночного мрака. (17:78)"
+                        ),
+                        PrayerTimeInfo(
+                            "İkindi (Asr) Namazı", "Asr Prayer", "13:15 / 16:30",
+                            "Namazı dosdoğru kılın, zekâtı verin ve rükû edenlerle rükû edin. (Bakara 43) [Öğle ile birleştirilebilir]",
+                            "Establish prayer and bow with those who bow. (2:43) [Can be combined with Dhuhr]",
+                            "Послеполуденная молитва (Аср)",
+                            "Совершайте молитву и кланяйтесь вместе с кланяющимися. (2:43) [Можно совмещать с Зухр]"
+                        ),
+                        PrayerTimeInfo(
+                            "Akşam (Maghrib) Namazı", "Maghrib Prayer", "19:35",
+                            "Gündüzün iki tarafında ve gecenin gündüze yakın saatlerinde namaz kıl. (Hûd 114)",
+                            "Establish prayer at the two ends of the day and at the approach of the night. (11:114)",
+                            "Вечерняя молитва (Магриб)",
+                            "Совершай молитву в начале и конце дня и в некоторые часы ночи. (11:114)"
+                        ),
+                        PrayerTimeInfo(
+                            "Yatsı (Isha) Namazı", "Isha Prayer", "20:00 / 21:00",
+                            "Gecenin bir kısmında secde et ve O'nu uzun gece tesbih et. (İnsân 26) [Akşam ile birleştirilebilir]",
+                            "And during the night prostrate to Him and exalt Him. (76:26) [Can be combined with Maghrib]",
+                            "Ночная молитва (Иша)",
+                            "И падай ниц пред Ним в части ночи и славь Его долгой ночью. (76:26) [Можно совмещать с Магриб]"
+                        )
                     )
                 } else {
                     listOf(
-                        PrayerTimeInfo("Sabah (Fecr) Namazı", "Fajr Prayer", "05:15", "Sabah Kur'an okuyuşu şahitlidir. (İsrâ 78)", "Indeed, the recitation of dawn is ever witnessed. (17:78)"),
-                        PrayerTimeInfo("Öğle (Zuhr) Namazı", "Dhuhr Prayer", "12:45", "Şüphesiz namaz, müminler üzerine vakitleri belirlenmiş bir farzdır. (Nisâ 103)", "Indeed, prayer has been decreed upon the believers a decree of specified times. (4:103)"),
-                        PrayerTimeInfo("İkindi (Asr) Namazı", "Asr Prayer", "16:30", "Namazlara ve orta namaza devam edin. (Bakara 238)", "Maintain with care the obligatory prayers and the middle prayer. (2:238)"),
-                        PrayerTimeInfo("Akşam (Maghrib) Namazı", "Maghrib Prayer", "19:20", "Rabbini hamd ile tesbih et; güneşin doğuşundan ve batışından önce. (Tâhâ 130)", "Exalt with praise of your Lord before the rising of the sun and before its setting. (20:130)"),
-                        PrayerTimeInfo("Yatsı (Isha) Namazı", "Isha Prayer", "21:00", "Gecenin saatlerinde ve gündüzün uçlarında tesbih et ki rızaya eresin. (Tâhâ 130)", "Exalt Him in hours of the night and at the ends of the day. (20:130)")
+                        PrayerTimeInfo(
+                            "Sabah (Fecr) Namazı", "Fajr Prayer", "05:15",
+                            "Sabah Kur'an okuyuşu şahitlidir. (İsrâ 78)",
+                            "Indeed, the recitation of dawn is ever witnessed. (17:78)",
+                            "Утренняя молитва (Фаджр)",
+                            "Воистину, чтение на рассвете свидетельствуется. (17:78)"
+                        ),
+                        PrayerTimeInfo(
+                            "Öğle (Zuhr) Namazı", "Dhuhr Prayer", "12:45",
+                            "Şüphesiz namaz, müminler üzerine vakitleri belirlenmiş bir farzdır. (Nisâ 103)",
+                            "Indeed, prayer has been decreed upon the believers a decree of specified times. (4:103)",
+                            "Полуденная молитва (Зухр)",
+                            "Воистину, молитва предписана верующим в определенное время. (4:103)"
+                        ),
+                        PrayerTimeInfo(
+                            "İkindi (Asr) Namazı", "Asr Prayer", "16:30",
+                            "Namazlara ve orta namaza devam edin. (Bakara 238)",
+                            "Maintain with care the obligatory prayers and the middle prayer. (2:238)",
+                            "Послеполуденная молитва (Аср)",
+                            "Берегите молитвы и среднюю молитву. (2:238)"
+                        ),
+                        PrayerTimeInfo(
+                            "Akşam (Maghrib) Namazı", "Maghrib Prayer", "19:20",
+                            "Rabbini hamd ile tesbih et; güneşin doğuşundan ve batışından önce. (Tâhâ 130)",
+                            "Exalt with praise of your Lord before the rising of the sun and before its setting. (20:130)",
+                            "Вечерняя молитва (Магриб)",
+                            "Прославляй хвалой Господа твоего перед восходом солнца и перед его закатом. (20:130)"
+                        ),
+                        PrayerTimeInfo(
+                            "Yatsı (Isha) Namazı", "Isha Prayer", "21:00",
+                            "Gecenin saatlerinde ve gündüzün uçlarında tesbih et ki rızaya eresin. (Tâhâ 130)",
+                            "Exalt Him in hours of the night and at the ends of the day. (20:130)",
+                            "Ночная молитва (Иша)",
+                            "Славь Его в часы ночи и по краям дня, чтобы ты был доволен. (20:130)"
+                        )
                     )
                 }
             }
             UserReligion.CHRISTIANITY -> {
                 when (sect) {
                     UserSect.CATHOLIC -> listOf(
-                        PrayerTimeInfo("Sabah Duası & Matins", "Morning Prayer & Matins", "07:00", "Siz dünyanın ışığısınız. Dağ üzerine kurulan kent gizlenemez. (Matta 5:14)", "You are the light of the world. A city set on a hill cannot be hidden. (Matthew 5:14)"),
-                        PrayerTimeInfo("Öğle Melek Duası (Angelus)", "Angelus / Midday Prayer", "12:00", "Rab'de her zaman sevinin; yine diyorum, sevinin! (Filipililer 4:4)", "Rejoice in the Lord always; again I will say, rejoice. (Philippians 4:4)"),
-                        PrayerTimeInfo("Akşam Şükran Duası (Vespers)", "Evening Vespers", "18:30", "Rab çobanımdır, eksiğim olmaz. Beni yeşil çayırlarda dinlendirir. (Mezmur 23:1)", "The Lord is my shepherd; I shall not want. (Psalm 23:1)"),
-                        PrayerTimeInfo("Pazar Kutsal Ayin Hatırlatması", "Sunday Holy Mass Reminder", "Pazar 09:30", "Rabb'in evine gidelim dediklerinde sevindim. (Mezmur 122:1)", "I was glad when they said to me, 'Let us go to the house of the Lord!' (Psalm 122:1)")
+                        PrayerTimeInfo(
+                            "Sabah Duası & Matins", "Morning Prayer & Matins", "07:00",
+                            "Siz dünyanın ışığısınız. Dağ üzerine kurulan kent gizlenemez. (Matta 5:14)",
+                            "You are the light of the world. A city set on a hill cannot be hidden. (Matthew 5:14)",
+                            "Утренняя молитва и Утреня",
+                            "Вы — свет мира. Не может укрыться город, стоящий на верху горы. (От Матфея 5:14)"
+                        ),
+                        PrayerTimeInfo(
+                            "Öğle Melek Duası (Angelus)", "Angelus / Midday Prayer", "12:00",
+                            "Rab'de her zaman sevinin; yine diyorum, sevinin! (Filipililer 4:4)",
+                            "Rejoice in the Lord always; again I will say, rejoice. (Philippians 4:4)",
+                            "Полуденная молитва (Ангел Господень)",
+                            "Радуйтесь всегда в Господе; и еще говорю: радуйтесь. (Филиппийцам 4:4)"
+                        ),
+                        PrayerTimeInfo(
+                            "Akşam Şükran Duası (Vespers)", "Evening Vespers", "18:30",
+                            "Rab çobanımdır, eksiğim olmaz. Beni yeşil çayırlarda dinlendirir. (Mezmur 23:1)",
+                            "The Lord is my shepherd; I shall not want. (Psalm 23:1)",
+                            "Вечерня (Вечерняя молитва)",
+                            "Господь — Пастырь мой; я ни в чем не буду нуждаться. (Псалтирь 22:1)"
+                        ),
+                        PrayerTimeInfo(
+                            "Pazar Kutsal Ayin Hatırlatması", "Sunday Holy Mass Reminder", "Pazar 09:30",
+                            "Rabb'in evine gidelim dediklerinde sevindim. (Mezmur 122:1)",
+                            "I was glad when they said to me, 'Let us go to the house of the Lord!' (Psalm 122:1)",
+                            "Воскресная святая месса",
+                            "Возрадовался я, когда сказали мне: «Пойдем в дом Господень». (Псалтирь 121:1)"
+                        )
                     )
                     UserSect.ORTHODOX -> listOf(
-                        PrayerTimeInfo("Sabah Orthros & Tevhit", "Morning Orthros Prayer", "07:00", "Işık saçan doğuşunla dünyayı aydınlatan Mesih Tanrı'mız...", "O Christ our God, Who with Your radiant birth enlighten the world..."),
-                        PrayerTimeInfo("Öğle Tefekkürü & İsa Duası", "Midday Jesus Prayer", "12:00", "Rabbim İsa Mesih, Tanrı'nın Oğlu, günahkâr olan bana merhamet eyle.", "Lord Jesus Christ, Son of God, have mercy on me, a sinner."),
-                        PrayerTimeInfo("Akşam Hesperinos Duası", "Evening Hesperinos", "18:30", "Akşam duamız huzuruna tütsü gibi yükselsin. (Mezmur 141:2)", "Let my prayer be counted as incense before you. (Psalm 141:2)")
+                        PrayerTimeInfo(
+                            "Sabah Orthros & Tevhit", "Morning Orthros Prayer", "07:00",
+                            "Işık saçan doğuşunla dünyayı aydınlatan Mesih Tanrı'mız...",
+                            "O Christ our God, Who with Your radiant birth enlighten the world...",
+                            "Утреннее правило и Утреня",
+                            "Христе Боже наш, озаривший мир светом Своего пришествия..."
+                        ),
+                        PrayerTimeInfo(
+                            "Öğle Tefekkürü & İsa Duası", "Midday Jesus Prayer", "12:00",
+                            "Rabbim İsa Mesih, Tanrı'nın Oğlu, günahkâr olan bana merhamet eyle.",
+                            "Lord Jesus Christ, Son of God, have mercy on me, a sinner.",
+                            "Иисусова молитва в полдень",
+                            "Господи Иисусе Христе, Сыне Божий, помилуй мя грешного."
+                        ),
+                        PrayerTimeInfo(
+                            "Akşam Hesperinos Duası", "Evening Hesperinos", "18:30",
+                            "Akşam duamız huzuruna tütsü gibi yükselsin. (Mezmur 141:2)",
+                            "Let my prayer be counted as incense before you. (Psalm 141:2)",
+                            "Вечернее богослужение (Вечерня)",
+                            "Да направится молитва моя, как фимиам, пред лице Твое. (Псалтирь 140:2)"
+                        )
                     )
                     else -> listOf(
-                        PrayerTimeInfo("Sabah Adanış & Dua", "Morning Devotional", "07:30", "Her sabah yeni bir merhametle uyanırız; sadakatin büyüktür. (Ağıtlar 3:23)", "His mercies are new every morning; great is Your faithfulness. (Lamentations 3:23)"),
-                        PrayerTimeInfo("Öğle Sözü & Tefekkür", "Midday Scripture Reading", "12:30", "Senin sözün adımlarıma çıra, yoluma ışıktır. (Mezmur 119:105)", "Your word is a lamp to my feet and a light to my path. (Psalm 119:105)"),
-                        PrayerTimeInfo("Akşam Şükür Duası", "Evening Reflection", "20:00", "Huzur içinde yatar uyurum, çünkü yalnız sen beni güvende tutarsın. (Mezmur 4:8)", "In peace I will both lie down and sleep; for You alone make me dwell in safety. (Psalm 4:8)")
+                        PrayerTimeInfo(
+                            "Sabah Adanış & Dua", "Morning Devotional", "07:30",
+                            "Her sabah yeni bir merhametle uyanırız; sadakatin büyüktür. (Ağıtlar 3:23)",
+                            "His mercies are new every morning; great is Your faithfulness. (Lamentations 3:23)",
+                            "Утреннее молитвенное размышление",
+                            "Милосердие Его обновляется каждое утро; велика верность Твоя! (Плач 3:23)"
+                        ),
+                        PrayerTimeInfo(
+                            "Öğle Sözü & Tefekkür", "Midday Scripture Reading", "12:30",
+                            "Senin sözün adımlarıma çıra, yoluma ışıktır. (Mezmur 119:105)",
+                            "Your word is a lamp to my feet and a light to my path. (Psalm 119:105)",
+                            "Полуденное чтение Писания",
+                            "Слово Твое — светильник ноге моей и свет стезе моей. (Псалтирь 118:105)"
+                        ),
+                        PrayerTimeInfo(
+                            "Akşam Şükür Duası", "Evening Reflection", "20:00",
+                            "Huzur içinde yatar uyurum, çünkü yalnız sen beni güvende tutarsın. (Mezmur 4:8)",
+                            "In peace I will both lie down and sleep; for You alone make me dwell in safety. (Psalm 4:8)",
+                            "Вечерняя благодарственная молитва",
+                            "Спокойно ложусь я и сплю, ибо Ты, Господи, един даешь мне жить в безопасности. (Псалтирь 4:9)"
+                        )
                     )
                 }
             }
             UserReligion.JUDAISM -> listOf(
-                PrayerTimeInfo("Sabah Duası (Shacharit)", "Morning Shacharit", "07:00", "Dinle ey İsrail! Rab Tanrı'mızdır, Rab tektir. (Yasa'nın Tekrarı 6:4)", "Hear, O Israel: The Lord our God, the Lord is one. (Deuteronomy 6:4)"),
-                PrayerTimeInfo("Öğle / İkindi Duası (Mincha)", "Afternoon Mincha", "16:00", "Rab yakın olan herkese, içtenlikle çağırana yakındır. (Mezmur 145:18)", "The Lord is near to all who call on Him in truth. (Psalm 145:18)"),
-                PrayerTimeInfo("Akşam Duası (Maariv)", "Evening Maariv", "20:00", "Gece vakti de Tanrı'nın şefkatini ve adaletini hatırlarız.", "In the night we remember the lovingkindness and truth of the Almighty."),
-                PrayerTimeInfo("Şabbat Mum Yakma Hatırlatıcısı", "Shabbat Candle Lighting", "Cuma 17:30", "Şabbat gününü kutsal tutmak üzere hatırla. (Mısır'dan Çıkış 20:8)", "Remember the Sabbath day, to keep it holy. (Exodus 20:8)")
+                PrayerTimeInfo(
+                    "Sabah Duası (Shacharit)", "Morning Shacharit", "07:00",
+                    "Dinle ey İsrail! Rab Tanrı'mızdır, Rab tektir. (Yasa'nın Tekrarı 6:4)",
+                    "Hear, O Israel: The Lord our God, the Lord is one. (Deuteronomy 6:4)",
+                    "Утренняя молитва (Шахарит)",
+                    "Слушай, Израиль: Господь, Бог наш, Господь един есть. (Второзаконие 6:4)"
+                ),
+                PrayerTimeInfo(
+                    "Öğle / İkindi Duası (Mincha)", "Afternoon Mincha", "16:00",
+                    "Rab yakın olan herkese, içtenlikle çağırana yakındır. (Mezmur 145:18)",
+                    "The Lord is near to all who call on Him in truth. (Psalm 145:18)",
+                    "Дневная молитва (Минха)",
+                    "Близок Господь ко всем призывающим Его, ко всем призывающим Его в истине. (Псалтирь 144:18)"
+                ),
+                PrayerTimeInfo(
+                    "Akşam Duası (Maariv)", "Evening Maariv", "20:00",
+                    "Gece vakti de Tanrı'nın şefkatini ve adaletini hatırlarız.",
+                    "In the night we remember the lovingkindness and truth of the Almighty.",
+                    "Вечерняя молитва (Маарив)",
+                    "В ночные часы мы вспоминаем милость и истину Всевышнего."
+                ),
+                PrayerTimeInfo(
+                    "Şabbat Mum Yakma Hatırlatıcısı", "Shabbat Candle Lighting", "Cuma 17:30",
+                    "Şabbat gününü kutsal tutmak üzere hatırla. (Mısır'dan Çıkış 20:8)",
+                    "Remember the Sabbath day, to keep it holy. (Exodus 20:8)",
+                    "Зажигание субботних свечей (Шаббат)",
+                    "Помни день субботний, чтобы святить его. (Исход 20:8)"
+                )
             )
             UserReligion.HINDUISM -> listOf(
-                PrayerTimeInfo("Sabah Sandhya & Gayatri Mantra", "Morning Sandhya & Gayatri", "06:30", "Om Bhur Bhuva Swaha, Tat Savitur Varenyam - Zihnimizi ilahi ışıkla aydınlat.", "Om Bhur Bhuva Swaha, Tat Savitur Varenyam - May divine light illuminate our intellect."),
-                PrayerTimeInfo("Akşam Aarti & Bhagavad Gita", "Evening Aarti & Gita Study", "18:30", "Zihnini kararlı tutan, arzuların ötesindeki nihai huzura ulaşır. (Bhagavad Gita 2:71)", "One who has controlled the mind attains ultimate peace. (Bhagavad Gita 2:71)")
+                PrayerTimeInfo(
+                    "Sabah Sandhya & Gayatri Mantra", "Morning Sandhya & Gayatri", "06:30",
+                    "Om Bhur Bhuva Swaha, Tat Savitur Varenyam - Zihnimizi ilahi ışıkla aydınlat.",
+                    "Om Bhur Bhuva Swaha, Tat Savitur Varenyam - May divine light illuminate our intellect.",
+                    "Утренняя Сандхья и Гаятри мантра",
+                    "Ом Бхур Бхувах Сваха - Да озарит божественный свет наш разум."
+                ),
+                PrayerTimeInfo(
+                    "Akşam Aarti & Bhagavad Gita", "Evening Aarti & Gita Study", "18:30",
+                    "Zihnini kararlı tutan, arzuların ötesindeki nihai huzura ulaşır. (Bhagavad Gita 2:71)",
+                    "One who has controlled the mind attains ultimate peace. (Bhagavad Gita 2:71)",
+                    "Вечерняя Арати и чтение Гиты",
+                    "Тот, кто обуздал чувства, обретает истинное умиротворение. (Бхагавад-гита 2:71)"
+                )
             )
             UserReligion.BUDDHISM -> listOf(
-                PrayerTimeInfo("Sabah Meditasyonu & Oturuş", "Morning Sitting & Mindfulness", "07:00", "Niyet tüm eylemlerin öncüsüdür; temiz bir zihin huzur getirir. (Dhammapada 1)", "Mind precedes all mental states; with a pure mind happiness follows. (Dhammapada 1)"),
-                PrayerTimeInfo("Akşam Metta (Şefkat) Tefekkürü", "Evening Metta & Compassion", "20:00", "Öfke dünyada nefretle değil, yalnızca şefkatle yatışır.", "Hatred is never appeased by hatred; by love alone is it appeased.")
+                PrayerTimeInfo(
+                    "Sabah Meditasyonu & Oturuş", "Morning Sitting & Mindfulness", "07:00",
+                    "Niyet tüm eylemlerin öncüsüdür; temiz bir zihin huzur getirir. (Dhammapada 1)",
+                    "Mind precedes all mental states; with a pure mind happiness follows. (Dhammapada 1)",
+                    "Утренняя медитация и осознанность",
+                    "Разум предшествует всем вещам; чистый разум приносит счастье. (Дхаммапада 1)"
+                ),
+                PrayerTimeInfo(
+                    "Akşam Metta (Şefkat) Tefekkürü", "Evening Metta & Compassion", "20:00",
+                    "Öfke dünyada nefretle değil, yalnızca şefkatle yatışır.",
+                    "Hatred is never appeased by hatred; by love alone is it appeased.",
+                    "Вечерняя медитация Метта (Любящая доброта)",
+                    "Ненависть побеждается не ненавистью, а любовью и состраданием."
+                )
             )
             UserReligion.UNIVERSAL -> listOf(
-                PrayerTimeInfo("Sabah Hikmet & Tefekkür", "Morning Wisdom & Reflection", "08:00", "İçindeki sakinliği bul, evrenin hakikati orada fısıldar.", "Find tranquility within; the universe speaks in quiet moments."),
-                PrayerTimeInfo("Akşam Şükran & Farkındalık", "Evening Gratitude & Peace", "20:00", "Günü şükranla kapat; her nefes yeni bir farkındalık kapısıdır.", "End the day with gratitude; every breath is a doorway to awareness.")
+                PrayerTimeInfo(
+                    "Sabah Hikmet & Tefekkür", "Morning Wisdom & Reflection", "08:00",
+                    "İçindeki sakinliği bul, evrenin hakikati orada fısıldar.",
+                    "Find tranquility within; the universe speaks in quiet moments.",
+                    "Утреннее созерцание и мудрость",
+                    "Обрети внутренний покой; истина вселенной открывается в тишине."
+                ),
+                PrayerTimeInfo(
+                    "Akşam Şükran & Farkındalık", "Evening Gratitude & Peace", "20:00",
+                    "Günü şükranla kapat; her nefes yeni bir farkındalık kapısıdır.",
+                    "End the day with gratitude; every breath is a doorway to awareness.",
+                    "Вечерняя благодарность и покой",
+                    "Заверши день с благодарностью; каждое дыхание — врата к осознанности."
+                )
             )
             UserReligion.SECULAR -> listOf(
-                PrayerTimeInfo("Sabah Felsefi Tefekkür", "Morning Philosophical Reflection", "08:00", "Sorgulanmamış bir yaşam yaşanmaya değmez. (Sokrates)", "An unexamined life is not worth living. (Socrates)"),
-                PrayerTimeInfo("Öğle Hümanist Düşünce", "Midday Humanist Reflection", "13:00", "Evrende aradığımız anlamı ve sevgiyi yine insan üretir.", "The purpose and compassion we seek in the universe is created by humanity."),
-                PrayerTimeInfo("Akşam Zihinsel Dinlenme & Gün Sonu", "Evening Mindful Wind-Down", "20:00", "Bildiğim tek şey, hiçbir şey bilmediğimdir. Eleştirel düşünce zihni özgürleştirir.", "All I know is that I know nothing. Critical thinking frees the mind.")
+                PrayerTimeInfo(
+                    "Sabah Felsefi Tefekkür", "Morning Philosophical Reflection", "08:00",
+                    "Sorgulanmamış bir yaşam yaşanmaya değmez. (Sokrates)",
+                    "An unexamined life is not worth living. (Socrates)",
+                    "Утреннее философское размышление",
+                    "Неосмысленная жизнь не стоит того, чтобы жить. (Сократ)"
+                ),
+                PrayerTimeInfo(
+                    "Öğle Hümanist Düşünce", "Midday Humanist Reflection", "13:00",
+                    "Evrende aradığımız anlamı ve sevgiyi yine insan üretir.",
+                    "The purpose and compassion we seek in the universe is created by humanity.",
+                    "Дневная гуманистическая мысль",
+                    "Смысл и любовь, которые мы ищем во вселенной, создает сам человек."
+                ),
+                PrayerTimeInfo(
+                    "Akşam Zihinsel Dinlenme & Gün Sonu", "Evening Mindful Wind-Down", "20:00",
+                    "Bildiğim tek şey, hiçbir şey bilmediğimdir. Eleştirel düşünce zihni özgürleştirir.",
+                    "All I know is that I know nothing. Critical thinking frees the mind.",
+                    "Вечерний отдых и завершение дня",
+                    "Я знаю только то, что ничего не знаю. Критическое мышление освобождает разум."
+                )
             )
         }
     }

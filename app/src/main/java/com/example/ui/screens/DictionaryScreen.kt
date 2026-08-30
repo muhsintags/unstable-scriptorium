@@ -50,8 +50,26 @@ data class DictionaryTerm(
     val exampleTr: String = "",          // Example context / verse in Turkish
     val exampleEn: String = ""           // Example context / verse in English
 ) {
-    fun term(lang: AppLanguage): String = if (lang == AppLanguage.EN) termEn else termTr
-    fun origin(lang: AppLanguage): String = if (lang == AppLanguage.EN) originEn else originTr
+    fun term(lang: AppLanguage): String = when (lang) {
+        AppLanguage.RU -> termEn
+        AppLanguage.EN -> termEn
+        AppLanguage.TR -> termTr
+    }
+    fun origin(lang: AppLanguage): String = when (lang) {
+        AppLanguage.RU -> originEn
+        AppLanguage.EN -> originEn
+        AppLanguage.TR -> originTr
+    }
+    fun meaning(lang: AppLanguage): String = when (lang) {
+        AppLanguage.RU -> meaningEn
+        AppLanguage.EN -> meaningEn
+        AppLanguage.TR -> meaningTr
+    }
+    fun example(lang: AppLanguage): String = when (lang) {
+        AppLanguage.RU -> exampleEn
+        AppLanguage.EN -> exampleEn
+        AppLanguage.TR -> exampleTr
+    }
 }
 
 enum class TermCategory {
@@ -322,7 +340,11 @@ fun DictionaryScreen(
                             tint = SacredGold
                         )
                         Text(
-                            text = if (lang == AppLanguage.EN) "Scriptorium Dictionary" else "Kavramlar Sözlüğü",
+                            text = when (lang) {
+                                AppLanguage.RU -> "Словарь понятий"
+                                AppLanguage.EN -> "Scriptorium Dictionary"
+                                AppLanguage.TR -> "Kavramlar Sözlüğü"
+                            },
                             fontFamily = FontFamily.Serif,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary,
@@ -359,7 +381,11 @@ fun DictionaryScreen(
                 onValueChange = { searchQuery = it },
                 placeholder = {
                     Text(
-                        text = if (lang == AppLanguage.EN) "Search theology, terms or wisdom..." else "Kavram, terim veya bilgelik ara...",
+                        text = when (lang) {
+                            AppLanguage.RU -> "Поиск понятий, терминов..."
+                            AppLanguage.EN -> "Search theology, terms or wisdom..."
+                            AppLanguage.TR -> "Kavram, terim veya bilgelik ara..."
+                        },
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                     )
@@ -408,10 +434,10 @@ fun DictionaryScreen(
                     .padding(vertical = 10.dp)
             ) {
                 val categories = listOf(
-                    Triple(TermCategory.ALL, if (lang == AppLanguage.EN) "All" else "Hepsi", Icons.Filled.AllInclusive),
-                    Triple(TermCategory.ISLAMIC, if (lang == AppLanguage.EN) "Quranic" else "Kur'anî", Icons.Filled.Star),
-                    Triple(TermCategory.BIBLICAL, if (lang == AppLanguage.EN) "Biblical" else "Kitab-ı Mukaddes", Icons.AutoMirrored.Filled.MenuBook),
-                    Triple(TermCategory.GENERAL, if (lang == AppLanguage.EN) "Theology" else "Genel Teoloji", Icons.Filled.SelfImprovement)
+                    Triple(TermCategory.ALL, when (lang) { AppLanguage.RU -> "Все"; AppLanguage.EN -> "All"; AppLanguage.TR -> "Hepsi" }, Icons.Filled.AllInclusive),
+                    Triple(TermCategory.ISLAMIC, when (lang) { AppLanguage.RU -> "Коран"; AppLanguage.EN -> "Quranic"; AppLanguage.TR -> "Kur'anî" }, Icons.Filled.Star),
+                    Triple(TermCategory.BIBLICAL, when (lang) { AppLanguage.RU -> "Библия"; AppLanguage.EN -> "Biblical"; AppLanguage.TR -> "Kitab-ı Mukaddes" }, Icons.AutoMirrored.Filled.MenuBook),
+                    Triple(TermCategory.GENERAL, when (lang) { AppLanguage.RU -> "Теология"; AppLanguage.EN -> "Theology"; AppLanguage.TR -> "Genel Teoloji" }, Icons.Filled.SelfImprovement)
                 )
 
                 items(categories) { (cat, label, icon) ->
@@ -475,7 +501,11 @@ fun DictionaryScreen(
                             modifier = Modifier.size(64.dp)
                         )
                         Text(
-                            text = if (lang == AppLanguage.EN) "No matching concepts found." else "Aradığınız kriterde kavram bulunamadı.",
+                            text = when (lang) {
+                                AppLanguage.RU -> "По вашему запросу ничего не найдено."
+                                AppLanguage.EN -> "No matching concepts found."
+                                AppLanguage.TR -> "Aradığınız kriterde kavram bulunamadı."
+                            },
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center
@@ -484,7 +514,14 @@ fun DictionaryScreen(
                             onClick = { searchQuery = ""; selectedCategory = TermCategory.ALL },
                             colors = ButtonDefaults.buttonColors(containerColor = SacredGold)
                         ) {
-                            Text(if (lang == AppLanguage.EN) "Reset Filters" else "Aramayı Temizle", color = Color.White)
+                            Text(
+                                text = when (lang) {
+                                    AppLanguage.RU -> "Сбросить фильтры"
+                                    AppLanguage.EN -> "Reset Filters"
+                                    AppLanguage.TR -> "Aramayı Temizle"
+                                },
+                                color = Color.White
+                            )
                         }
                     }
                 }
@@ -562,9 +599,9 @@ fun DictionaryScreen(
                                     ) {
                                         Text(
                                             text = when (item.category) {
-                                                TermCategory.ISLAMIC -> if (lang == AppLanguage.EN) "Quran" else "Kur'an"
-                                                TermCategory.BIBLICAL -> if (lang == AppLanguage.EN) "Bible" else "Kitab-ı Mukaddes"
-                                                TermCategory.GENERAL -> if (lang == AppLanguage.EN) "Theology" else "Genel"
+                                                TermCategory.ISLAMIC -> when (lang) { AppLanguage.RU -> "Коран"; AppLanguage.EN -> "Quran"; AppLanguage.TR -> "Kur'an" }
+                                                TermCategory.BIBLICAL -> when (lang) { AppLanguage.RU -> "Библия"; AppLanguage.EN -> "Bible"; AppLanguage.TR -> "Kitab-ı Mukaddes" }
+                                                TermCategory.GENERAL -> when (lang) { AppLanguage.RU -> "Теология"; AppLanguage.EN -> "Theology"; AppLanguage.TR -> "Genel" }
                                                 else -> ""
                                             },
                                             style = MaterialTheme.typography.labelSmall,
@@ -583,7 +620,7 @@ fun DictionaryScreen(
 
                                 // Meaning preview or full text
                                 Text(
-                                    text = if (lang == AppLanguage.EN) item.meaningEn else item.meaningTr,
+                                    text = item.meaning(lang),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurface,
                                     fontFamily = displayFont,
@@ -594,7 +631,7 @@ fun DictionaryScreen(
 
                                 // Expandable Extra Info (Examples)
                                 if (isExpanded) {
-                                    val exampleText = if (lang == AppLanguage.EN) item.exampleEn else item.exampleTr
+                                    val exampleText = item.example(lang)
                                     if (exampleText.isNotEmpty()) {
                                         Spacer(modifier = Modifier.height(14.dp))
                                         HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f))
@@ -658,7 +695,11 @@ fun DictionaryScreen(
             onDismissRequest = { showAddDialog = false },
             title = {
                 Text(
-                    text = if (lang == AppLanguage.EN) "Add Custom Concept" else "Yeni Kavram Ekle",
+                    text = when (lang) {
+                        AppLanguage.RU -> "Добавить новое понятие"
+                        AppLanguage.EN -> "Add Custom Concept"
+                        AppLanguage.TR -> "Yeni Kavram Ekle"
+                    },
                     fontFamily = FontFamily.Serif,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
@@ -674,7 +715,7 @@ fun DictionaryScreen(
                     OutlinedTextField(
                         value = newTermName,
                         onValueChange = { newTermName = it },
-                        label = { Text(if (lang == AppLanguage.EN) "Concept Name" else "Kavram Adı") },
+                        label = { Text(when (lang) { AppLanguage.RU -> "Название понятия"; AppLanguage.EN -> "Concept Name"; AppLanguage.TR -> "Kavram Adı" }) },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = SacredGold)
@@ -683,7 +724,7 @@ fun DictionaryScreen(
                     OutlinedTextField(
                         value = newTermOrigin,
                         onValueChange = { newTermOrigin = it },
-                        label = { Text(if (lang == AppLanguage.EN) "Origin (e.g., Hebrew, Arabic)" else "Köken (Örn: Arapça, İbranice)") },
+                        label = { Text(when (lang) { AppLanguage.RU -> "Происхождение (напр. Арабский, Иврит)"; AppLanguage.EN -> "Origin (e.g., Hebrew, Arabic)"; AppLanguage.TR -> "Köken (Örn: Arapça, İbranice)" }) },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = SacredGold)
@@ -691,7 +732,7 @@ fun DictionaryScreen(
 
                     // Category Selection Row
                     Text(
-                        text = if (lang == AppLanguage.EN) "Category" else "Kategori",
+                        text = when (lang) { AppLanguage.RU -> "Категория"; AppLanguage.EN -> "Category"; AppLanguage.TR -> "Kategori" },
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -701,9 +742,9 @@ fun DictionaryScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         val cats = listOf(
-                            TermCategory.ISLAMIC to (if (lang == AppLanguage.EN) "Quran" else "Kur'an"),
-                            TermCategory.BIBLICAL to (if (lang == AppLanguage.EN) "Bible" else "Kitap"),
-                            TermCategory.GENERAL to (if (lang == AppLanguage.EN) "General" else "Genel")
+                            TermCategory.ISLAMIC to when (lang) { AppLanguage.RU -> "Коран"; AppLanguage.EN -> "Quran"; AppLanguage.TR -> "Kur'an" },
+                            TermCategory.BIBLICAL to when (lang) { AppLanguage.RU -> "Библия"; AppLanguage.EN -> "Bible"; AppLanguage.TR -> "Kitap" },
+                            TermCategory.GENERAL to when (lang) { AppLanguage.RU -> "Общее"; AppLanguage.EN -> "General"; AppLanguage.TR -> "Genel" }
                         )
                         cats.forEach { (cat, label) ->
                             val active = newTermCategory == cat
@@ -801,7 +842,14 @@ fun DictionaryScreen(
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = SacredGold)
                 ) {
-                    Text(if (lang == AppLanguage.EN) "Save" else "Ekle", color = Color.White)
+                    Text(
+                        text = when (lang) {
+                            AppLanguage.RU -> "Сохранить"
+                            AppLanguage.EN -> "Save"
+                            AppLanguage.TR -> "Ekle"
+                        },
+                        color = Color.White
+                    )
                 }
             },
             dismissButton = {
@@ -809,7 +857,13 @@ fun DictionaryScreen(
                     onClick = { showAddDialog = false },
                     colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant)
                 ) {
-                    Text(if (lang == AppLanguage.EN) "Cancel" else "İptal")
+                    Text(
+                        text = when (lang) {
+                            AppLanguage.RU -> "Отмена"
+                            AppLanguage.EN -> "Cancel"
+                            AppLanguage.TR -> "İptal"
+                        }
+                    )
                 }
             }
         )

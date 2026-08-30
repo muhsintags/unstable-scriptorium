@@ -74,13 +74,21 @@ fun BackendSetupGuideDialog(
                             )
                             Column {
                                 Text(
-                                    text = if (lang == AppLanguage.EN) "Backend & Database Architecture" else "Sunucu & Veritabanı Mimarisi",
+                                    text = when (lang) {
+                                        AppLanguage.RU -> "Архитектура сервера и БД"
+                                        AppLanguage.EN -> "Backend & Database Architecture"
+                                        AppLanguage.TR -> "Sunucu & Veritabanı Mimarisi"
+                                    },
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
-                                    text = if (lang == AppLanguage.EN) "example.com API Setup & Integration Guide" else "example.com API Yapılandırma ve Entegrasyon Rehberi",
+                                    text = when (lang) {
+                                        AppLanguage.RU -> "Руководство по настройке и интеграции API example.com"
+                                        AppLanguage.EN -> "example.com API Setup & Integration Guide"
+                                        AppLanguage.TR -> "example.com API Yapılandırma ve Entegrasyon Rehberi"
+                                    },
                                     style = MaterialTheme.typography.labelMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -88,7 +96,7 @@ fun BackendSetupGuideDialog(
                         }
 
                         IconButton(onClick = onDismiss) {
-                            Icon(Icons.Default.Close, contentDescription = "Kapat")
+                            Icon(Icons.Default.Close, contentDescription = when (lang) { AppLanguage.RU -> "Закрыть"; AppLanguage.EN -> "Close"; AppLanguage.TR -> "Kapat" })
                         }
                     }
                 }
@@ -108,7 +116,11 @@ fun BackendSetupGuideDialog(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Text(
-                            text = if (lang == AppLanguage.EN) "API Base Endpoint URL" else "Aktif API Sunucu Adresi (Base URL):",
+                            text = when (lang) {
+                                AppLanguage.RU -> "Активный адрес API сервера (Base URL):"
+                                AppLanguage.EN -> "API Base Endpoint URL:"
+                                AppLanguage.TR -> "Aktif API Sunucu Adresi (Base URL):"
+                            },
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary
@@ -130,7 +142,7 @@ fun BackendSetupGuideDialog(
                                 colors = ButtonDefaults.buttonColors(containerColor = SacredGold),
                                 shape = RoundedCornerShape(8.dp)
                             ) {
-                                Text(if (lang == AppLanguage.EN) "Apply" else "Güncelle", color = Color.White)
+                                Text(when (lang) { AppLanguage.RU -> "Обновить"; AppLanguage.EN -> "Apply"; AppLanguage.TR -> "Güncelle" }, color = Color.White)
                             }
                         }
                     }
@@ -144,17 +156,17 @@ fun BackendSetupGuideDialog(
                     Tab(
                         selected = selectedTab == 0,
                         onClick = { selectedTab = 0 },
-                        text = { Text(if (lang == AppLanguage.EN) "1. Node.js Express" else "1. Node.js Sunucu") }
+                        text = { Text(when (lang) { AppLanguage.RU -> "1. Node.js Сервер"; AppLanguage.EN -> "1. Node.js Express"; AppLanguage.TR -> "1. Node.js Sunucu" }) }
                     )
                     Tab(
                         selected = selectedTab == 1,
                         onClick = { selectedTab = 1 },
-                        text = { Text(if (lang == AppLanguage.EN) "2. PostgreSQL DB" else "2. Veritabanı") }
+                        text = { Text(when (lang) { AppLanguage.RU -> "2. База данных"; AppLanguage.EN -> "2. PostgreSQL DB"; AppLanguage.TR -> "2. Veritabanı" }) }
                     )
                     Tab(
                         selected = selectedTab == 2,
                         onClick = { selectedTab = 2 },
-                        text = { Text(if (lang == AppLanguage.EN) "3. New Content API" else "3. İçerik Ekleme") }
+                        text = { Text(when (lang) { AppLanguage.RU -> "3. Добавление контента"; AppLanguage.EN -> "3. New Content API"; AppLanguage.TR -> "3. İçerik Ekleme" }) }
                     )
                 }
 
@@ -187,7 +199,7 @@ fun BackendSetupGuideDialog(
                         onClick = onDismiss,
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                     ) {
-                        Text(if (lang == AppLanguage.EN) "Close Guide" else "Rehberi Kapat")
+                        Text(when (lang) { AppLanguage.RU -> "Закрыть руководство"; AppLanguage.EN -> "Close Guide"; AppLanguage.TR -> "Rehberi Kapat" })
                     }
                 }
             }

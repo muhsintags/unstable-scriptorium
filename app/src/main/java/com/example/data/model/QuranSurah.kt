@@ -1,5 +1,7 @@
 package com.example.data.model
 
+import com.example.ui.util.AppLanguage
+
 data class QuranSurah(
     val number: Int,
     val nameArabic: String,
@@ -7,7 +9,15 @@ data class QuranSurah(
     val nameTurkish: String,
     val ayahCount: Int,
     val revelationType: String
-)
+) {
+    fun getName(lang: AppLanguage): String {
+        return when (lang) {
+            AppLanguage.RU -> nameEnglish
+            AppLanguage.EN -> nameEnglish
+            AppLanguage.TR -> nameTurkish
+        }
+    }
+}
 
 data class QuranVerse(
     val number: Int,
