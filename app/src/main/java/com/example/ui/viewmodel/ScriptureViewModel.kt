@@ -2902,28 +2902,42 @@ class ScriptureViewModel(application: Application) : AndroidViewModel(applicatio
         val paragraphs = book.paragraphs
         if (paragraphs.isEmpty()) {
             return Pair(
-                if (lang == AppLanguage.EN) "HOLY SCRIPTURES" else "KUTSAL KİTAP",
-                if (lang == AppLanguage.EN) "Verse content not found." else "Ayet içeriği bulunamadı."
+                when (lang) {
+                    AppLanguage.RU -> "СВЯЩЕННОЕ ПИСАНИЕ"
+                    AppLanguage.EN -> "HOLY SCRIPTURES"
+                    AppLanguage.TR -> "KUTSAL KİTAP"
+                },
+                when (lang) {
+                    AppLanguage.RU -> "Текст не найден."
+                    AppLanguage.EN -> "Verse content not found."
+                    AppLanguage.TR -> "Ayet içeriği bulunamadı."
+                }
             )
         }
         val randomIndex = (paragraphs.indices).random()
         val textTr = paragraphs[randomIndex]
-        val text = if (lang == AppLanguage.EN) {
-            translateTextGtx(textTr, targetLang = "en", sourceLang = "tr")
-        } else {
-            textTr
+        val text = when (lang) {
+            AppLanguage.RU -> translateTextGtx(textTr, targetLang = "ru", sourceLang = "tr")
+            AppLanguage.EN -> translateTextGtx(textTr, targetLang = "en", sourceLang = "tr")
+            AppLanguage.TR -> textTr
         }
         val bookTitle = Loc.get(book.id, lang)
-        val ref = if (lang == AppLanguage.EN) {
-            when (book.id) {
+        val ref = when (lang) {
+            AppLanguage.RU -> when (book.id) {
+                "quran" -> "Сура Аль-Фатх, Аят ${randomIndex + 1}"
+                "torah" -> "Бытие, Глава 1:${randomIndex + 1}"
+                "sermon" -> "Евангелие от Матфея 5:${randomIndex + 1}"
+                "gita" -> "Бхагавад-гита, Глава 2:${randomIndex + 1}"
+                else -> "$bookTitle, ${randomIndex + 1}"
+            }
+            AppLanguage.EN -> when (book.id) {
                 "quran" -> "Surah Al-Fath, Verse ${randomIndex + 1}"
                 "torah" -> "Genesis, Chapter 1:${randomIndex + 1}"
                 "sermon" -> "The Gospel, Matthew 5:${randomIndex + 1}"
                 "gita" -> "Bhagavad Gita, Chapter 2:${randomIndex + 1}"
                 else -> "$bookTitle, ${randomIndex + 1}"
             }
-        } else {
-            when (book.id) {
+            AppLanguage.TR -> when (book.id) {
                 "quran" -> "Fetih Suresi, Ayet ${randomIndex + 1}"
                 "torah" -> "Yaratılış, Bölüm 1:${randomIndex + 1}"
                 "sermon" -> "İncil, Matta 5:${randomIndex + 1}"
@@ -3194,9 +3208,17 @@ class ScriptureViewModel(application: Application) : AndroidViewModel(applicatio
         Toast.makeText(
             context,
             if (newValue) {
-                if (lang == AppLanguage.EN) "Notifications activated! You will receive random verses." else "Bildirimler aktif edildi! Belirlediğiniz aralıklarla ayetler gönderilecektir."
+                when (lang) {
+                    AppLanguage.RU -> "Уведомления включены! Вы будете получать аяты с выбранным интервалом."
+                    AppLanguage.EN -> "Notifications activated! You will receive random verses."
+                    AppLanguage.TR -> "Bildirimler aktif edildi! Belirlediğiniz aralıklarla ayetler gönderilecektir."
+                }
             } else {
-                if (lang == AppLanguage.EN) "Notifications deactivated." else "Bildirimler kapatıldı."
+                when (lang) {
+                    AppLanguage.RU -> "Уведомления отключены."
+                    AppLanguage.EN -> "Notifications deactivated."
+                    AppLanguage.TR -> "Bildirimler kapatıldı."
+                }
             },
             Toast.LENGTH_SHORT
         ).show()
@@ -3214,9 +3236,14 @@ class ScriptureViewModel(application: Application) : AndroidViewModel(applicatio
         val lang = _readerSettings.value.language
         val textTr = if (cappedMinutes >= 60) "${cappedMinutes / 60} saat" else "$cappedMinutes dakika"
         val textEn = if (cappedMinutes >= 60) "${cappedMinutes / 60} hours" else "$cappedMinutes minutes"
+        val textRu = if (cappedMinutes >= 60) "${cappedMinutes / 60} ч." else "$cappedMinutes мин."
         Toast.makeText(
             context,
-            if (lang == AppLanguage.EN) "Notification interval updated to $textEn!" else "Bildirim sıklığı $textTr olarak güncellendi!",
+            when (lang) {
+                AppLanguage.RU -> "Интервал уведомлений обновлен: $textRu!"
+                AppLanguage.EN -> "Notification interval updated to $textEn!"
+                AppLanguage.TR -> "Bildirim sıklığı $textTr olarak güncellendi!"
+            },
             Toast.LENGTH_SHORT
         ).show()
         
@@ -3261,7 +3288,11 @@ class ScriptureViewModel(application: Application) : AndroidViewModel(applicatio
         val lang = _readerSettings.value.language
         Toast.makeText(
             context,
-            if (lang == AppLanguage.EN) "Religion set to ${religion.titleEn}" else "Dini tercih ${religion.titleTr} olarak güncellendi",
+            when (lang) {
+                AppLanguage.RU -> "Религиозная традиция: ${religion.getTitle(lang)}"
+                AppLanguage.EN -> "Religion set to ${religion.getTitle(lang)}"
+                AppLanguage.TR -> "Dini tercih ${religion.getTitle(lang)} olarak güncellendi"
+            },
             Toast.LENGTH_SHORT
         ).show()
 
@@ -3278,7 +3309,11 @@ class ScriptureViewModel(application: Application) : AndroidViewModel(applicatio
         val lang = _readerSettings.value.language
         Toast.makeText(
             context,
-            if (lang == AppLanguage.EN) "Sect set to ${sect.titleEn}" else "Mezhep/Görüş tercihi ${sect.titleTr} olarak güncellendi",
+            when (lang) {
+                AppLanguage.RU -> "Направление: ${sect.getTitle(lang)}"
+                AppLanguage.EN -> "Sect set to ${sect.getTitle(lang)}"
+                AppLanguage.TR -> "Mezhep/Görüş tercihi ${sect.getTitle(lang)} olarak güncellendi"
+            },
             Toast.LENGTH_SHORT
         ).show()
 
@@ -3295,7 +3330,11 @@ class ScriptureViewModel(application: Application) : AndroidViewModel(applicatio
             withContext(Dispatchers.Main) {
                 Toast.makeText(
                     context,
-                    if (lang == AppLanguage.EN) "Sending test notification..." else "Test bildirimi gönderiliyor...",
+                    when (lang) {
+                        AppLanguage.RU -> "Отправка тестового уведомления..."
+                        AppLanguage.EN -> "Sending test notification..."
+                        AppLanguage.TR -> "Test bildirimi gönderiliyor..."
+                    },
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -3332,10 +3371,18 @@ class ScriptureViewModel(application: Application) : AndroidViewModel(applicatio
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val channel = android.app.NotificationChannel(
                     channelId,
-                    "Günün Ayetleri ve İbadet Vakitleri",
+                    when (lang) {
+                        AppLanguage.RU -> "Аяты дня и времена молитв"
+                        AppLanguage.EN -> "Daily Verses & Prayer Times"
+                        AppLanguage.TR -> "Günün Ayetleri ve İbadet Vakitleri"
+                    },
                     android.app.NotificationManager.IMPORTANCE_HIGH
                 ).apply {
-                    description = "Seçilen din, mezhep ve kutsal kitaplardan ibadet/namaz vakitleri ve ayet bildirimleri."
+                    description = when (lang) {
+                        AppLanguage.RU -> "Времена молитв и аяты из священных писаний в соответствии с выбранной традицией."
+                        AppLanguage.EN -> "Prayer times and scriptures according to selected faith and sect."
+                        AppLanguage.TR -> "Seçilen din, mezhep ve kutsal kitaplardan ibadet/namaz vakitleri ve ayet bildirimleri."
+                    }
                     enableVibration(true)
                     enableLights(true)
                     setShowBadge(true)
@@ -3370,7 +3417,11 @@ class ScriptureViewModel(application: Application) : AndroidViewModel(applicatio
             withContext(Dispatchers.Main) {
                 Toast.makeText(
                     context,
-                    if (lang == AppLanguage.EN) "Test notification sent successfully!" else "Test bildirimi başarıyla gönderildi!",
+                    when (lang) {
+                        AppLanguage.RU -> "Тестовое уведомление успешно отправлено!"
+                        AppLanguage.EN -> "Test notification sent successfully!"
+                        AppLanguage.TR -> "Test bildirimi başarıyla gönderildi!"
+                    },
                     Toast.LENGTH_SHORT
                 ).show()
             }

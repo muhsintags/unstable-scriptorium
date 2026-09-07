@@ -820,8 +820,8 @@ fun DictionaryScreen(
                                 DictionaryTerm(
                                     termTr = newTermName.trim(),
                                     termEn = newTermName.trim(),
-                                    originTr = newTermOrigin.ifBlank { if (lang == AppLanguage.EN) "Unknown" else "Bilinmiyor" }.trim(),
-                                    originEn = newTermOrigin.ifBlank { if (lang == AppLanguage.EN) "Unknown" else "Bilinmiyor" }.trim(),
+                                    originTr = newTermOrigin.ifBlank { when (lang) { AppLanguage.RU -> "Неизвестно"; AppLanguage.EN -> "Unknown"; AppLanguage.TR -> "Bilinmiyor" } }.trim(),
+                                    originEn = newTermOrigin.ifBlank { when (lang) { AppLanguage.RU -> "Неизвестно"; AppLanguage.EN -> "Unknown"; AppLanguage.TR -> "Bilinmiyor" } }.trim(),
                                     category = newTermCategory,
                                     meaningTr = newTermMeaningTr.ifBlank { newTermMeaningEn }.trim(),
                                     meaningEn = newTermMeaningEn.ifBlank { newTermMeaningTr }.trim(),

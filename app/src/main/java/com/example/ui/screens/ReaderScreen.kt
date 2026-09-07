@@ -98,7 +98,11 @@ fun ReaderScreen(
             onDismissRequest = { showAddNoteDialog = false },
             title = {
                 Text(
-                    text = if (lang == AppLanguage.EN) "Add Note or Highlight" else "Not veya İşaretleme Ekle",
+                    text = when (lang) {
+                        AppLanguage.RU -> "Добавить заметку или выделение"
+                        AppLanguage.EN -> "Add Note or Highlight"
+                        AppLanguage.TR -> "Not veya İşaretleme Ekle"
+                    },
                     fontFamily = FontFamily.Serif,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
@@ -107,7 +111,11 @@ fun ReaderScreen(
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     Text(
-                        text = if (lang == AppLanguage.EN) "Selected Verse/Passage:" else "Seçilen Ayet/Pasaj:",
+                        text = when (lang) {
+                            AppLanguage.RU -> "Выбранный стих / отрывок:"
+                            AppLanguage.EN -> "Selected Verse/Passage:"
+                            AppLanguage.TR -> "Seçilen Ayet/Pasaj:"
+                        },
                         style = MaterialTheme.typography.labelLarge,
                         color = SacredGold
                     )
@@ -129,8 +137,24 @@ fun ReaderScreen(
                     OutlinedTextField(
                         value = noteTextQuery,
                         onValueChange = { noteTextQuery = it },
-                        label = { Text(if (lang == AppLanguage.EN) "Your Reflection Note (Optional)" else "Tefekkür Notunuz (İsteğe Bağlı)") },
-                        placeholder = { Text(if (lang == AppLanguage.EN) "Write your thoughts about this passage..." else "Bu pasaj hakkındaki düşüncelerinizi yazın...") },
+                        label = {
+                            Text(
+                                when (lang) {
+                                    AppLanguage.RU -> "Ваша заметка (необязательно)"
+                                    AppLanguage.EN -> "Your Reflection Note (Optional)"
+                                    AppLanguage.TR -> "Tefekkür Notunuz (İsteğe Bağlı)"
+                                }
+                            )
+                        },
+                        placeholder = {
+                            Text(
+                                when (lang) {
+                                    AppLanguage.RU -> "Напишите ваши мысли об этом отрывке..."
+                                    AppLanguage.EN -> "Write your thoughts about this passage..."
+                                    AppLanguage.TR -> "Bu pasaj hakkındaki düşüncelerinizi yazın..."
+                                }
+                            )
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(100.dp)
@@ -156,7 +180,14 @@ fun ReaderScreen(
                             noteTextQuery = ""
                         }
                     ) {
-                        Text(if (lang == AppLanguage.EN) "Highlight Only" else "Yalnızca İşaretle", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(
+                            when (lang) {
+                                AppLanguage.RU -> "Только выделить"
+                                AppLanguage.EN -> "Highlight Only"
+                                AppLanguage.TR -> "Yalnızca İşaretle"
+                            },
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
 
                     Button(
@@ -174,13 +205,25 @@ fun ReaderScreen(
                             containerColor = MaterialTheme.colorScheme.primary
                         )
                     ) {
-                        Text(if (lang == AppLanguage.EN) "Save Note" else "Notu Kaydet")
+                        Text(
+                            when (lang) {
+                                AppLanguage.RU -> "Сохранить заметку"
+                                AppLanguage.EN -> "Save Note"
+                                AppLanguage.TR -> "Notu Kaydet"
+                            }
+                        )
                     }
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showAddNoteDialog = false }) {
-                    Text(if (lang == AppLanguage.EN) "Cancel" else "İptal")
+                    Text(
+                        when (lang) {
+                            AppLanguage.RU -> "Отмена"
+                            AppLanguage.EN -> "Cancel"
+                            AppLanguage.TR -> "İptal"
+                        }
+                    )
                 }
             },
             shape = RoundedCornerShape(12.dp),
@@ -209,7 +252,7 @@ fun ReaderScreen(
                         IconButton(onClick = onNavigateBack) {
                             Icon(
                                 imageVector = Icons.Filled.ChevronLeft,
-                                contentDescription = if (lang == AppLanguage.EN) "Back" else "Geri",
+                                contentDescription = Loc.get("back", lang),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -218,7 +261,11 @@ fun ReaderScreen(
                         IconButton(onClick = { isBookmarked = !isBookmarked }) {
                             Icon(
                                 imageVector = if (isBookmarked) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
-                                contentDescription = if (lang == AppLanguage.EN) "Bookmark" else "Yer İmi",
+                                contentDescription = when (lang) {
+                                    AppLanguage.RU -> "Закладка"
+                                    AppLanguage.EN -> "Bookmark"
+                                    AppLanguage.TR -> "Yer İmi"
+                                },
                                 tint = if (isBookmarked) SacredGold else MaterialTheme.colorScheme.primary
                             )
                         }
@@ -251,8 +298,25 @@ fun ReaderScreen(
                     noteQuoteText = book.paragraphs.firstOrNull() ?: ""
                     showAddNoteDialog = true
                 },
-                icon = { Icon(Icons.Filled.EditNote, if (lang == AppLanguage.EN) "Add Note" else "Not Ekle") },
-                text = { Text(if (lang == AppLanguage.EN) "Quick Note" else "Hızlı Not Al") },
+                icon = {
+                    Icon(
+                        Icons.Filled.EditNote,
+                        when (lang) {
+                            AppLanguage.RU -> "Добавить заметку"
+                            AppLanguage.EN -> "Add Note"
+                            AppLanguage.TR -> "Not Ekle"
+                        }
+                    )
+                },
+                text = {
+                    Text(
+                        when (lang) {
+                            AppLanguage.RU -> "Быстрая заметка"
+                            AppLanguage.EN -> "Quick Note"
+                            AppLanguage.TR -> "Hızlı Not Al"
+                        }
+                    )
+                },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
                 shape = RoundedCornerShape(12.dp),
@@ -359,7 +423,11 @@ fun ReaderScreen(
                                         modifier = Modifier.size(18.dp)
                                     )
                                     Text(
-                                        text = if (lang == AppLanguage.EN) "READING LANGUAGE & OPTIONS" else "OKUMA DİLİ VE SEÇENEKLER",
+                                        text = when (lang) {
+                                            AppLanguage.RU -> "ЯЗЫК И ПАРАМЕТРЫ ЧТЕНИЯ"
+                                            AppLanguage.EN -> "READING LANGUAGE & OPTIONS"
+                                            AppLanguage.TR -> "OKUMA DİLİ VE SEÇENEKLER"
+                                        },
                                         style = MaterialTheme.typography.labelMedium,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         fontWeight = FontWeight.Bold
@@ -387,10 +455,20 @@ fun ReaderScreen(
                                             modifier = Modifier.fillMaxWidth(),
                                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                                         ) {
+                                            val primaryLangLabel = when (lang) {
+                                                AppLanguage.RU -> "Русский"
+                                                AppLanguage.EN -> "English"
+                                                AppLanguage.TR -> "Türkçe"
+                                            }
+                                            val bilingualLabel = when (lang) {
+                                                AppLanguage.RU -> "Двуязычный"
+                                                AppLanguage.EN -> "Bilingual"
+                                                AppLanguage.TR -> "İki Dilli"
+                                            }
                                             val modes = listOf(
-                                                "turkish" to (if (lang == AppLanguage.EN) "English" else "Türkçe"),
+                                                "turkish" to primaryLangLabel,
                                                 "original" to book.originalLanguageName,
-                                                "bilingual" to (if (lang == AppLanguage.EN) "Bilingual" else "İki Dilli")
+                                                "bilingual" to bilingualLabel
                                             )
                                             modes.forEach { (mode, label) ->
                                                 val isSelected = languageMode == mode
@@ -464,7 +542,11 @@ fun ReaderScreen(
                                         }
                                         Column {
                                             Text(
-                                                text = if (lang == AppLanguage.EN) "Audiobook Narrator" else "Sesli Kitap Okuyucu",
+                                                text = when (lang) {
+                                                    AppLanguage.RU -> "Аудиочтение"
+                                                    AppLanguage.EN -> "Audiobook Narrator"
+                                                    AppLanguage.TR -> "Sesli Kitap Okuyucu"
+                                                },
                                                 style = MaterialTheme.typography.titleSmall,
                                                 fontWeight = FontWeight.Bold,
                                                 color = MaterialTheme.colorScheme.onSurface
@@ -472,12 +554,24 @@ fun ReaderScreen(
                                             Text(
                                                 text = if (isCurrentBookPlaying) {
                                                     if (isAudioPlaying) {
-                                                        if (lang == AppLanguage.EN) "Beautifully narrated audiobook is playing..." else "Muhteşem tonlu seslendirme çalınıyor..."
+                                                        when (lang) {
+                                                            AppLanguage.RU -> "Звучит выразительное аудиочтение..."
+                                                            AppLanguage.EN -> "Beautifully narrated audiobook is playing..."
+                                                            AppLanguage.TR -> "Muhteşem tonlu seslendirme çalınıyor..."
+                                                        }
                                                     } else {
-                                                        if (lang == AppLanguage.EN) "Narration paused." else "Seslendirme duraklatıldı."
+                                                        when (lang) {
+                                                            AppLanguage.RU -> "Чтение приостановлено."
+                                                            AppLanguage.EN -> "Narration paused."
+                                                            AppLanguage.TR -> "Seslendirme duraklatıldı."
+                                                        }
                                                     }
                                                 } else {
-                                                    if (lang == AppLanguage.EN) "Listen with a deep, resonant, and peaceful voice." else "Derin, tok ve huzur veren erkek sesiyle dinleyin."
+                                                    when (lang) {
+                                                        AppLanguage.RU -> "Слушайте глубокий, умиротворяющий голос."
+                                                        AppLanguage.EN -> "Listen with a deep, resonant, and peaceful voice."
+                                                        AppLanguage.TR -> "Derin, tok ve huzur veren erkek sesiyle dinleyin."
+                                                    }
                                                 },
                                                 style = MaterialTheme.typography.bodySmall,
                                                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -508,7 +602,11 @@ fun ReaderScreen(
                                             ) {
                                                 Icon(
                                                     imageVector = if (isCurrentBookPlaying && isAudioPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
-                                                    contentDescription = if (lang == AppLanguage.EN) "Listen" else "Dinle",
+                                                    contentDescription = when (lang) {
+                                                        AppLanguage.RU -> "Слушать"
+                                                        AppLanguage.EN -> "Listen"
+                                                        AppLanguage.TR -> "Dinle"
+                                                    },
                                                     tint = MaterialTheme.colorScheme.onPrimaryContainer,
                                                     modifier = Modifier.size(20.dp)
                                                 )
@@ -524,7 +622,11 @@ fun ReaderScreen(
                                                 ) {
                                                     Icon(
                                                         imageVector = Icons.Filled.Stop,
-                                                        contentDescription = if (lang == AppLanguage.EN) "Stop" else "Durdur",
+                                                        contentDescription = when (lang) {
+                                                            AppLanguage.RU -> "Остановить"
+                                                            AppLanguage.EN -> "Stop"
+                                                            AppLanguage.TR -> "Durdur"
+                                                        },
                                                         tint = MaterialTheme.colorScheme.error,
                                                         modifier = Modifier.size(16.dp)
                                                     )
@@ -556,9 +658,17 @@ fun ReaderScreen(
                                     Column {
                                         Text(
                                             text = if (isDownloaded) {
-                                                if (lang == AppLanguage.EN) "Saved Chapter" else "Kayıtlı Bölüm"
+                                                when (lang) {
+                                                    AppLanguage.RU -> "Сохраненная глава"
+                                                    AppLanguage.EN -> "Saved Chapter"
+                                                    AppLanguage.TR -> "Kayıtlı Bölüm"
+                                                }
                                             } else {
-                                                if (lang == AppLanguage.EN) "Download Chapter" else "Bölümü İndir"
+                                                when (lang) {
+                                                    AppLanguage.RU -> "Скачать главу"
+                                                    AppLanguage.EN -> "Download Chapter"
+                                                    AppLanguage.TR -> "Bölümü İndir"
+                                                }
                                             },
                                             style = MaterialTheme.typography.titleSmall,
                                             fontWeight = FontWeight.Bold,
@@ -566,16 +676,28 @@ fun ReaderScreen(
                                         )
                                         if (progress != null) {
                                             Text(
-                                                text = if (lang == AppLanguage.EN) "Downloading: %${(progress * 100).toInt()}" else "İndiriliyor: %${(progress * 100).toInt()}",
+                                                text = when (lang) {
+                                                    AppLanguage.RU -> "Загрузка: %${(progress * 100).toInt()}"
+                                                    AppLanguage.EN -> "Downloading: %${(progress * 100).toInt()}"
+                                                    AppLanguage.TR -> "İndiriliyor: %${(progress * 100).toInt()}"
+                                                },
                                                 style = MaterialTheme.typography.bodySmall,
                                                 color = MaterialTheme.colorScheme.primary
                                             )
                                         } else {
                                             Text(
                                                 text = if (isDownloaded) {
-                                                    if (lang == AppLanguage.EN) "Saved to your device for reading anytime." else "Metinler ve seslendirmeler cihazınızda kayıtlı."
+                                                    when (lang) {
+                                                        AppLanguage.RU -> "Тексты и аудио сохранены на устройстве."
+                                                        AppLanguage.EN -> "Saved to your device for reading anytime."
+                                                        AppLanguage.TR -> "Metinler ve seslendirmeler cihazınızda kayıtlı."
+                                                    }
                                                 } else {
-                                                    if (lang == AppLanguage.EN) "Download to read and listen anytime." else "Metinleri ve seslendirmeyi dilediğiniz zaman okuyup dinleyin."
+                                                    when (lang) {
+                                                        AppLanguage.RU -> "Скачайте для чтения и прослушивания в любое время."
+                                                        AppLanguage.EN -> "Download to read and listen anytime."
+                                                        AppLanguage.TR -> "Metinleri ve seslendirmeyi dilediğiniz zaman okuyup dinleyin."
+                                                    }
                                                 },
                                                 style = MaterialTheme.typography.bodySmall,
                                                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -598,7 +720,14 @@ fun ReaderScreen(
                                         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
                                         shape = RoundedCornerShape(8.dp)
                                     ) {
-                                        Text(if (lang == AppLanguage.EN) "Download" else "İndir", style = MaterialTheme.typography.labelMedium)
+                                        Text(
+                                            when (lang) {
+                                                AppLanguage.RU -> "Скачать"
+                                                AppLanguage.EN -> "Download"
+                                                AppLanguage.TR -> "İndir"
+                                            },
+                                            style = MaterialTheme.typography.labelMedium
+                                        )
                                     }
                                 }
                             }
@@ -634,9 +763,17 @@ fun ReaderScreen(
                                       Column {
                                           Text(
                                               text = if (isAiLoaded) {
-                                                  if (lang == AppLanguage.EN) "Scripture Reading Active" else "Metin Okuma Hazır"
+                                                  when (lang) {
+                                                      AppLanguage.RU -> "Чтение Писания активно"
+                                                      AppLanguage.EN -> "Scripture Reading Active"
+                                                      AppLanguage.TR -> "Metin Okuma Hazır"
+                                                  }
                                               } else {
-                                                  if (lang == AppLanguage.EN) "Standard Edition" else "Standart Nüsha"
+                                                  when (lang) {
+                                                      AppLanguage.RU -> "Стандартное издание"
+                                                      AppLanguage.EN -> "Standard Edition"
+                                                      AppLanguage.TR -> "Standart Nüsha"
+                                                  }
                                               },
                                               style = MaterialTheme.typography.titleSmall,
                                               fontWeight = FontWeight.Bold,
@@ -647,10 +784,26 @@ fun ReaderScreen(
                                                   "${book.title} • ${book.contentTitle} (${book.originalLanguageName})"
                                               } else {
                                                   when (book.id) {
-                                                      "quran" -> if (lang == AppLanguage.EN) "Holy Quran (Surah Al-Fath • English & Arabic)" else "Kur'an-ı Kerim (Fetih Suresi • Türkçe & Arapça)"
-                                                      "torah" -> if (lang == AppLanguage.EN) "Torah (Genesis 1-3 • English & Hebrew)" else "Tevrat (Yaratılış 1-3 • Türkçe & İbranice)"
-                                                      "sermon" -> if (lang == AppLanguage.EN) "Gospel (English & Greek)" else "İncil (Türkçe & Grekçe)"
-                                                      else -> if (lang == AppLanguage.EN) "Original Text & Translation" else "Orijinal Metin ve Meal"
+                                                      "quran" -> when (lang) {
+                                                          AppLanguage.RU -> "Священный Коран (Сура Аль-Фатх • Русский и арабский)"
+                                                          AppLanguage.EN -> "Holy Quran (Surah Al-Fath • English & Arabic)"
+                                                          AppLanguage.TR -> "Kur'an-ı Kerim (Fetih Suresi • Türkçe & Arapça)"
+                                                      }
+                                                      "torah" -> when (lang) {
+                                                          AppLanguage.RU -> "Тора (Бытие 1-3 • Русский и иврит)"
+                                                          AppLanguage.EN -> "Torah (Genesis 1-3 • English & Hebrew)"
+                                                          AppLanguage.TR -> "Tevrat (Yaratılış 1-3 • Türkçe & İbranice)"
+                                                      }
+                                                      "sermon" -> when (lang) {
+                                                          AppLanguage.RU -> "Евангелие (Русский и греческий)"
+                                                          AppLanguage.EN -> "Gospel (English & Greek)"
+                                                          AppLanguage.TR -> "İncil (Türkçe & Grekçe)"
+                                                      }
+                                                      else -> when (lang) {
+                                                          AppLanguage.RU -> "Оригинальный текст и перевод"
+                                                          AppLanguage.EN -> "Original Text & Translation"
+                                                          AppLanguage.TR -> "Orijinal Metin ve Meal"
+                                                      }
                                                   }
                                               },
                                               style = MaterialTheme.typography.bodySmall,
@@ -672,9 +825,17 @@ fun ReaderScreen(
                                   ) {
                                       Text(
                                           text = if (isAiLoaded) {
-                                              if (lang == AppLanguage.EN) "LIVE/ARCHIVE" else "CANLI/ARŞİV"
+                                              when (lang) {
+                                                  AppLanguage.RU -> "ОНЛАЙН/АРХИВ"
+                                                  AppLanguage.EN -> "LIVE/ARCHIVE"
+                                                  AppLanguage.TR -> "CANLI/ARŞİV"
+                                              }
                                           } else {
-                                              if (lang == AppLanguage.EN) "EMBEDDED" else "GÖMÜLÜ"
+                                              when (lang) {
+                                                  AppLanguage.RU -> "ВСТРОЕННЫЙ"
+                                                  AppLanguage.EN -> "EMBEDDED"
+                                                  AppLanguage.TR -> "GÖMÜLÜ"
+                                              }
                                           },
                                           style = MaterialTheme.typography.labelSmall,
                                           color = if (isAiLoaded) SacredGold else MaterialTheme.colorScheme.primary,
@@ -700,7 +861,11 @@ fun ReaderScreen(
                                         modifier = Modifier.size(18.dp)
                                     )
                                     Text(
-                                        text = if (lang == AppLanguage.EN) "Live Library & Archive Fetch (Free)" else "Canlı Kütüphane & Arşivden Getir (Bedava)",
+                                        text = when (lang) {
+                                            AppLanguage.RU -> "Загрузка из архива/онлайн (бесплатно)"
+                                            AppLanguage.EN -> "Live Library & Archive Fetch (Free)"
+                                            AppLanguage.TR -> "Canlı Kütüphane & Arşivden Getir (Bedava)"
+                                        },
                                         style = MaterialTheme.typography.titleSmall,
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.primary
@@ -708,7 +873,11 @@ fun ReaderScreen(
                                 }
 
                                 Text(
-                                    text = if (lang == AppLanguage.EN) "Load any section of the sacred scriptures including the 24 volumes of Torah (Sefaria), Bible (Bible API), and the Holy Quran completely free, without API keys, instantly in English & Original language." else "24 cilt Tevrat (Sefaria), İncil (Bible API) ve Kur'an-ı Kerim dahil kütüphanedeki kutsal metinlerin dilediğiniz bölümünü tamamen ücretsiz, anahtarsız ve sınırsız olarak anında Türkçe & Orijinal dilinde yükleyin.",
+                                    text = when (lang) {
+                                        AppLanguage.RU -> "Загружайте любые разделы священных текстов, включая 24 книги Торы (Sefaria), Библию (Bible API) и Священный Коран, совершенно бесплатно, без ключей API."
+                                        AppLanguage.EN -> "Load any section of the sacred scriptures including the 24 volumes of Torah (Sefaria), Bible (Bible API), and the Holy Quran completely free, without API keys, instantly in English & Original language."
+                                        AppLanguage.TR -> "24 cilt Tevrat (Sefaria), İncil (Bible API) ve Kur'an-ı Kerim dahil kütüphanedeki kutsal metinlerin dilediğiniz bölümünü tamamen ücretsiz, anahtarsız ve sınırsız olarak anında Türkçe & Orijinal dilinde yükleyin."
+                                    },
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -716,13 +885,33 @@ fun ReaderScreen(
                                 OutlinedTextField(
                                     value = aiQueryText,
                                     onValueChange = { aiQueryText = it },
-                                    label = { Text(if (lang == AppLanguage.EN) "Chapter or Subject Title" else "Bölüm veya Konu Başlığı") },
+                                    label = {
+                                        Text(
+                                            when (lang) {
+                                                AppLanguage.RU -> "Название главы или темы"
+                                                AppLanguage.EN -> "Chapter or Subject Title"
+                                                AppLanguage.TR -> "Bölüm veya Konu Başlığı"
+                                            }
+                                        )
+                                    },
                                     placeholder = {
                                         Text(
                                             when (book.id) {
-                                                "torah" -> if (lang == AppLanguage.EN) "e.g., Genesis 1, Exodus 20, Psalms 23..." else "Örn: Yaratılış 1, Çıkış 20, Mezmurlar 23..."
-                                                "sermon" -> if (lang == AppLanguage.EN) "e.g., Matthew 5, Matthew 6, Matthew 7..." else "Örn: Matta 5, Matta 6, Matta 7..."
-                                                else -> if (lang == AppLanguage.EN) "e.g., Chapter 1..." else "Örn: Bölüm 1..."
+                                                "torah" -> when (lang) {
+                                                    AppLanguage.RU -> "напр., Бытие 1, Исход 20, Псалтирь 23..."
+                                                    AppLanguage.EN -> "e.g., Genesis 1, Exodus 20, Psalms 23..."
+                                                    AppLanguage.TR -> "Örn: Yaratılış 1, Çıkış 20, Mezmurlar 23..."
+                                                }
+                                                "sermon" -> when (lang) {
+                                                    AppLanguage.RU -> "напр., От Матфея 5, От Матфея 6, От Матфея 7..."
+                                                    AppLanguage.EN -> "e.g., Matthew 5, Matthew 6, Matthew 7..."
+                                                    AppLanguage.TR -> "Örn: Matta 5, Matta 6, Matta 7..."
+                                                }
+                                                else -> when (lang) {
+                                                    AppLanguage.RU -> "напр., Глава 1..."
+                                                    AppLanguage.EN -> "e.g., Chapter 1..."
+                                                    AppLanguage.TR -> "Örn: Bölüm 1..."
+                                                }
                                             }
                                         )
                                     },
@@ -730,7 +919,14 @@ fun ReaderScreen(
                                     trailingIcon = {
                                         if (aiQueryText.isNotEmpty()) {
                                             IconButton(onClick = { aiQueryText = "" }) {
-                                                Icon(Icons.Default.Clear, contentDescription = if (lang == AppLanguage.EN) "Clear" else "Temizle")
+                                                Icon(
+                                                    Icons.Default.Clear,
+                                                    contentDescription = when (lang) {
+                                                        AppLanguage.RU -> "Очистить"
+                                                        AppLanguage.EN -> "Clear"
+                                                        AppLanguage.TR -> "Temizle"
+                                                    }
+                                                )
                                             }
                                         }
                                     },
@@ -741,15 +937,20 @@ fun ReaderScreen(
                                  // Complete books list for quick access
                                  val allBooksOfCategory = when (book.id) {
                                      "torah" -> {
-                                         if (lang == AppLanguage.EN) {
-                                             listOf(
+                                         when (lang) {
+                                             AppLanguage.RU -> listOf(
+                                                 "Бытие", "Исход", "Левит", "Числа", "Второзаконие", "Иисус Навин", "Судьи", "Руфь", "1 Царств", "2 Царств",
+                                                 "3 Царств", "4 Царств", "1 Паралипоменон", "2 Паралипоменон", "Ездра", "Неемия", "Есфирь", "Иов", "Псалтирь",
+                                                 "Притчи", "Екклесиаст", "Песнь Песней", "Исаия", "Иеремия", "Плач Иеремии", "Иезекииль", "Даниил", "Осия", "Иоиль",
+                                                 "Амос", "Авдий", "Иона", "Михей", "Наум", "Аввакум", "Софония", "Аггей", "Захария", "Малахия"
+                                             )
+                                             AppLanguage.EN -> listOf(
                                                  "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy", "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel",
                                                  "1 Kings", "2 Kings", "1 Chronicles", "2 Chronicles", "Ezra", "Nehemiah", "Esther", "Job", "Psalms",
                                                  "Proverbs", "Ecclesiastes", "Song of Solomon", "Isaiah", "Jeremiah", "Lamentations", "Ezekiel", "Daniel", "Hosea", "Joel",
                                                  "Amos", "Obadiah", "Jonah", "Micah", "Nahum", "Habakkuk", "Zephaniah", "Haggai", "Zechariah", "Malachi"
                                              )
-                                         } else {
-                                             listOf(
+                                             AppLanguage.TR -> listOf(
                                                  "Yaratılış", "Çıkış", "Levililer", "Sayılar", "Yasanın Tekrarı",
                                                  "Yeşu", "Hakimler", "Rut", "1. Samuel", "2. Samuel",
                                                  "1. Krallar", "2. Krallar", "1. Tarihler", "2. Tarihler",
@@ -762,14 +963,18 @@ fun ReaderScreen(
                                          }
                                      }
                                      "sermon" -> {
-                                         if (lang == AppLanguage.EN) {
-                                             listOf(
+                                         when (lang) {
+                                             AppLanguage.RU -> listOf(
+                                                 "От Матфея", "От Марка", "От Луки", "От Иоанна", "Деяния", "Римлянам", "1 Коринфянам", "2 Коринфянам", "Галатам",
+                                                 "Ефесянам", "Филиппийцам", "Колоссянам", "1 Фессалоникийцам", "2 Фессалоникийцам", "1 Тимофею", "2 Тимофею", "Титу",
+                                                 "Филимону", "Евреям", "Иакова", "1 Петра", "2 Петра", "1 Иоанна", "2 Иоанна", "3 Иоанна", "Иуды", "Откровение"
+                                             )
+                                             AppLanguage.EN -> listOf(
                                                  "Matthew", "Mark", "Luke", "John", "Acts", "Romans", "1 Corinthians", "2 Corinthians", "Galatians",
                                                  "Ephesians", "Philippians", "Colossians", "1 Thessalonians", "2 Thessalonians", "1 Timothy", "2 Timothy", "Titus",
                                                  "Philemon", "Hebrews", "James", "1 Peter", "2 Peter", "1 John", "2 John", "3 John", "Jude", "Revelation"
                                              )
-                                         } else {
-                                             listOf(
+                                             AppLanguage.TR -> listOf(
                                                  "Matta", "Markos", "Luka", "Yuhanna", "Elçilerin İşleri",
                                                  "Romalılar", "1. Korintliler", "2. Korintliler", "Galatyalılar",
                                                  "Efesliler", "Filipililer", "Koloseliler", "1. Selanikliler",
@@ -795,7 +1000,11 @@ fun ReaderScreen(
                                  if (allBooksOfCategory.isNotEmpty()) {
                                      Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                          Text(
-                                             text = if (lang == AppLanguage.EN) "Quick Book Selection (${allBooksOfCategory.size} Books):" else "Hızlı Kitap Seçimi (${allBooksOfCategory.size} Kitap):",
+                                             text = when (lang) {
+                                                 AppLanguage.RU -> "Быстрый выбор книги (${allBooksOfCategory.size} книг):"
+                                                 AppLanguage.EN -> "Quick Book Selection (${allBooksOfCategory.size} Books):"
+                                                 AppLanguage.TR -> "Hızlı Kitap Seçimi (${allBooksOfCategory.size} Kitap):"
+                                             },
                                              style = MaterialTheme.typography.labelSmall,
                                              color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
                                          )
@@ -815,12 +1024,28 @@ fun ReaderScreen(
 
                                 // Quick suggestions chips
                                 val suggestions = when (book.id) {
-                                    "torah" -> if (lang == AppLanguage.EN) listOf("Genesis 1", "Psalms 23", "Exodus 20") else listOf("Yaratılış 1", "Mezmurlar 23", "Çıkış 20")
-                                    "sermon" -> if (lang == AppLanguage.EN) listOf("Matthew 5", "Matthew 6", "Matthew 7") else listOf("Matta 5", "Matta 6", "Matta 7")
+                                    "torah" -> when (lang) {
+                                        AppLanguage.RU -> listOf("Бытие 1", "Псалтирь 23", "Исход 20")
+                                        AppLanguage.EN -> listOf("Genesis 1", "Psalms 23", "Exodus 20")
+                                        AppLanguage.TR -> listOf("Yaratılış 1", "Mezmurlar 23", "Çıkış 20")
+                                    }
+                                    "sermon" -> when (lang) {
+                                        AppLanguage.RU -> listOf("От Матфея 5", "От Матфея 6", "От Матфея 7")
+                                        AppLanguage.EN -> listOf("Matthew 5", "Matthew 6", "Matthew 7")
+                                        AppLanguage.TR -> listOf("Matta 5", "Matta 6", "Matta 7")
+                                    }
                                     "talmud" -> listOf("Berakhot 2a", "Shabbat 2a", "Megillah 2a")
                                     "bukhari" -> listOf("Hadith 1", "Hadith 15", "Hadith 42")
-                                    "gita" -> if (lang == AppLanguage.EN) listOf("Sankhya Yoga", "Karma Yoga", "Bhakti Yoga") else listOf("Bilgelik ve Ruh", "Karma Yoga", "Bhakti Yoga")
-                                    else -> if (lang == AppLanguage.EN) listOf("Chapter 1", "Chapter 2") else listOf("Bölüm 1", "Bölüm 2")
+                                    "gita" -> when (lang) {
+                                        AppLanguage.RU -> listOf("Санкхья-йога", "Карма-йога", "Бхакти-йога")
+                                        AppLanguage.EN -> listOf("Sankhya Yoga", "Karma Yoga", "Bhakti Yoga")
+                                        AppLanguage.TR -> listOf("Bilgelik ve Ruh", "Karma Yoga", "Bhakti Yoga")
+                                    }
+                                    else -> when (lang) {
+                                        AppLanguage.RU -> listOf("Глава 1", "Глава 2")
+                                        AppLanguage.EN -> listOf("Chapter 1", "Chapter 2")
+                                        AppLanguage.TR -> listOf("Bölüm 1", "Bölüm 2")
+                                    }
                                 }
 
                                 Row(
@@ -856,17 +1081,29 @@ fun ReaderScreen(
                                             strokeWidth = 2.dp
                                         )
                                         Spacer(modifier = Modifier.width(8.dp))
-                                        Text(if (lang == AppLanguage.EN) "Fetching Chapter..." else "Bölüm Getiriliyor...")
+                                        Text(
+                                            when (lang) {
+                                                AppLanguage.RU -> "Загрузка главы..."
+                                                AppLanguage.EN -> "Fetching Chapter..."
+                                                AppLanguage.TR -> "Bölüm Getiriliyor..."
+                                            }
+                                        )
                                     } else {
                                         Icon(Icons.Default.AutoAwesome, contentDescription = null, modifier = Modifier.size(16.dp))
                                         Spacer(modifier = Modifier.width(8.dp))
-                                        Text(if (lang == AppLanguage.EN) "Load Chapter Live/Archive (Free)" else "Bölümü Canlı/Arşivden Yükle (Ücretsiz)")
+                                        Text(
+                                            when (lang) {
+                                                AppLanguage.RU -> "Загрузить главу из архива (бесплатно)"
+                                                AppLanguage.EN -> "Load Chapter Live/Archive (Free)"
+                                                AppLanguage.TR -> "Bölümü Canlı/Arşivden Yükle (Ücretsiz)"
+                                            }
+                                        )
                                     }
                                 }
 
                                 if (bookError != null) {
                                     Text(
-                                        text = "${if (lang == AppLanguage.EN) "Error" else "Hata"}: $bookError",
+                                        text = "${when (lang) { AppLanguage.RU -> "Ошибка"; AppLanguage.EN -> "Error"; AppLanguage.TR -> "Hata" }}: $bookError",
                                         color = MaterialTheme.colorScheme.error,
                                         style = MaterialTheme.typography.bodySmall,
                                         modifier = Modifier.padding(top = 4.dp)
@@ -1071,7 +1308,11 @@ fun ReaderScreen(
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             Text(
-                                text = if (lang == AppLanguage.EN) "Critical Notes" else "Kritik Notlar",
+                                text = when (lang) {
+                                    AppLanguage.RU -> "Критические примечания"
+                                    AppLanguage.EN -> "Critical Notes"
+                                    AppLanguage.TR -> "Kritik Notlar"
+                                },
                                 style = MaterialTheme.typography.labelLarge,
                                 color = SacredGold,
                                 letterSpacing = 1.sp
@@ -1143,7 +1384,14 @@ fun ReaderScreen(
                                 color = MaterialTheme.colorScheme.primary
                             )
                             IconButton(onClick = { showSettingsPanel = false }) {
-                                Icon(Icons.Filled.Close, contentDescription = if (lang == AppLanguage.EN) "Close" else "Kapat")
+                                Icon(
+                                    Icons.Filled.Close,
+                                    contentDescription = when (lang) {
+                                        AppLanguage.RU -> "Закрыть"
+                                        AppLanguage.EN -> "Close"
+                                        AppLanguage.TR -> "Kapat"
+                                    }
+                                )
                             }
                         }
 
@@ -1159,9 +1407,9 @@ fun ReaderScreen(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 val themes = listOf(
-                                    Triple(if (lang == AppLanguage.EN) "Light" else "Aydınlık", AppThemeSetting.LIGHT, Color.White),
-                                    Triple(if (lang == AppLanguage.EN) "Dark" else "Karanlık", AppThemeSetting.DARK, Color(0xFF1E2120)),
-                                    Triple(if (lang == AppLanguage.EN) "Sepia" else "Antik", AppThemeSetting.SEPIA, Color(0xFFF4ECD8))
+                                    Triple(when (lang) { AppLanguage.RU -> "Светлая"; AppLanguage.EN -> "Light"; AppLanguage.TR -> "Aydınlık" }, AppThemeSetting.LIGHT, Color.White),
+                                    Triple(when (lang) { AppLanguage.RU -> "Темная"; AppLanguage.EN -> "Dark"; AppLanguage.TR -> "Karanlık" }, AppThemeSetting.DARK, Color(0xFF1E2120)),
+                                    Triple(when (lang) { AppLanguage.RU -> "Сепия"; AppLanguage.EN -> "Sepia"; AppLanguage.TR -> "Antik" }, AppThemeSetting.SEPIA, Color(0xFFF4ECD8))
                                 )
                                 themes.forEach { (label, setting, bg) ->
                                     Box(
@@ -1197,7 +1445,11 @@ fun ReaderScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = if (lang == AppLanguage.EN) "FONT SIZE" else "METİN BOYUTU",
+                                    text = when (lang) {
+                                        AppLanguage.RU -> "РАЗМЕР ШРИФТА"
+                                        AppLanguage.EN -> "FONT SIZE"
+                                        AppLanguage.TR -> "METİN BOYUTU"
+                                    },
                                     style = MaterialTheme.typography.labelMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -1242,7 +1494,11 @@ fun ReaderScreen(
                           // Font Family Option
                           Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                               Text(
-                                  text = if (lang == AppLanguage.EN) "FONT FAMILY" else "YAZI TİPİ",
+                                  text = when (lang) {
+                                      AppLanguage.RU -> "ШРИФТ"
+                                      AppLanguage.EN -> "FONT FAMILY"
+                                      AppLanguage.TR -> "YAZI TİPİ"
+                                  },
                                   style = MaterialTheme.typography.labelMedium,
                                   color = MaterialTheme.colorScheme.onSurfaceVariant
                               )
@@ -1264,7 +1520,11 @@ fun ReaderScreen(
                                           contentAlignment = Alignment.Center
                                       ) {
                                           Text(
-                                              text = if (lang == AppLanguage.EN) "Serif (Classic)" else "Serif (Klasik)",
+                                              text = when (lang) {
+                                                  AppLanguage.RU -> "С засечками"
+                                                  AppLanguage.EN -> "Serif (Classic)"
+                                                  AppLanguage.TR -> "Serif (Klasik)"
+                                              },
                                               fontFamily = FontFamily.Serif,
                                               fontWeight = FontWeight.Bold,
                                               color = if (readerSettings.fontFamily == FontFamilySetting.SERIF) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
@@ -1286,7 +1546,11 @@ fun ReaderScreen(
                                           contentAlignment = Alignment.Center
                                       ) {
                                           Text(
-                                              text = if (lang == AppLanguage.EN) "Sans-serif (Modern)" else "Sans-serif (Modern)",
+                                              text = when (lang) {
+                                                  AppLanguage.RU -> "Без засечек"
+                                                  AppLanguage.EN -> "Sans-serif (Modern)"
+                                                  AppLanguage.TR -> "Sans-serif (Modern)"
+                                              },
                                               fontFamily = FontFamily.SansSerif,
                                               fontWeight = FontWeight.Bold,
                                               color = if (readerSettings.fontFamily == FontFamilySetting.SANS_SERIF) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
@@ -1299,7 +1563,11 @@ fun ReaderScreen(
                           // Line Spacing Option
                           Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                               Text(
-                                  text = if (lang == AppLanguage.EN) "LINE SPACING" else "SATIR ARALIĞI",
+                                  text = when (lang) {
+                                      AppLanguage.RU -> "МЕЖСТРОЧНЫЙ ИНТЕРВАЛ"
+                                      AppLanguage.EN -> "LINE SPACING"
+                                      AppLanguage.TR -> "SATIR ARALIĞI"
+                                  },
                                   style = MaterialTheme.typography.labelMedium,
                                   color = MaterialTheme.colorScheme.onSurfaceVariant
                               )
@@ -1308,9 +1576,9 @@ fun ReaderScreen(
                                   horizontalArrangement = Arrangement.spacedBy(8.dp)
                               ) {
                                   val lineHeights = listOf(
-                                      (if (lang == AppLanguage.EN) "Tight" else "Dar") to LineHeightSetting.TIGHT,
-                                      (if (lang == AppLanguage.EN) "Medium" else "Orta") to LineHeightSetting.NORMAL,
-                                      (if (lang == AppLanguage.EN) "Wide" else "Geniş") to LineHeightSetting.WIDE
+                                      (when (lang) { AppLanguage.RU -> "Узкий"; AppLanguage.EN -> "Tight"; AppLanguage.TR -> "Dar" }) to LineHeightSetting.TIGHT,
+                                      (when (lang) { AppLanguage.RU -> "Средний"; AppLanguage.EN -> "Medium"; AppLanguage.TR -> "Orta" }) to LineHeightSetting.NORMAL,
+                                      (when (lang) { AppLanguage.RU -> "Широкий"; AppLanguage.EN -> "Wide"; AppLanguage.TR -> "Geniş" }) to LineHeightSetting.WIDE
                                   )
                                   lineHeights.forEach { (label, setting) ->
                                       Card(

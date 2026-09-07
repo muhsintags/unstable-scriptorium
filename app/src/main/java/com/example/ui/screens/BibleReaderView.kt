@@ -35,6 +35,7 @@ import com.example.ui.theme.SacredGold
 import com.example.ui.viewmodel.FontFamilySetting
 import com.example.ui.viewmodel.ScriptureViewModel
 import com.example.ui.util.AppLanguage
+import com.example.ui.util.Loc
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
@@ -182,7 +183,11 @@ fun BibleReaderView(
             onDismissRequest = { showAddNoteDialog = false },
             title = {
                 Text(
-                    text = if (lang == AppLanguage.EN) "Add Reflection or Note" else "Tefekkür veya Not Ekle",
+                    text = when (lang) {
+                        AppLanguage.RU -> "Добавить размышление или заметку"
+                        AppLanguage.EN -> "Add Reflection or Note"
+                        AppLanguage.TR -> "Tefekkür veya Not Ekle"
+                    },
                     fontFamily = FontFamily.Serif,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
@@ -191,7 +196,11 @@ fun BibleReaderView(
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text(
-                        text = if (lang == AppLanguage.EN) "Selected Passage:" else "Seçilen Pasaj:",
+                        text = when (lang) {
+                            AppLanguage.RU -> "Выбранный отрывок:"
+                            AppLanguage.EN -> "Selected Passage:"
+                            AppLanguage.TR -> "Seçilen Pasaj:"
+                        },
                         style = MaterialTheme.typography.labelLarge,
                         color = SacredGold
                     )
@@ -213,8 +222,24 @@ fun BibleReaderView(
                     OutlinedTextField(
                         value = noteTextQuery,
                         onValueChange = { noteTextQuery = it },
-                        label = { Text(if (lang == AppLanguage.EN) "Your Reflection Note (Optional)" else "Tefekkür Notunuz (İsteğe Bağlı)") },
-                        placeholder = { Text(if (lang == AppLanguage.EN) "Write your thoughts about this passage..." else "Bu pasaj hakkındaki düşüncelerinizi yazın...") },
+                        label = {
+                            Text(
+                                when (lang) {
+                                    AppLanguage.RU -> "Ваша заметка (необязательно)"
+                                    AppLanguage.EN -> "Your Reflection Note (Optional)"
+                                    AppLanguage.TR -> "Tefekkür Notunuz (İsteğe Bağlı)"
+                                }
+                            )
+                        },
+                        placeholder = {
+                            Text(
+                                when (lang) {
+                                    AppLanguage.RU -> "Запишите ваши мысли об этом отрывке..."
+                                    AppLanguage.EN -> "Write your thoughts about this passage..."
+                                    AppLanguage.TR -> "Bu pasaj hakkındaki düşüncelerinizi yazın..."
+                                }
+                            )
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(100.dp)
@@ -240,7 +265,14 @@ fun BibleReaderView(
                             noteTextQuery = ""
                         }
                     ) {
-                        Text(if (lang == AppLanguage.EN) "Highlight Only" else "Yalnızca İşaretle", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(
+                            when (lang) {
+                                AppLanguage.RU -> "Только выделить"
+                                AppLanguage.EN -> "Highlight Only"
+                                AppLanguage.TR -> "Yalnızca İşaretle"
+                            },
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
 
                     Button(
@@ -258,13 +290,25 @@ fun BibleReaderView(
                             containerColor = MaterialTheme.colorScheme.primary
                         )
                     ) {
-                        Text(if (lang == AppLanguage.EN) "Save Note" else "Notu Kaydet")
+                        Text(
+                            when (lang) {
+                                AppLanguage.RU -> "Сохранить заметку"
+                                AppLanguage.EN -> "Save Note"
+                                AppLanguage.TR -> "Notu Kaydet"
+                            }
+                        )
                     }
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showAddNoteDialog = false }) {
-                    Text(if (lang == AppLanguage.EN) "Cancel" else "İptal")
+                    Text(
+                        when (lang) {
+                            AppLanguage.RU -> "Отмена"
+                            AppLanguage.EN -> "Cancel"
+                            AppLanguage.TR -> "İptal"
+                        }
+                    )
                 }
             },
             shape = RoundedCornerShape(12.dp),
@@ -279,25 +323,23 @@ fun BibleReaderView(
                     Column {
                         Text(
                             text = if (currentSelectedBook != null && currentSelectedChapter != null) {
-                                val name = if (lang == AppLanguage.EN) currentSelectedBook?.nameEnglish else currentSelectedBook?.nameTurkish
+                                val name = currentSelectedBook?.getName(lang)
                                 if (book.id == "talmud") {
                                     val pageNum = 2 + ((currentSelectedChapter ?: 1) - 1) / 2
                                     val side = if ((currentSelectedChapter ?: 1) % 2 == 1) "a" else "b"
                                     "$name $pageNum$side"
                                 } else {
-                                    "$name $currentSelectedChapter"
+                                    val chLabel = when (lang) {
+                                        AppLanguage.RU -> "Глава $currentSelectedChapter"
+                                        AppLanguage.EN -> "$currentSelectedChapter"
+                                        AppLanguage.TR -> "$currentSelectedChapter. Bölüm"
+                                    }
+                                    "$name $chLabel"
                                 }
                             } else if (currentSelectedBook != null) {
-                                if (lang == AppLanguage.EN) currentSelectedBook!!.nameEnglish else currentSelectedBook!!.nameTurkish
+                                currentSelectedBook!!.getName(lang)
                             } else {
-                                when (book.id) {
-                                    "torah" -> if (lang == AppLanguage.EN) "Torah" else "Tevrat"
-                                    "talmud" -> if (lang == AppLanguage.EN) "Talmud Bavli" else "Talmud"
-                                    "bukhari" -> if (lang == AppLanguage.EN) "Sahih al-Bukhari" else "Sahih-i Buhârî"
-                                    "gita" -> "Bhagavad Gita"
-                                    "sermon" -> if (lang == AppLanguage.EN) "Gospel" else "İncil"
-                                    else -> if (lang == AppLanguage.EN) book.title else (if (book.id == "torah") "Tevrat" else book.title)
-                                }
+                                Loc.get(book.id, lang)
                             },
                             fontFamily = FontFamily.Serif,
                             fontWeight = FontWeight.Bold,
@@ -308,7 +350,7 @@ fun BibleReaderView(
                         )
                         if (currentSelectedBook != null) {
                             Text(
-                                text = "${if (lang == AppLanguage.EN) currentSelectedBook?.nameEnglish else currentSelectedBook?.nameTurkish} • ${currentSelectedBook?.sourceLanguage}",
+                                text = "${currentSelectedBook?.getName(lang)} • ${currentSelectedBook?.sourceLanguage}",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 maxLines = 1,
@@ -341,7 +383,7 @@ fun BibleReaderView(
                     }) {
                         Icon(
                             imageVector = Icons.Filled.ChevronLeft,
-                            contentDescription = if (lang == AppLanguage.EN) "Back" else "Geri",
+                            contentDescription = Loc.get("back", lang),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -351,7 +393,11 @@ fun BibleReaderView(
                         IconButton(onClick = { isBookmarked = !isBookmarked }) {
                             Icon(
                                 imageVector = if (isBookmarked) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
-                                contentDescription = if (lang == AppLanguage.EN) "Bookmark" else "Yer İmi",
+                                contentDescription = when (lang) {
+                                    AppLanguage.RU -> "Закладка"
+                                    AppLanguage.EN -> "Bookmark"
+                                    AppLanguage.TR -> "Yer İmi"
+                                },
                                 tint = if (isBookmarked) SacredGold else MaterialTheme.colorScheme.primary
                             )
                         }
@@ -368,8 +414,8 @@ fun BibleReaderView(
                         noteQuoteText = activeBook.paragraphs.firstOrNull() ?: ""
                         showAddNoteDialog = true
                     },
-                    icon = { Icon(Icons.Filled.EditNote, if (lang == AppLanguage.EN) "Add Note" else "Not Ekle") },
-                    text = { Text(if (lang == AppLanguage.EN) "Quick Note" else "Hızlı Not Al") },
+                    icon = { Icon(Icons.Filled.EditNote, when (lang) { AppLanguage.RU -> "Добавить заметку"; AppLanguage.EN -> "Add Note"; AppLanguage.TR -> "Not Ekle" }) },
+                    text = { Text(when (lang) { AppLanguage.RU -> "Быстрая заметка"; AppLanguage.EN -> "Quick Note"; AppLanguage.TR -> "Hızlı Not Al" }) },
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
                     shape = RoundedCornerShape(12.dp)
@@ -392,12 +438,36 @@ fun BibleReaderView(
                 ) {
                     Text(
                         text = when (book.id) {
-                            "torah" -> if (lang == AppLanguage.EN) "Torah Library" else "Tevrat Kütüphanesi"
-                            "sermon" -> if (lang == AppLanguage.EN) "Gospel Library" else "İncil Kütüphanesi"
-                            "talmud" -> if (lang == AppLanguage.EN) "Talmud Library" else "Talmud Kütüphanesi"
-                            "bukhari" -> if (lang == AppLanguage.EN) "Sahih al-Bukhari Library" else "Sahih-i Buharî Kütüphanesi"
-                            "gita" -> if (lang == AppLanguage.EN) "Bhagavad Gita Library" else "Bhagavad Gita Kütüphanesi"
-                            else -> if (lang == AppLanguage.EN) "Gospel Library" else "İncil Kütüphanesi"
+                            "torah" -> when (lang) {
+                                AppLanguage.RU -> "Библиотека Торы"
+                                AppLanguage.EN -> "Torah Library"
+                                AppLanguage.TR -> "Tevrat Kütüphanesi"
+                            }
+                            "sermon" -> when (lang) {
+                                AppLanguage.RU -> "Библиотека Евангелия"
+                                AppLanguage.EN -> "Gospel Library"
+                                AppLanguage.TR -> "İncil Kütüphanesi"
+                            }
+                            "talmud" -> when (lang) {
+                                AppLanguage.RU -> "Библиотека Талмуда"
+                                AppLanguage.EN -> "Talmud Library"
+                                AppLanguage.TR -> "Talmud Kütüphanesi"
+                            }
+                            "bukhari" -> when (lang) {
+                                AppLanguage.RU -> "Библиотека Сахих аль-Бухари"
+                                AppLanguage.EN -> "Sahih al-Bukhari Library"
+                                AppLanguage.TR -> "Sahih-i Buharî Kütüphanesi"
+                            }
+                            "gita" -> when (lang) {
+                                AppLanguage.RU -> "Библиотека Бхагавад-гиты"
+                                AppLanguage.EN -> "Bhagavad Gita Library"
+                                AppLanguage.TR -> "Bhagavad Gita Kütüphanesi"
+                            }
+                            else -> when (lang) {
+                                AppLanguage.RU -> "Библиотека"
+                                AppLanguage.EN -> "Library"
+                                AppLanguage.TR -> "Kütüphane"
+                            }
                         },
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
@@ -406,11 +476,31 @@ fun BibleReaderView(
                     )
                     Text(
                         text = when (book.id) {
-                            "torah" -> if (lang == AppLanguage.EN) "Contemplate Hebrew scriptures and modern translations." else "İbranice kutsal metinleri ve Türkçe çevirileri tefekkür edin."
-                            "sermon" -> if (lang == AppLanguage.EN) "Read the teachings of Jesus Christ in their Greek originals and modern translations." else "Grekçe asılları ve Türkçe çevirileri ile İsa Mesih'in öğretilerini okuyun."
-                            "talmud" -> if (lang == AppLanguage.EN) "Explore the Babylonian Talmud with commentary and parallel Aramaic text." else "Tefsirler ve paralel Aramice metinler eşliğinde Babil Talmudu'nu okuyun."
-                            "bukhari" -> if (lang == AppLanguage.EN) "Read Sahih al-Bukhari with English and Turkish translations." else "Sahih-i Buharî'yi Türkçe çevirileri ve Arapça asılları ile inceleyin."
-                            "gita" -> if (lang == AppLanguage.EN) "Explore Bhagavad Gita with Sanskrit original verses and translations." else "Bhagavad Gita'yı Sanskritçe asılları ve çevirileri ile inceleyin."
+                            "torah" -> when (lang) {
+                                AppLanguage.RU -> "Размышляйте над священными текстами на иврите и переводами."
+                                AppLanguage.EN -> "Contemplate Hebrew scriptures and modern translations."
+                                AppLanguage.TR -> "İbranice kutsal metinleri ve Türkçe çevirileri tefekkür edin."
+                            }
+                            "sermon" -> when (lang) {
+                                AppLanguage.RU -> "Читайте учения Иисуса Христа в греческом оригинале и современных переводах."
+                                AppLanguage.EN -> "Read the teachings of Jesus Christ in their Greek originals and modern translations."
+                                AppLanguage.TR -> "Grekçe asılları ve Türkçe çevirileri ile İsa Mesih'in öğretilerini okuyun."
+                            }
+                            "talmud" -> when (lang) {
+                                AppLanguage.RU -> "Исследуйте Вавилонский Талмуд с комментариями и параллельным арамейским текстом."
+                                AppLanguage.EN -> "Explore the Babylonian Talmud with commentary and parallel Aramaic text."
+                                AppLanguage.TR -> "Tefsirler ve paralel Aramice metinler eşliğinde Babil Talmudu'nu okuyun."
+                            }
+                            "bukhari" -> when (lang) {
+                                AppLanguage.RU -> "Читайте Сахих аль-Бухари с переводами и арабскими оригиналами."
+                                AppLanguage.EN -> "Read Sahih al-Bukhari with English and Turkish translations."
+                                AppLanguage.TR -> "Sahih-i Buharî'yi Türkçe çevirileri ve Arapça asılları ile inceleyin."
+                            }
+                            "gita" -> when (lang) {
+                                AppLanguage.RU -> "Исследуйте Бхагавад-гиту с оригинальными стихами на санскрите и переводами."
+                                AppLanguage.EN -> "Explore Bhagavad Gita with Sanskrit original verses and translations."
+                                AppLanguage.TR -> "Bhagavad Gita'yı Sanskritçe asılları ve çevirileri ile inceleyin."
+                            }
                             else -> ""
                         },
                         style = MaterialTheme.typography.bodyMedium,
@@ -448,15 +538,27 @@ fun BibleReaderView(
                                 )
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = if (lang == AppLanguage.EN) "Download Entire Book" else "Tüm Kitabı Cihaza İndir",
+                                        text = when (lang) {
+                                            AppLanguage.RU -> "Скачать книгу целиком"
+                                            AppLanguage.EN -> "Download Entire Book"
+                                            AppLanguage.TR -> "Tüm Kitabı Cihaza İndir"
+                                        },
                                         style = MaterialTheme.typography.titleSmall,
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
                                         text = if (bookProgress != null) {
-                                            if (lang == AppLanguage.EN) "Downloading: %${(bookProgress * 100).toInt()}" else "İndiriliyor: %${(bookProgress * 100).toInt()}"
+                                            when (lang) {
+                                                AppLanguage.RU -> "Загрузка: %${(bookProgress * 100).toInt()}"
+                                                AppLanguage.EN -> "Downloading: %${(bookProgress * 100).toInt()}"
+                                                AppLanguage.TR -> "İndiriliyor: %${(bookProgress * 100).toInt()}"
+                                            }
                                         } else {
-                                            if (lang == AppLanguage.EN) "Download all sections to read offline anytime." else "Tüm bölümleri cihazınıza kaydedip internetsiz okuyun."
+                                            when (lang) {
+                                                AppLanguage.RU -> "Загрузите все разделы для чтения офлайн в любое время."
+                                                AppLanguage.EN -> "Download all sections to read offline anytime."
+                                                AppLanguage.TR -> "Tüm bölümleri cihazınıza kaydedip internetsiz okuyun."
+                                            }
                                         },
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -476,7 +578,14 @@ fun BibleReaderView(
                                         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
                                         shape = RoundedCornerShape(8.dp)
                                     ) {
-                                        Text(if (lang == AppLanguage.EN) "Download" else "İndir", style = MaterialTheme.typography.labelMedium)
+                                        Text(
+                                            when (lang) {
+                                                AppLanguage.RU -> "Скачать"
+                                                AppLanguage.EN -> "Download"
+                                                AppLanguage.TR -> "İndir"
+                                            },
+                                            style = MaterialTheme.typography.labelMedium
+                                        )
                                     }
                                 }
                             }
@@ -487,12 +596,27 @@ fun BibleReaderView(
                     OutlinedTextField(
                         value = searchQuery,
                         onValueChange = { searchQuery = it },
-                        placeholder = { Text(if (lang == AppLanguage.EN) "Search book name or number..." else "Kitap ismi veya numara ara...") },
-                        leadingIcon = { Icon(Icons.Filled.Search, contentDescription = if (lang == AppLanguage.EN) "Search" else "Ara") },
+                        placeholder = {
+                            Text(
+                                when (lang) {
+                                    AppLanguage.RU -> "Поиск книги по названию или номеру..."
+                                    AppLanguage.EN -> "Search book name or number..."
+                                    AppLanguage.TR -> "Kitap ismi veya numara ara..."
+                                }
+                            )
+                        },
+                        leadingIcon = { Icon(Icons.Filled.Search, contentDescription = Loc.get("search", lang)) },
                         trailingIcon = {
                             if (searchQuery.isNotEmpty()) {
                                 IconButton(onClick = { searchQuery = "" }) {
-                                    Icon(Icons.Filled.Close, contentDescription = if (lang == AppLanguage.EN) "Clear" else "Temizle")
+                                    Icon(
+                                        Icons.Filled.Close,
+                                        contentDescription = when (lang) {
+                                            AppLanguage.RU -> "Очистить"
+                                            AppLanguage.EN -> "Clear"
+                                            AppLanguage.TR -> "Temizle"
+                                        }
+                                    )
                                 }
                             }
                         },
@@ -551,16 +675,16 @@ fun BibleReaderView(
                                     // Book names
                                     Column(modifier = Modifier.weight(1f)) {
                                         Text(
-                                            text = if (lang == AppLanguage.EN) bibleBook.nameEnglish else bibleBook.nameTurkish,
+                                            text = bibleBook.getName(lang),
                                             style = MaterialTheme.typography.titleMedium,
                                             fontWeight = FontWeight.Bold,
                                             color = MaterialTheme.colorScheme.onSurface
                                         )
                                         Text(
-                                            text = if (lang == AppLanguage.EN) {
-                                                "${bibleBook.nameTurkish} • ${bibleBook.sourceLanguage}"
-                                            } else {
-                                                "${bibleBook.nameEnglish} • ${bibleBook.sourceLanguage}"
+                                            text = when (lang) {
+                                                AppLanguage.RU -> "${bibleBook.nameEnglish} • ${bibleBook.sourceLanguage}"
+                                                AppLanguage.EN -> "${bibleBook.nameTurkish} • ${bibleBook.sourceLanguage}"
+                                                AppLanguage.TR -> "${bibleBook.nameEnglish} • ${bibleBook.sourceLanguage}"
                                             },
                                             style = MaterialTheme.typography.bodySmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -576,7 +700,11 @@ fun BibleReaderView(
                                             color = SacredGold
                                         )
                                         Text(
-                                            text = if (lang == AppLanguage.EN) "Chapters" else "Bölüm",
+                                            text = when (lang) {
+                                                AppLanguage.RU -> "Глав"
+                                                AppLanguage.EN -> "Chapters"
+                                                AppLanguage.TR -> "Bölüm"
+                                            },
                                             style = MaterialTheme.typography.labelSmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -596,17 +724,21 @@ fun BibleReaderView(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
-                        text = if (lang == AppLanguage.EN) "${selectedBook.nameEnglish} Chapters" else "${selectedBook.nameTurkish} Bölümleri",
+                        text = when (lang) {
+                            AppLanguage.RU -> "Главы книги ${selectedBook.getName(lang)}"
+                            AppLanguage.EN -> "${selectedBook.nameEnglish} Chapters"
+                            AppLanguage.TR -> "${selectedBook.nameTurkish} Bölümleri"
+                        },
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         color = SacredGold,
                         modifier = Modifier.padding(top = 12.dp)
                     )
                     Text(
-                        text = if (lang == AppLanguage.EN) {
-                            "Select the chapter you want to read to view text and commentary."
-                        } else {
-                            "Okumak istediğiniz bölümü seçerek metni ve dipnotları görüntüleyin."
+                        text = when (lang) {
+                            AppLanguage.RU -> "Выберите главу, которую хотите прочитать, чтобы увидеть текст и комментарии."
+                            AppLanguage.EN -> "Select the chapter you want to read to view text and commentary."
+                            AppLanguage.TR -> "Okumak istediğiniz bölümü seçerek metni ve dipnotları görüntüleyin."
                         },
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -679,7 +811,11 @@ fun BibleReaderView(
                         ) {
                             CircularProgressIndicator(color = SacredGold)
                             Text(
-                                text = if (lang == AppLanguage.EN) "Loading and translating chapter..." else "Bölüm yükleniyor ve çevriliyor...",
+                                text = when (lang) {
+                                    AppLanguage.RU -> "Загрузка и подготовка главы..."
+                                    AppLanguage.EN -> "Loading and translating chapter..."
+                                    AppLanguage.TR -> "Bölüm yükleniyor ve çevriliyor..."
+                                },
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 style = MaterialTheme.typography.bodyMedium
                             )
@@ -724,7 +860,13 @@ fun BibleReaderView(
                                 },
                                 colors = ButtonDefaults.buttonColors(containerColor = SacredGold)
                             ) {
-                                Text(if (lang == AppLanguage.EN) "Retry" else "Tekrar Dene")
+                                Text(
+                                    when (lang) {
+                                        AppLanguage.RU -> "Повторить"
+                                        AppLanguage.EN -> "Retry"
+                                        AppLanguage.TR -> "Tekrar Dene"
+                                    }
+                                )
                             }
                         }
                     }
@@ -815,7 +957,11 @@ fun BibleReaderView(
                                                 modifier = Modifier.size(18.dp)
                                             )
                                             Text(
-                                                text = if (lang == AppLanguage.EN) "READING LANGUAGE & OPTIONS" else "OKUMA DİLİ VE SEÇENEKLER",
+                                                text = when (lang) {
+                                                    AppLanguage.RU -> "ЯЗЫК ЧТЕНИЯ И НАСТРОЙКИ"
+                                                    AppLanguage.EN -> "READING LANGUAGE & OPTIONS"
+                                                    AppLanguage.TR -> "OKUMA DİLİ VE SEÇENEKLER"
+                                                },
                                                 style = MaterialTheme.typography.labelMedium,
                                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                                 fontWeight = FontWeight.Bold
@@ -828,7 +974,11 @@ fun BibleReaderView(
                                         ) {
                                             Icon(
                                                 imageVector = if (showLanguageCard) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
-                                                contentDescription = "Gizle/Göster",
+                                                contentDescription = when (lang) {
+                                                    AppLanguage.RU -> "Скрыть/Показать"
+                                                    AppLanguage.EN -> "Hide/Show"
+                                                    AppLanguage.TR -> "Gizle/Göster"
+                                                },
                                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                                             )
                                         }
@@ -842,10 +992,20 @@ fun BibleReaderView(
                                                     modifier = Modifier.fillMaxWidth(),
                                                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                                                 ) {
+                                                    val translationLabel = when (lang) {
+                                                        AppLanguage.RU -> "Русский"
+                                                        AppLanguage.EN -> "English"
+                                                        AppLanguage.TR -> "Türkçe"
+                                                    }
+                                                    val bilingualLabel = when (lang) {
+                                                        AppLanguage.RU -> "Двуязычный"
+                                                        AppLanguage.EN -> "Bilingual"
+                                                        AppLanguage.TR -> "İki Dilli"
+                                                    }
                                                     val modes = listOf(
-                                                        "turkish" to (if (lang == AppLanguage.EN) "Turkish" else "Türkçe"),
+                                                        "turkish" to translationLabel,
                                                         "original" to activeBook.originalLanguageName,
-                                                        "bilingual" to (if (lang == AppLanguage.EN) "Bilingual" else "İki Dilli")
+                                                        "bilingual" to bilingualLabel
                                                     )
                                                     modes.forEach { (mode, label) ->
                                                         val isSelected = languageMode == mode
@@ -894,9 +1054,17 @@ fun BibleReaderView(
                                             Column(modifier = Modifier.weight(1f)) {
                                                 Text(
                                                     text = if (isChapterDownloaded) {
-                                                        if (lang == AppLanguage.EN) "Saved to Device" else "Cihazda Kayıtlı"
+                                                        when (lang) {
+                                                            AppLanguage.RU -> "Сохранено на устройстве"
+                                                            AppLanguage.EN -> "Saved to Device"
+                                                            AppLanguage.TR -> "Cihazda Kayıtlı"
+                                                        }
                                                     } else {
-                                                        if (lang == AppLanguage.EN) "Download Chapter" else "Bölümü İndir"
+                                                        when (lang) {
+                                                            AppLanguage.RU -> "Скачать главу"
+                                                            AppLanguage.EN -> "Download Chapter"
+                                                            AppLanguage.TR -> "Bölümü İndir"
+                                                        }
                                                     },
                                                     style = MaterialTheme.typography.titleSmall,
                                                     fontWeight = FontWeight.Bold,
@@ -904,9 +1072,17 @@ fun BibleReaderView(
                                             )
                                             Text(
                                                 text = if (isChapterDownloaded) {
-                                                    if (lang == AppLanguage.EN) "Saved to read anytime." else "Dilediğiniz an okumak için cihazınızda kayıtlı."
+                                                    when (lang) {
+                                                        AppLanguage.RU -> "Сохранено для чтения в любое время."
+                                                        AppLanguage.EN -> "Saved to read anytime."
+                                                        AppLanguage.TR -> "Dilediğiniz an okumak için cihazınızda kayıtlı."
+                                                    }
                                                 } else {
-                                                    if (lang == AppLanguage.EN) "Download this chapter to read anytime." else "Bu bölümü dilediğiniz zaman okumak için indirin."
+                                                    when (lang) {
+                                                        AppLanguage.RU -> "Скачайте эту главу для чтения в любое время."
+                                                        AppLanguage.EN -> "Download this chapter to read anytime."
+                                                        AppLanguage.TR -> "Bu bölümü dilediğiniz zaman okumak için indirin."
+                                                    }
                                                 },
                                                 style = MaterialTheme.typography.bodySmall,
                                                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -934,7 +1110,11 @@ fun BibleReaderView(
                                                 ) {
                                                     Icon(
                                                         imageVector = Icons.Filled.Download,
-                                                        contentDescription = if (lang == AppLanguage.EN) "Download chapter" else "Bölümü indir",
+                                                        contentDescription = when (lang) {
+                                                            AppLanguage.RU -> "Скачать главу"
+                                                            AppLanguage.EN -> "Download chapter"
+                                                            AppLanguage.TR -> "Bölümü indir"
+                                                        },
                                                         tint = SacredGold
                                                     )
                                                 }
@@ -1022,7 +1202,11 @@ fun BibleReaderView(
                                             ) {
                                                 Icon(
                                                     imageVector = Icons.Filled.EditNote,
-                                                    contentDescription = if (lang == AppLanguage.EN) "Add Note" else "Not Ekle",
+                                                    contentDescription = when (lang) {
+                                                        AppLanguage.RU -> "Добавить заметку"
+                                                        AppLanguage.EN -> "Add Note"
+                                                        AppLanguage.TR -> "Not Ekle"
+                                                    },
                                                     tint = MaterialTheme.colorScheme.primary,
                                                     modifier = Modifier.size(20.dp)
                                                 )
@@ -1120,7 +1304,11 @@ fun BibleReaderView(
                                             modifier = Modifier.size(18.dp)
                                         )
                                         Text(
-                                            text = if (lang == AppLanguage.EN) "EXPLANATIONS & FOOTNOTES" else "AÇIKLAMALAR & DİPNOTLAR",
+                                            text = when (lang) {
+                                                AppLanguage.RU -> "ПОЯСНЕНИЯ И ПРИМЕЧАНИЯ"
+                                                AppLanguage.EN -> "EXPLANATIONS & FOOTNOTES"
+                                                AppLanguage.TR -> "AÇIKLAMALAR & DİPNOTLAR"
+                                            },
                                             style = MaterialTheme.typography.titleSmall,
                                             fontWeight = FontWeight.Bold,
                                             color = MaterialTheme.colorScheme.primary
@@ -1154,25 +1342,7 @@ fun BibleReaderView(
                         // Okumayı Kaydet / Tamamla Block
                         item {
                             val historyList by viewModel.readingHistory.collectAsState()
-                            val bTitle = if (lang == AppLanguage.EN) {
-                                when (book.id) {
-                                    "torah" -> "Torah"
-                                    "sermon" -> "Gospel"
-                                    "talmud" -> "Talmud"
-                                    "bukhari" -> "Sahih al-Bukhari"
-                                    "gita" -> "Bhagavad Gita"
-                                    else -> "Scripture"
-                                }
-                            } else {
-                                when (book.id) {
-                                    "torah" -> "Tevrat"
-                                    "sermon" -> "İncil"
-                                    "talmud" -> "Talmud"
-                                    "bukhari" -> "Sahih-i Buharî"
-                                    "gita" -> "Bhagavad Gita"
-                                    else -> "Kutsal Metin"
-                                }
-                            }
+                            val bTitle = Loc.get(book.id, lang)
                             val previousPagesRead = historyList
                                 .filter { it.bookTitle == bTitle }
                                 .sumOf { it.pagesRead }
@@ -1209,7 +1379,11 @@ fun BibleReaderView(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         Text(
-                                            text = if (lang == AppLanguage.EN) "Reading Session Summary" else "Okuma Oturumu Özeti",
+                                            text = when (lang) {
+                                                AppLanguage.RU -> "Итоги сессии чтения"
+                                                AppLanguage.EN -> "Reading Session Summary"
+                                                AppLanguage.TR -> "Okuma Oturumu Özeti"
+                                            },
                                             style = MaterialTheme.typography.titleMedium,
                                             fontWeight = FontWeight.Bold,
                                             color = MaterialTheme.colorScheme.primary
@@ -1220,7 +1394,11 @@ fun BibleReaderView(
                                             shape = RoundedCornerShape(8.dp)
                                         ) {
                                             Text(
-                                                text = if (lang == AppLanguage.EN) "Auto-Calculated" else "Otomatik Hesaplandı",
+                                                text = when (lang) {
+                                                    AppLanguage.RU -> "Авторасчёт"
+                                                    AppLanguage.EN -> "Auto-Calculated"
+                                                    AppLanguage.TR -> "Otomatik Hesaplandı"
+                                                },
                                                 style = MaterialTheme.typography.labelSmall,
                                                 color = SacredGold,
                                                 fontWeight = FontWeight.Bold,
@@ -1237,22 +1415,32 @@ fun BibleReaderView(
                                         ) {
                                             Icon(
                                                 imageVector = Icons.Filled.CheckCircle,
-                                                contentDescription = if (lang == AppLanguage.EN) "Success" else "Başarılı",
+                                                contentDescription = when (lang) {
+                                                    AppLanguage.RU -> "Успешно"
+                                                    AppLanguage.EN -> "Success"
+                                                    AppLanguage.TR -> "Başarılı"
+                                                },
                                                 tint = SacredGold
                                             )
                                             Text(
-                                                text = if (lang == AppLanguage.EN) "Your reading record was successfully added!" else "Okuma kaydınız başarıyla eklendi!",
+                                                text = when (lang) {
+                                                    AppLanguage.RU -> "Запись о чтении успешно сохранена!"
+                                                    AppLanguage.EN -> "Your reading record was successfully added!"
+                                                    AppLanguage.TR -> "Okuma kaydınız başarıyla eklendi!"
+                                                },
                                                 color = MaterialTheme.colorScheme.onSurface,
                                                 style = MaterialTheme.typography.bodyMedium
                                             )
                                         }
                                     } else {
-                                        val displaySection = if (lang == AppLanguage.EN) {
-                                            (currentSelectedBook?.nameEnglish ?: activeBook.title)
-                                        } else {
-                                            (currentSelectedBook?.nameTurkish ?: activeBook.title)
-                                        }
-                                        val displayChapter = currentSelectedChapter?.let { if (lang == AppLanguage.EN) " Chapter $it" else " Bölüm $it" } ?: ""
+                                        val displaySection = currentSelectedBook?.getName(lang) ?: activeBook.title
+                                        val displayChapter = currentSelectedChapter?.let {
+                                            when (lang) {
+                                                AppLanguage.RU -> " Глава $it"
+                                                AppLanguage.EN -> " Chapter $it"
+                                                AppLanguage.TR -> " $it. Bölüm"
+                                            }
+                                        } ?: ""
 
                                         // Show automated metrics in clean, beautiful badge rows
                                         Column(
@@ -1261,7 +1449,11 @@ fun BibleReaderView(
                                         ) {
                                             // Chapter/Section details
                                             Text(
-                                                text = if (lang == AppLanguage.EN) "Section: $displaySection$displayChapter" else "Bölüm: $displaySection$displayChapter",
+                                                text = when (lang) {
+                                                    AppLanguage.RU -> "Раздел: $displaySection$displayChapter"
+                                                    AppLanguage.EN -> "Section: $displaySection$displayChapter"
+                                                    AppLanguage.TR -> "Bölüm: $displaySection$displayChapter"
+                                                },
                                                 style = MaterialTheme.typography.bodyLarge,
                                                 fontWeight = FontWeight.SemiBold,
                                                 color = MaterialTheme.colorScheme.onSurface
@@ -1281,13 +1473,21 @@ fun BibleReaderView(
                                                 ) {
                                                     Icon(Icons.AutoMirrored.Filled.MenuBook, contentDescription = null, tint = SacredGold, modifier = Modifier.size(18.dp))
                                                     Text(
-                                                        text = if (lang == AppLanguage.EN) "Pages Read" else "Okunan Sayfa",
+                                                        text = when (lang) {
+                                                            AppLanguage.RU -> "Прочитано страниц"
+                                                            AppLanguage.EN -> "Pages Read"
+                                                            AppLanguage.TR -> "Okunan Sayfa"
+                                                        },
                                                         style = MaterialTheme.typography.bodyMedium,
                                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                                     )
                                                 }
                                                 Text(
-                                                    text = if (lang == AppLanguage.EN) "$autoPagesRead pages" else "$autoPagesRead sayfa",
+                                                    text = when (lang) {
+                                                        AppLanguage.RU -> "$autoPagesRead стр."
+                                                        AppLanguage.EN -> "$autoPagesRead pages"
+                                                        AppLanguage.TR -> "$autoPagesRead sayfa"
+                                                    },
                                                     style = MaterialTheme.typography.bodyMedium,
                                                     fontWeight = FontWeight.Bold,
                                                     color = MaterialTheme.colorScheme.onSurface
@@ -1306,13 +1506,21 @@ fun BibleReaderView(
                                                 ) {
                                                     Icon(Icons.Filled.HourglassEmpty, contentDescription = null, tint = SacredGold, modifier = Modifier.size(18.dp))
                                                     Text(
-                                                        text = if (lang == AppLanguage.EN) "Reading Time" else "Okuma Süresi",
+                                                        text = when (lang) {
+                                                            AppLanguage.RU -> "Время чтения"
+                                                            AppLanguage.EN -> "Reading Time"
+                                                            AppLanguage.TR -> "Okuma Süresi"
+                                                        },
                                                         style = MaterialTheme.typography.bodyMedium,
                                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                                     )
                                                 }
                                                 Text(
-                                                    text = if (lang == AppLanguage.EN) "$autoMinutes min" else "$autoMinutes dk",
+                                                    text = when (lang) {
+                                                        AppLanguage.RU -> "$autoMinutes мин."
+                                                        AppLanguage.EN -> "$autoMinutes min"
+                                                        AppLanguage.TR -> "$autoMinutes dk"
+                                                    },
                                                     style = MaterialTheme.typography.bodyMedium,
                                                     fontWeight = FontWeight.Bold,
                                                     color = MaterialTheme.colorScheme.onSurface
@@ -1331,7 +1539,11 @@ fun BibleReaderView(
                                                 ) {
                                                     Icon(Icons.AutoMirrored.Filled.TrendingUp, contentDescription = null, tint = SacredGold, modifier = Modifier.size(18.dp))
                                                     Text(
-                                                        text = if (lang == AppLanguage.EN) "New Book Progress" else "Yeni Kitap İlerlemesi",
+                                                        text = when (lang) {
+                                                            AppLanguage.RU -> "Новый прогресс книги"
+                                                            AppLanguage.EN -> "New Book Progress"
+                                                            AppLanguage.TR -> "Yeni Kitap İlerlemesi"
+                                                        },
                                                         style = MaterialTheme.typography.bodyMedium,
                                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                                     )
@@ -1349,10 +1561,10 @@ fun BibleReaderView(
                                             onClick = {
                                                 viewModel.updateReadingSessionProgress(
                                                     bookTitle = bTitle,
-                                                    subtitle = if (lang == AppLanguage.EN) {
-                                                        "$displaySection (Chapter ${currentSelectedChapter ?: 1})"
-                                                    } else {
-                                                        "$displaySection (${currentSelectedChapter ?: 1}. Bölüm)"
+                                                    subtitle = when (lang) {
+                                                        AppLanguage.RU -> "$displaySection (Глава ${currentSelectedChapter ?: 1})"
+                                                        AppLanguage.EN -> "$displaySection (Chapter ${currentSelectedChapter ?: 1})"
+                                                        AppLanguage.TR -> "$displaySection (${currentSelectedChapter ?: 1}. Bölüm)"
                                                     },
                                                     progress = calculatedProgress,
                                                     surahOrChapter = "$displaySection (${currentSelectedChapter ?: 1})",
@@ -1366,7 +1578,11 @@ fun BibleReaderView(
                                             colors = ButtonDefaults.buttonColors(containerColor = SacredGold)
                                         ) {
                                             Text(
-                                                text = if (lang == AppLanguage.EN) "Save Reading Progress" else "Okuma İlerlemesini Kaydet",
+                                                text = when (lang) {
+                                                    AppLanguage.RU -> "Сохранить прогресс чтения"
+                                                    AppLanguage.EN -> "Save Reading Progress"
+                                                    AppLanguage.TR -> "Okuma İlerlemesini Kaydet"
+                                                },
                                                 color = Color.White
                                             )
                                         }

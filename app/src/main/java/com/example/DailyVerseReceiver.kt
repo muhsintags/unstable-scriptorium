@@ -50,10 +50,15 @@ class DailyVerseReceiver : BroadcastReceiver() {
                 val randomBook = targetBooks.randomOrNull() ?: books.first()
 
                 val settingsPrefs = context.getSharedPreferences("scriptorium_settings", Context.MODE_PRIVATE)
-                val isEn = settingsPrefs.getString("language", "TR") == "EN"
+                val langStr = settingsPrefs.getString("language", "TR") ?: "TR"
+                val lang = try {
+                    com.example.ui.util.AppLanguage.valueOf(langStr)
+                } catch (e: Exception) {
+                    com.example.ui.util.AppLanguage.TR
+                }
 
                 // Fetch random verse from live API, fallback to offline if error
-                val (ref, text) = fetchVerseFromApiWithFallback(randomBook.id, randomBook, isEn)
+                val (ref, text) = fetchVerseFromApiWithFallback(randomBook.id, randomBook, lang)
 
                 val savedReligionStr = prefs.getString("user_religion", "islam")
                 val userReligion = com.example.ui.util.UserReligion.fromId(savedReligionStr)
@@ -70,7 +75,6 @@ class DailyVerseReceiver : BroadcastReceiver() {
                 )
 
                 val randomPrayer = livePrayerSchedules.randomOrNull()
-                val lang = if (isEn) com.example.ui.util.AppLanguage.EN else com.example.ui.util.AppLanguage.TR
 
                 val finalTitle = if (randomPrayer != null) {
                     "📍 ${locationInfo.cityName} [${userSect.getTitle(lang)}] ${randomPrayer.getName(lang)} (${randomPrayer.timeStr})"
@@ -81,7 +85,7 @@ class DailyVerseReceiver : BroadcastReceiver() {
                 } else text ?: ""
 
                 if (finalTitle != null && finalText.isNotEmpty()) {
-                    showNotification(context, finalTitle, finalText)
+                    showNotification(context, finalTitle, finalText, lang)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -92,13 +96,17 @@ class DailyVerseReceiver : BroadcastReceiver() {
         }
     }
 
-    private suspend fun fetchVerseFromApiWithFallback(bookId: String, fallbackBook: com.example.data.model.Book, isEn: Boolean): Pair<String, String> {
+    private suspend fun fetchVerseFromApiWithFallback(bookId: String, fallbackBook: com.example.data.model.Book, lang: com.example.ui.util.AppLanguage): Pair<String, String> {
         val client = OkHttpClient()
         return try {
             when (bookId) {
                 "quran" -> {
                     val randomAyah = (1..6236).random()
-                    val quranEdition = if (isEn) "en.yusufali" else "tr.yazir"
+                    val quranEdition = when (lang) {
+                        com.example.ui.util.AppLanguage.RU -> "ru.kuliev"
+                        com.example.ui.util.AppLanguage.EN -> "en.yusufali"
+                        com.example.ui.util.AppLanguage.TR -> "tr.yazir"
+                    }
                     val url = "https://api.alquran.cloud/v1/ayah/$randomAyah/$quranEdition"
                     val request = Request.Builder().url(url).build()
                     client.newCall(request).execute().use { response ->
@@ -111,142 +119,33 @@ class DailyVerseReceiver : BroadcastReceiver() {
                         val surahNum = surahObj.getInt("number")
                         val surahName = surahObj.getString("englishName")
                         val numberInSurah = dataObj.getInt("numberInSurah")
-                        if (isEn) {
-                            Pair("HOLY QURAN (Surah $surahName, Verse $numberInSurah)", text)
-                        } else {
-                            val surahTurkishName = when (surahNum) {
-                                1 -> "Fâtiha"
-                                2 -> "Bakara"
-                                3 -> "Âl-i İmrân"
-                                4 -> "Nisâ"
-                                5 -> "Mâide"
-                                6 -> "En'âm"
-                                7 -> "A'râf"
-                                8 -> "Enfâl"
-                                9 -> "Tevbe"
-                                10 -> "Yûnus"
-                                11 -> "Hûd"
-                                12 -> "Yûsuf"
-                                13 -> "Ra'd"
-                                14 -> "İbrâhîm"
-                                15 -> "Hicr"
-                                16 -> "Nahl"
-                                17 -> "İsrâ"
-                                18 -> "Kehf"
-                                19 -> "Meryem"
-                                20 -> "Tâhâ"
-                                21 -> "Enbiyâ"
-                                22 -> "Hac"
-                                23 -> "Mü'minûn"
-                                24 -> "Nûr"
-                                25 -> "Furkan"
-                                26 -> "Şuarâ"
-                                27 -> "Neml"
-                                28 -> "Kasas"
-                                29 -> "Ankebût"
-                                30 -> "Rûm"
-                                31 -> "Lokmân"
-                                32 -> "Secde"
-                                33 -> "Ahzâb"
-                                34 -> "Sebe'"
-                                35 -> "Fâtır"
-                                36 -> "Yâsîn"
-                                37 -> "Sâffât"
-                                38 -> "Sâd"
-                                39 -> "Zümer"
-                                40 -> "Mü'min"
-                                41 -> "Fussilet"
-                                42 -> "Şûrâ"
-                                43 -> "Zuhruf"
-                                44 -> "Duhân"
-                                45 -> "Câsiye"
-                                46 -> "Ahkaf"
-                                47 -> "Muhammed"
-                                48 -> "Fetih"
-                                49 -> "Hucurât"
-                                50 -> "Kâf"
-                                51 -> "Zâriyât"
-                                52 -> "Tûr"
-                                53 -> "Necm"
-                                54 -> "Kamer"
-                                55 -> "Rahmân"
-                                56 -> "Vâkıa"
-                                57 -> "Hadîd"
-                                58 -> "Mücâdele"
-                                59 -> "Haşr"
-                                60 -> "Mümtehine"
-                                61 -> "Saf"
-                                62 -> "Cuma"
-                                63 -> "Münâfikûn"
-                                64 -> "Tegâbun"
-                                65 -> "Talâk"
-                                66 -> "Tahrîm"
-                                67 -> "Mülk"
-                                68 -> "Kalem"
-                                69 -> "Hâkka"
-                                70 -> "Meâric"
-                                71 -> "Nûh"
-                                72 -> "Cin"
-                                73 -> "Müzzemmil"
-                                74 -> "Müddessir"
-                                75 -> "Kıyâme"
-                                76 -> "İnsân"
-                                77 -> "Mürselât"
-                                78 -> "Nebe'"
-                                79 -> "Nâziât"
-                                80 -> "Abese"
-                                81 -> "Tekvîr"
-                                82 -> "İnfitâr"
-                                83 -> "Mutaffifîn"
-                                84 -> "İnşikâk"
-                                85 -> "Burûc"
-                                86 -> "Târık"
-                                87 -> "A'lâ"
-                                88 -> "Gâşiye"
-                                89 -> "Fecr"
-                                90 -> "Beled"
-                                91 -> "Şems"
-                                92 -> "Leyl"
-                                93 -> "Duhâ"
-                                94 -> "İnşirâh"
-                                95 -> "Tîn"
-                                96 -> "Alak"
-                                97 -> "Kadir"
-                                98 -> "Beyyine"
-                                99 -> "Zilzâl"
-                                100 -> "Âdiyât"
-                                101 -> "Kâria"
-                                102 -> "Tekâsür"
-                                103 -> "Asr"
-                                104 -> "Hümeze"
-                                105 -> "Fîl"
-                                106 -> "Kureyş"
-                                107 -> "Mâûn"
-                                108 -> "Kevser"
-                                109 -> "Kâfirûn"
-                                110 -> "Nasr"
-                                111 -> "Mesed"
-                                112 -> "İhlâs"
-                                113 -> "Felak"
-                                114 -> "Nâs"
-                                else -> surahName
-                            }
-                            Pair("KUR'AN-I KERİM ($surahTurkishName Suresi, Ayet $numberInSurah)", text)
+                        val surahLocalizedName = com.example.data.model.QuranRepository.surahs.find { it.number == surahNum }?.getName(lang) ?: surahName
+                        val refHeader = when (lang) {
+                            com.example.ui.util.AppLanguage.RU -> "СВЯЩЕННЫЙ КОРАН (Сура $surahLocalizedName, Аят $numberInSurah)"
+                            com.example.ui.util.AppLanguage.EN -> "HOLY QURAN (Surah $surahLocalizedName, Verse $numberInSurah)"
+                            com.example.ui.util.AppLanguage.TR -> "KUR'AN-I KERİM ($surahLocalizedName Suresi, Ayet $numberInSurah)"
                         }
+                        Pair(refHeader, text)
                     }
                 }
                 "torah" -> {
                     // Random Torah book and chapter details
-                    val torahBooks = if (isEn) {
-                        listOf(
+                    val torahBooks = when (lang) {
+                        com.example.ui.util.AppLanguage.RU -> listOf(
+                            Triple("genesis", "Бытие", 50),
+                            Triple("exodus", "Исход", 40),
+                            Triple("leviticus", "Левит", 27),
+                            Triple("numbers", "Числа", 36),
+                            Triple("deuteronomy", "Второзаконие", 34)
+                        )
+                        com.example.ui.util.AppLanguage.EN -> listOf(
                             Triple("genesis", "Genesis", 50),
                             Triple("exodus", "Exodus", 40),
                             Triple("leviticus", "Leviticus", 27),
                             Triple("numbers", "Numbers", 36),
                             Triple("deuteronomy", "Deuteronomy", 34)
                         )
-                    } else {
-                        listOf(
+                        com.example.ui.util.AppLanguage.TR -> listOf(
                             Triple("genesis", "Yaratılış", 50),
                             Triple("exodus", "Mısır'dan Çıkış", 40),
                             Triple("leviticus", "Levililer", 27),
@@ -268,8 +167,16 @@ class DailyVerseReceiver : BroadcastReceiver() {
                         val verseObj = versesJA.getJSONObject(randomIdx)
                         val englishText = verseObj.getString("text").trim()
                         val verseNum = verseObj.getInt("verse")
-                        val verseText = if (isEn) englishText else translateTextGtx(englishText)
-                        val refHeader = if (isEn) "TORAH (${selectedTorah.second}, Chapter $chapter:$verseNum)" else "TEVRAT (${selectedTorah.second}, Bölüm $chapter:$verseNum)"
+                        val verseText = when (lang) {
+                            com.example.ui.util.AppLanguage.RU -> translateTextGtx(englishText, targetLang = "ru", sourceLang = "en")
+                            com.example.ui.util.AppLanguage.EN -> englishText
+                            com.example.ui.util.AppLanguage.TR -> translateTextGtx(englishText, targetLang = "tr", sourceLang = "en")
+                        }
+                        val refHeader = when (lang) {
+                            com.example.ui.util.AppLanguage.RU -> "ТОРА (${selectedTorah.second}, Глава $chapter:$verseNum)"
+                            com.example.ui.util.AppLanguage.EN -> "TORAH (${selectedTorah.second}, Chapter $chapter:$verseNum)"
+                            com.example.ui.util.AppLanguage.TR -> "TEVRAT (${selectedTorah.second}, Bölüm $chapter:$verseNum)"
+                        }
                         Pair(refHeader, verseText)
                     }
                 }
@@ -288,52 +195,79 @@ class DailyVerseReceiver : BroadcastReceiver() {
                         val verseObj = versesJA.getJSONObject(randomIdx)
                         val englishText = verseObj.getString("text").trim()
                         val verseNum = verseObj.getInt("verse")
-                        val verseText = if (isEn) englishText else translateTextGtx(englishText)
-                        val refHeader = if (isEn) "GOSPEL (Matthew $chapter:$verseNum)" else "İNCİL (Matta $chapter:$verseNum)"
+                        val verseText = when (lang) {
+                            com.example.ui.util.AppLanguage.RU -> translateTextGtx(englishText, targetLang = "ru", sourceLang = "en")
+                            com.example.ui.util.AppLanguage.EN -> englishText
+                            com.example.ui.util.AppLanguage.TR -> translateTextGtx(englishText, targetLang = "tr", sourceLang = "en")
+                        }
+                        val refHeader = when (lang) {
+                            com.example.ui.util.AppLanguage.RU -> "ЕВА scriptorium (От Матфея $chapter:$verseNum)".replace("scriptorium", "НГЕЛИЕ")
+                            com.example.ui.util.AppLanguage.EN -> "GOSPEL (Matthew $chapter:$verseNum)"
+                            com.example.ui.util.AppLanguage.TR -> "İNCİL (Matta $chapter:$verseNum)"
+                        }
                         Pair(refHeader, verseText)
                     }
                 }
-                else -> fetchOfflineVerse(fallbackBook, isEn)
+                else -> fetchOfflineVerse(fallbackBook, lang)
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            fetchOfflineVerse(fallbackBook, isEn)
+            fetchOfflineVerse(fallbackBook, lang)
         }
     }
 
-    private fun fetchOfflineVerse(book: com.example.data.model.Book, isEn: Boolean): Pair<String, String> {
+    private fun fetchOfflineVerse(book: com.example.data.model.Book, lang: com.example.ui.util.AppLanguage): Pair<String, String> {
         val paragraphs = book.paragraphs
         if (paragraphs.isEmpty()) {
             return Pair(
-                if (isEn) "HOLY SCRIPTURES" else "KUTSAL KİTAP",
-                if (isEn) "Verse content not found." else "Ayet içeriği bulunamadı."
+                when (lang) {
+                    com.example.ui.util.AppLanguage.RU -> "СВЯЩЕННОЕ ПИСАНИЕ"
+                    com.example.ui.util.AppLanguage.EN -> "HOLY SCRIPTURES"
+                    com.example.ui.util.AppLanguage.TR -> "KUTSAL KİTAP"
+                },
+                when (lang) {
+                    com.example.ui.util.AppLanguage.RU -> "Текст не найден."
+                    com.example.ui.util.AppLanguage.EN -> "Verse content not found."
+                    com.example.ui.util.AppLanguage.TR -> "Ayet içeriği bulunamadı."
+                }
             )
         }
         val randomIndex = (paragraphs.indices).random()
-        val text = paragraphs[randomIndex]
-        val ref = if (isEn) {
-            when (book.id) {
+        val textTr = paragraphs[randomIndex]
+        val text = when (lang) {
+            com.example.ui.util.AppLanguage.RU -> translateTextGtx(textTr, targetLang = "ru", sourceLang = "tr")
+            com.example.ui.util.AppLanguage.EN -> translateTextGtx(textTr, targetLang = "en", sourceLang = "tr")
+            com.example.ui.util.AppLanguage.TR -> textTr
+        }
+        val bookTitle = com.example.ui.util.Loc.get(book.id, lang)
+        val ref = when (lang) {
+            com.example.ui.util.AppLanguage.RU -> when (book.id) {
+                "quran" -> "СВЯЩЕННЫЙ КОРАН (Сура Аль-Фатх, Аят ${randomIndex + 1})"
+                "torah" -> "ТОРА (Бытие, Глава 1:${randomIndex + 1})"
+                "sermon" -> "ЕВА scriptorium (От Матфея 5:${randomIndex + 1})".replace("scriptorium", "НГЕЛИЕ")
+                else -> "${bookTitle.uppercase()} (${randomIndex + 1})"
+            }
+            com.example.ui.util.AppLanguage.EN -> when (book.id) {
                 "quran" -> "HOLY QURAN (Surah Al-Fath, Verse ${randomIndex + 1})"
                 "torah" -> "TORAH (Genesis, Chapter 1:${randomIndex + 1})"
                 "sermon" -> "GOSPEL (Matthew 5:${randomIndex + 1})"
-                else -> "${book.title.uppercase()} (${randomIndex + 1})"
+                else -> "${bookTitle.uppercase()} (${randomIndex + 1})"
             }
-        } else {
-            when (book.id) {
+            com.example.ui.util.AppLanguage.TR -> when (book.id) {
                 "quran" -> "KUR'AN-I KERİM (Fetih Suresi, Ayet ${randomIndex + 1})"
                 "torah" -> "TEVRAT (Yaratılış, Bölüm 1:${randomIndex + 1})"
                 "sermon" -> "İNCİL (Matta 5:${randomIndex + 1})"
-                else -> "${book.title.uppercase()} (${randomIndex + 1})"
+                else -> "${bookTitle.uppercase()} (${randomIndex + 1})"
             }
         }
         return Pair(ref, text)
     }
 
-    private fun translateTextGtx(text: String): String {
+    private fun translateTextGtx(text: String, targetLang: String = "tr", sourceLang: String = "auto"): String {
         val okHttpClient = OkHttpClient()
         try {
             val encodedText = URLEncoder.encode(text, "UTF-8")
-            val url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=tr&dt=t&q=$encodedText"
+            val url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=$sourceLang&tl=$targetLang&dt=t&q=$encodedText"
             val request = Request.Builder().url(url).build()
             okHttpClient.newCall(request).execute().use { response ->
                 if (response.isSuccessful) {
@@ -358,17 +292,25 @@ class DailyVerseReceiver : BroadcastReceiver() {
         return text
     }
 
-    private fun showNotification(context: Context, title: String, message: String) {
+    private fun showNotification(context: Context, title: String, message: String, lang: com.example.ui.util.AppLanguage = com.example.ui.util.AppLanguage.TR) {
         val channelId = "hourly_verse_channel"
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
-                "Günün Ayetleri",
+                when (lang) {
+                    com.example.ui.util.AppLanguage.RU -> "Аяты дня и времена молитв"
+                    com.example.ui.util.AppLanguage.EN -> "Daily Verses & Prayer Times"
+                    com.example.ui.util.AppLanguage.TR -> "Günün Ayetleri"
+                },
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
-                description = "Seçilen kutsal kitaplardan saatlik ayet bildirimleri."
+                description = when (lang) {
+                    com.example.ui.util.AppLanguage.RU -> "Времена молитв и аяты из священных писаний."
+                    com.example.ui.util.AppLanguage.EN -> "Prayer times and daily verses from sacred scriptures."
+                    com.example.ui.util.AppLanguage.TR -> "Seçilen kutsal kitaplardan saatlik ayet bildirimleri."
+                }
                 enableVibration(true)
                 enableLights(true)
                 setShowBadge(true)

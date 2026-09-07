@@ -134,7 +134,11 @@ fun QuranReaderView(
             onDismissRequest = { showAddNoteDialog = false },
             title = {
                 Text(
-                    text = if (lang == AppLanguage.EN) "Add Verse Reflection" else "Ayet Tefekkürü Ekle",
+                    text = when (lang) {
+                        AppLanguage.RU -> "Добавить размышление"
+                        AppLanguage.EN -> "Add Verse Reflection"
+                        AppLanguage.TR -> "Ayet Tefekkürü Ekle"
+                    },
                     fontFamily = FontFamily.Serif,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
@@ -143,10 +147,10 @@ fun QuranReaderView(
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text(
-                        text = if (lang == AppLanguage.EN) {
-                            "${currentSelectedSurah?.nameEnglish ?: "Quran"} Surah, Verse ${verse.number}"
-                        } else {
-                            "${currentSelectedSurah?.nameTurkish ?: "Kur'an"} Suresi, ${verse.number}. Ayet"
+                        text = when (lang) {
+                            AppLanguage.RU -> "${currentSelectedSurah?.getName(lang) ?: "Коран"}, Аят ${verse.number}"
+                            AppLanguage.EN -> "${currentSelectedSurah?.nameEnglish ?: "Quran"} Surah, Verse ${verse.number}"
+                            AppLanguage.TR -> "${currentSelectedSurah?.nameTurkish ?: "Kur'an"} Suresi, ${verse.number}. Ayet"
                         },
                         style = MaterialTheme.typography.labelLarge,
                         color = SacredGold
@@ -177,8 +181,24 @@ fun QuranReaderView(
                     OutlinedTextField(
                         value = noteTextQuery,
                         onValueChange = { noteTextQuery = it },
-                        label = { Text(if (lang == AppLanguage.EN) "Your Reflection Note" else "Tefekkür Notunuz") },
-                        placeholder = { Text(if (lang == AppLanguage.EN) "Write your thoughts about this verse..." else "Bu ayet hakkındaki düşüncelerinizi yazın...") },
+                        label = {
+                            Text(
+                                when (lang) {
+                                    AppLanguage.RU -> "Ваша заметка"
+                                    AppLanguage.EN -> "Your Reflection Note"
+                                    AppLanguage.TR -> "Tefekkür Notunuz"
+                                }
+                            )
+                        },
+                        placeholder = {
+                            Text(
+                                when (lang) {
+                                    AppLanguage.RU -> "Напишите ваши мысли об этом аяте..."
+                                    AppLanguage.EN -> "Write your thoughts about this verse..."
+                                    AppLanguage.TR -> "Bu ayet hakkındaki düşüncelerinizi yazın..."
+                                }
+                            )
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(100.dp)
@@ -191,10 +211,10 @@ fun QuranReaderView(
             confirmButton = {
                 Button(
                     onClick = {
-                        val bookTitle = if (lang == AppLanguage.EN) {
-                            "Quran - ${currentSelectedSurah?.nameEnglish} ${verse.number}"
-                        } else {
-                            "Kur'an - ${currentSelectedSurah?.nameTurkish} ${verse.number}"
+                        val bookTitle = when (lang) {
+                            AppLanguage.RU -> "Коран - ${currentSelectedSurah?.getName(lang)} ${verse.number}"
+                            AppLanguage.EN -> "Quran - ${currentSelectedSurah?.nameEnglish} ${verse.number}"
+                            AppLanguage.TR -> "Kur'an - ${currentSelectedSurah?.nameTurkish} ${verse.number}"
                         }
                         viewModel.addNoteOrHighlight(
                             bookTitle = bookTitle,
@@ -207,12 +227,18 @@ fun QuranReaderView(
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
-                    Text(if (lang == AppLanguage.EN) "Save Note" else "Notu Kaydet")
+                    Text(
+                        when (lang) {
+                            AppLanguage.RU -> "Сохранить заметку"
+                            AppLanguage.EN -> "Save Note"
+                            AppLanguage.TR -> "Notu Kaydet"
+                        }
+                    )
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showAddNoteDialog = false }) {
-                    Text(if (lang == AppLanguage.EN) "Cancel" else "İptal")
+                    Text(Loc.get("cancel", lang))
                 }
             },
             shape = RoundedCornerShape(12.dp),
@@ -227,12 +253,12 @@ fun QuranReaderView(
                     Column {
                         Text(
                             text = currentSelectedSurah?.let {
-                                if (lang == AppLanguage.EN) {
-                                    "${it.number}. Surah ${it.nameEnglish}"
-                                } else {
-                                    "${it.number}. ${it.nameTurkish} Suresi"
+                                when (lang) {
+                                    AppLanguage.RU -> "${it.number}. Сура ${it.getName(lang)}"
+                                    AppLanguage.EN -> "${it.number}. Surah ${it.nameEnglish}"
+                                    AppLanguage.TR -> "${it.number}. ${it.nameTurkish} Suresi"
                                 }
-                            } ?: (if (lang == AppLanguage.EN) "Holy Quran" else "Kur'an-ı Kerim"),
+                            } ?: Loc.get("holy_quran", lang),
                             fontFamily = FontFamily.Serif,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary,
@@ -258,7 +284,7 @@ fun QuranReaderView(
                     }) {
                         Icon(
                             imageVector = Icons.Filled.ChevronLeft,
-                            contentDescription = if (lang == AppLanguage.EN) "Back" else "Geri",
+                            contentDescription = Loc.get("back", lang),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -267,10 +293,26 @@ fun QuranReaderView(
                     if (currentSelectedSurah != null) {
                         // Font size controls
                         IconButton(onClick = { fontSizeMultiplier = (fontSizeMultiplier - 0.1f).coerceAtLeast(0.8f) }) {
-                            Icon(Icons.Filled.Remove, if (lang == AppLanguage.EN) "Decrease Font Size" else "Yazıyı Küçült", tint = MaterialTheme.colorScheme.primary)
+                            Icon(
+                                Icons.Filled.Remove,
+                                when (lang) {
+                                    AppLanguage.RU -> "Уменьшить шрифт"
+                                    AppLanguage.EN -> "Decrease Font Size"
+                                    AppLanguage.TR -> "Yazıyı Küçült"
+                                },
+                                tint = MaterialTheme.colorScheme.primary
+                            )
                         }
                         IconButton(onClick = { fontSizeMultiplier = (fontSizeMultiplier + 0.1f).coerceAtMost(1.8f) }) {
-                            Icon(Icons.Filled.Add, if (lang == AppLanguage.EN) "Increase Font Size" else "Yazıyı Büyüt", tint = MaterialTheme.colorScheme.primary)
+                            Icon(
+                                Icons.Filled.Add,
+                                when (lang) {
+                                    AppLanguage.RU -> "Увеличить шрифт"
+                                    AppLanguage.EN -> "Increase Font Size"
+                                    AppLanguage.TR -> "Yazıyı Büyüt"
+                                },
+                                tint = MaterialTheme.colorScheme.primary
+                            )
                         }
                     }
                 },
@@ -293,17 +335,17 @@ fun QuranReaderView(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
-                        text = if (lang == AppLanguage.EN) "Holy Quran" else "Kur'an-ı Kerim",
+                        text = Loc.get("holy_quran", lang),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         color = SacredGold,
                         modifier = Modifier.padding(top = 12.dp)
                     )
                     Text(
-                        text = if (lang == AppLanguage.EN) {
-                            "Listen to all 114 surahs in Arabic with English translation and the beautiful recitation of Mishary Rashid Alafasy."
-                        } else {
-                            "Diyanet Türkçe meali ve Mishary Rashid Alafasy'nin eşsiz kıraati eşliğinde, 114 surenin tamamını arapça ve türkçe sesli dinleyin."
+                        text = when (lang) {
+                            AppLanguage.RU -> "Слушайте все 114 сур на арабском языке с переводом смыслов и прекрасным чтением Мишари Рашида аль-Афаси."
+                            AppLanguage.EN -> "Listen to all 114 surahs in Arabic with English translation and the beautiful recitation of Mishary Rashid Alafasy."
+                            AppLanguage.TR -> "Diyanet Türkçe meali ve Mishary Rashid Alafasy'nin eşsiz kıraati eşliğinde, 114 surenin tamamını arapça ve türkçe sesli dinleyin."
                         },
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -313,12 +355,27 @@ fun QuranReaderView(
                     OutlinedTextField(
                         value = searchQuery,
                         onValueChange = { searchQuery = it },
-                        placeholder = { Text(if (lang == AppLanguage.EN) "Search surah name or number..." else "Sure ismi veya numara ara...") },
-                        leadingIcon = { Icon(Icons.Filled.Search, contentDescription = if (lang == AppLanguage.EN) "Search" else "Ara") },
+                        placeholder = {
+                            Text(
+                                when (lang) {
+                                    AppLanguage.RU -> "Поиск суры по названию или номеру..."
+                                    AppLanguage.EN -> "Search surah name or number..."
+                                    AppLanguage.TR -> "Sure ismi veya numara ara..."
+                                }
+                            )
+                        },
+                        leadingIcon = { Icon(Icons.Filled.Search, contentDescription = Loc.get("search", lang)) },
                         trailingIcon = {
                             if (searchQuery.isNotEmpty()) {
                                 IconButton(onClick = { searchQuery = "" }) {
-                                    Icon(Icons.Filled.Close, contentDescription = if (lang == AppLanguage.EN) "Clear" else "Temizle")
+                                    Icon(
+                                        Icons.Filled.Close,
+                                        contentDescription = when (lang) {
+                                            AppLanguage.RU -> "Очистить"
+                                            AppLanguage.EN -> "Clear"
+                                            AppLanguage.TR -> "Temizle"
+                                        }
+                                    )
                                 }
                             }
                         },
@@ -359,15 +416,27 @@ fun QuranReaderView(
                                 )
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = if (lang == AppLanguage.EN) "Download Entire Quran" else "Tüm Kitabı Cihaza İndir",
+                                        text = when (lang) {
+                                            AppLanguage.RU -> "Скачать весь Коран"
+                                            AppLanguage.EN -> "Download Entire Quran"
+                                            AppLanguage.TR -> "Tüm Kitabı Cihaza İndir"
+                                        },
                                         style = MaterialTheme.typography.titleSmall,
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
                                         text = if (quranProgress != null) {
-                                            if (lang == AppLanguage.EN) "Downloading: %${(quranProgress * 100).toInt()}" else "İndiriliyor: %${(quranProgress * 100).toInt()}"
+                                            when (lang) {
+                                                AppLanguage.RU -> "Загрузка: %${(quranProgress * 100).toInt()}"
+                                                AppLanguage.EN -> "Downloading: %${(quranProgress * 100).toInt()}"
+                                                AppLanguage.TR -> "İndiriliyor: %${(quranProgress * 100).toInt()}"
+                                            }
                                         } else {
-                                            if (lang == AppLanguage.EN) "Read and listen to all 114 surahs offline even when you don't have internet access." else "İnternetiniz yokken bile tüm 114 sureyi arapça ve türkçe mealleriyle anında okuyabilirsiniz."
+                                            when (lang) {
+                                                AppLanguage.RU -> "Читайте и слушайте все 114 сур офлайн даже без доступа к интернету."
+                                                AppLanguage.EN -> "Read and listen to all 114 surahs offline even when you don't have internet access."
+                                                AppLanguage.TR -> "İnternetiniz yokken bile tüm 114 sureyi arapça ve türkçe mealleriyle anında okuyabilirsiniz."
+                                            }
                                         },
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -387,7 +456,14 @@ fun QuranReaderView(
                                         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
                                         shape = RoundedCornerShape(8.dp)
                                     ) {
-                                        Text(if (lang == AppLanguage.EN) "Download" else "İndir", style = MaterialTheme.typography.labelMedium)
+                                        Text(
+                                            when (lang) {
+                                                AppLanguage.RU -> "Скачать"
+                                                AppLanguage.EN -> "Download"
+                                                AppLanguage.TR -> "İndir"
+                                            },
+                                            style = MaterialTheme.typography.labelMedium
+                                        )
                                     }
                                 }
                             }
@@ -435,13 +511,17 @@ fun QuranReaderView(
                                     // Surah names
                                     Column(modifier = Modifier.weight(1f)) {
                                         Text(
-                                            text = if (lang == AppLanguage.EN) surah.nameEnglish else surah.nameTurkish,
+                                            text = surah.getName(lang),
                                             style = MaterialTheme.typography.titleMedium,
                                             fontWeight = FontWeight.Bold,
                                             color = MaterialTheme.colorScheme.onSurface
                                         )
                                         Text(
-                                            text = "${surah.nameEnglish} • ${surah.ayahCount} ${if (lang == AppLanguage.EN) "Verses" else "Ayet"}",
+                                            text = "${surah.nameEnglish} • ${surah.ayahCount} ${when (lang) {
+                                                AppLanguage.RU -> "Аятов"
+                                                AppLanguage.EN -> "Verses"
+                                                AppLanguage.TR -> "Ayet"
+                                            }}",
                                             style = MaterialTheme.typography.bodySmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -475,7 +555,11 @@ fun QuranReaderView(
                             ) {
                                 CircularProgressIndicator(color = SacredGold)
                                 Text(
-                                    text = if (lang == AppLanguage.EN) "Loading verses..." else "Ayetler yükleniyor...",
+                                    text = when (lang) {
+                                        AppLanguage.RU -> "Загрузка аятов..."
+                                        AppLanguage.EN -> "Loading verses..."
+                                        AppLanguage.TR -> "Ayetler yükleniyor..."
+                                    },
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     style = MaterialTheme.typography.bodyMedium
                                 )
@@ -509,7 +593,7 @@ fun QuranReaderView(
                                     onClick = { viewModel.loadSurahContent(currentSelectedSurah!!.number) },
                                     colors = ButtonDefaults.buttonColors(containerColor = SacredGold)
                                 ) {
-                                    Text(if (lang == AppLanguage.EN) "Retry" else "Tekrar Dene")
+                                    Text(Loc.get("retry", lang))
                                 }
                             }
                         }
@@ -557,12 +641,20 @@ fun QuranReaderView(
                                                     contentDescription = null,
                                                     tint = if (isSurahDownloaded) SacredGold else MaterialTheme.colorScheme.onSurfaceVariant
                                                 )
-                                                Column {
+                                                 Column {
                                                     Text(
                                                         text = if (isSurahDownloaded) {
-                                                            if (lang == AppLanguage.EN) "Saved to Device" else "Cihazda Kayıtlı"
+                                                            when (lang) {
+                                                                AppLanguage.RU -> "Сохранено на устройстве"
+                                                                AppLanguage.EN -> "Saved to Device"
+                                                                AppLanguage.TR -> "Cihazda Kayıtlı"
+                                                            }
                                                         } else {
-                                                            if (lang == AppLanguage.EN) "Audio & Reader Mode" else "Okuma ve Ses Dinleme"
+                                                            when (lang) {
+                                                                AppLanguage.RU -> "Режим чтения и аудио"
+                                                                AppLanguage.EN -> "Audio & Reader Mode"
+                                                                AppLanguage.TR -> "Okuma ve Ses Dinleme"
+                                                            }
                                                         },
                                                         style = MaterialTheme.typography.titleSmall,
                                                         fontWeight = FontWeight.Bold,
@@ -570,16 +662,28 @@ fun QuranReaderView(
                                                     )
                                                     if (surahProgress != null) {
                                                         Text(
-                                                            text = if (lang == AppLanguage.EN) "Downloading: %${(surahProgress * 100).toInt()}" else "İndiriliyor: %${(surahProgress * 100).toInt()}",
+                                                            text = when (lang) {
+                                                                AppLanguage.RU -> "Загрузка: %${(surahProgress * 100).toInt()}"
+                                                                AppLanguage.EN -> "Downloading: %${(surahProgress * 100).toInt()}"
+                                                                AppLanguage.TR -> "İndiriliyor: %${(surahProgress * 100).toInt()}"
+                                                            },
                                                             style = MaterialTheme.typography.bodySmall,
                                                             color = MaterialTheme.colorScheme.primary
                                                         )
                                                     } else {
                                                         Text(
                                                             text = if (isSurahDownloaded) {
-                                                                if (lang == AppLanguage.EN) "Read and listen offline without internet." else "İnternetsiz de okuyabilir ve dinleyebilirsiniz."
+                                                                when (lang) {
+                                                                    AppLanguage.RU -> "Читайте и слушайте офлайн без интернета."
+                                                                    AppLanguage.EN -> "Read and listen offline without internet."
+                                                                    AppLanguage.TR -> "İnternetsiz de okuyabilir ve dinleyebilirsiniz."
+                                                                }
                                                             } else {
-                                                                if (lang == AppLanguage.EN) "Save translation and audio to device." else "Meali ve tüm ses dosyalarını cihaza kaydedin."
+                                                                when (lang) {
+                                                                    AppLanguage.RU -> "Сохраните перевод и аудиофайлы на устройство."
+                                                                    AppLanguage.EN -> "Save translation and audio to device."
+                                                                    AppLanguage.TR -> "Meali ve tüm ses dosyalarını cihaza kaydedin."
+                                                                }
                                                             },
                                                             style = MaterialTheme.typography.bodySmall,
                                                             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -601,7 +705,11 @@ fun QuranReaderView(
                                                 ) {
                                                     Icon(
                                                         imageVector = Icons.Filled.DeleteOutline,
-                                                        contentDescription = if (lang == AppLanguage.EN) "Delete Download" else "İndirmeyi Sil",
+                                                        contentDescription = when (lang) {
+                                                            AppLanguage.RU -> "Удалить загрузку"
+                                                            AppLanguage.EN -> "Delete Download"
+                                                            AppLanguage.TR -> "İndirmeyi Sil"
+                                                        },
                                                         tint = MaterialTheme.colorScheme.error
                                                     )
                                                 }
@@ -612,7 +720,14 @@ fun QuranReaderView(
                                                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
                                                     shape = RoundedCornerShape(8.dp)
                                                 ) {
-                                                    Text(if (lang == AppLanguage.EN) "Download" else "İndir", style = MaterialTheme.typography.labelMedium)
+                                                    Text(
+                                                        when (lang) {
+                                                            AppLanguage.RU -> "Скачать"
+                                                            AppLanguage.EN -> "Download"
+                                                            AppLanguage.TR -> "İndir"
+                                                        },
+                                                        style = MaterialTheme.typography.labelMedium
+                                                    )
                                                 }
                                             }
                                         }
@@ -653,10 +768,10 @@ fun QuranReaderView(
                                             )
                                         }
                                         Text(
-                                            text = if (lang == AppLanguage.EN) {
-                                                "In the name of Allah, the Entirely Merciful, the Especially Merciful."
-                                            } else {
-                                                "Rahmân ve Rahîm olan Allah'ın adıyla."
+                                            text = when (lang) {
+                                                AppLanguage.RU -> "Во имя Аллаха, Милостивого, Милосердного!"
+                                                AppLanguage.EN -> "In the name of Allah, the Entirely Merciful, the Especially Merciful."
+                                                AppLanguage.TR -> "Rahmân ve Rahîm olan Allah'ın adıyla."
                                             },
                                             style = MaterialTheme.typography.bodyMedium.copy(
                                                 fontStyle = FontStyle.Italic,
@@ -735,7 +850,11 @@ fun QuranReaderView(
                                                 ) {
                                                     Icon(
                                                         imageVector = Icons.Filled.EditNote,
-                                                        contentDescription = if (lang == AppLanguage.EN) "Add Note" else "Not Ekle",
+                                                        contentDescription = when (lang) {
+                                                            AppLanguage.RU -> "Добавить заметку"
+                                                            AppLanguage.EN -> "Add Note"
+                                                            AppLanguage.TR -> "Not Ekle"
+                                                        },
                                                         tint = MaterialTheme.colorScheme.primary,
                                                         modifier = Modifier.size(20.dp)
                                                     )
@@ -765,7 +884,11 @@ fun QuranReaderView(
                                                     } else {
                                                         Icon(
                                                             imageVector = if (isVersePlaying && isAudioPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
-                                                            contentDescription = if (lang == AppLanguage.EN) "Listen" else "Dinle",
+                                                            contentDescription = when (lang) {
+                                                                AppLanguage.RU -> "Слушать"
+                                                                AppLanguage.EN -> "Listen"
+                                                                AppLanguage.TR -> "Dinle"
+                                                            },
                                                             tint = if (isVersePlaying) SacredGold else MaterialTheme.colorScheme.primary,
                                                             modifier = Modifier.size(22.dp)
                                                         )
@@ -808,7 +931,7 @@ fun QuranReaderView(
                             // Okumayı Kaydet / Tamamla Block
                             item {
                                 val historyList by viewModel.readingHistory.collectAsState()
-                                val bookTitle = if (lang == AppLanguage.EN) "Holy Quran" else "Kur'an-ı Kerim"
+                                val bookTitle = Loc.get("holy_quran", lang)
                                 val previousPagesRead = historyList
                                     .filter { it.bookTitle == bookTitle }
                                     .sumOf { it.pagesRead }
@@ -840,7 +963,11 @@ fun QuranReaderView(
                                             verticalAlignment = Alignment.CenterVertically
                                         ) {
                                             Text(
-                                                text = if (lang == AppLanguage.EN) "Reading Session Summary" else "Okuma Oturumu Özeti",
+                                                text = when (lang) {
+                                                    AppLanguage.RU -> "Итоги сессии чтения"
+                                                    AppLanguage.EN -> "Reading Session Summary"
+                                                    AppLanguage.TR -> "Okuma Oturumu Özeti"
+                                                },
                                                 style = MaterialTheme.typography.titleMedium,
                                                 fontWeight = FontWeight.Bold,
                                                 color = MaterialTheme.colorScheme.primary
@@ -851,7 +978,11 @@ fun QuranReaderView(
                                                 shape = RoundedCornerShape(8.dp)
                                             ) {
                                                 Text(
-                                                    text = if (lang == AppLanguage.EN) "Auto-Calculated" else "Otomatik Hesaplandı",
+                                                    text = when (lang) {
+                                                        AppLanguage.RU -> "Автоматический подсчет"
+                                                        AppLanguage.EN -> "Auto-Calculated"
+                                                        AppLanguage.TR -> "Otomatik Hesaplandı"
+                                                    },
                                                     style = MaterialTheme.typography.labelSmall,
                                                     color = SacredGold,
                                                     fontWeight = FontWeight.Bold,
@@ -868,11 +999,19 @@ fun QuranReaderView(
                                             ) {
                                                 Icon(
                                                     imageVector = Icons.Filled.CheckCircle,
-                                                    contentDescription = if (lang == AppLanguage.EN) "Success" else "Başarılı",
+                                                    contentDescription = when (lang) {
+                                                        AppLanguage.RU -> "Успешно"
+                                                        AppLanguage.EN -> "Success"
+                                                        AppLanguage.TR -> "Başarılı"
+                                                    },
                                                     tint = SacredGold
                                                 )
                                                 Text(
-                                                    text = if (lang == AppLanguage.EN) "Your reading record was added successfully!" else "Okuma kaydınız başarıyla eklendi!",
+                                                    text = when (lang) {
+                                                        AppLanguage.RU -> "Запись о чтении успешно сохранена!"
+                                                        AppLanguage.EN -> "Your reading record was added successfully!"
+                                                        AppLanguage.TR -> "Okuma kaydınız başarıyla eklendi!"
+                                                    },
                                                     color = MaterialTheme.colorScheme.onSurface,
                                                     style = MaterialTheme.typography.bodyMedium
                                                 )
@@ -885,10 +1024,10 @@ fun QuranReaderView(
                                             ) {
                                                 // Book details
                                                 Text(
-                                                    text = if (lang == AppLanguage.EN) {
-                                                        "Surah: ${currentSelectedSurah?.nameEnglish ?: "Fatiha"} Surah"
-                                                    } else {
-                                                        "Sure: ${currentSelectedSurah?.nameTurkish ?: "Fatiha"} Suresi"
+                                                    text = when (lang) {
+                                                        AppLanguage.RU -> "Сура: ${currentSelectedSurah?.getName(lang) ?: "Фатиха"}"
+                                                        AppLanguage.EN -> "Surah: ${currentSelectedSurah?.nameEnglish ?: "Fatiha"} Surah"
+                                                        AppLanguage.TR -> "Sure: ${currentSelectedSurah?.nameTurkish ?: "Fatiha"} Suresi"
                                                     },
                                                     style = MaterialTheme.typography.bodyLarge,
                                                     fontWeight = FontWeight.SemiBold,
@@ -909,13 +1048,21 @@ fun QuranReaderView(
                                                     ) {
                                                         Icon(Icons.AutoMirrored.Filled.MenuBook, contentDescription = null, tint = SacredGold, modifier = Modifier.size(18.dp))
                                                         Text(
-                                                            text = if (lang == AppLanguage.EN) "Pages Read" else "Okunan Sayfa",
+                                                            text = when (lang) {
+                                                                AppLanguage.RU -> "Прочитано страниц"
+                                                                AppLanguage.EN -> "Pages Read"
+                                                                AppLanguage.TR -> "Okunan Sayfa"
+                                                            },
                                                             style = MaterialTheme.typography.bodyMedium,
                                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                                         )
                                                     }
                                                     Text(
-                                                        text = if (lang == AppLanguage.EN) "$autoPagesRead pages" else "$autoPagesRead sayfa",
+                                                        text = when (lang) {
+                                                            AppLanguage.RU -> "$autoPagesRead стр."
+                                                            AppLanguage.EN -> "$autoPagesRead pages"
+                                                            AppLanguage.TR -> "$autoPagesRead sayfa"
+                                                        },
                                                         style = MaterialTheme.typography.bodyMedium,
                                                         fontWeight = FontWeight.Bold,
                                                         color = MaterialTheme.colorScheme.onSurface
@@ -934,13 +1081,21 @@ fun QuranReaderView(
                                                     ) {
                                                         Icon(Icons.Filled.HourglassEmpty, contentDescription = null, tint = SacredGold, modifier = Modifier.size(18.dp))
                                                         Text(
-                                                            text = if (lang == AppLanguage.EN) "Reading Time" else "Okuma Süresi",
+                                                            text = when (lang) {
+                                                                AppLanguage.RU -> "Время чтения"
+                                                                AppLanguage.EN -> "Reading Time"
+                                                                AppLanguage.TR -> "Okuma Süresi"
+                                                            },
                                                             style = MaterialTheme.typography.bodyMedium,
                                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                                         )
                                                     }
                                                     Text(
-                                                        text = if (lang == AppLanguage.EN) "$autoMinutes min" else "$autoMinutes dk",
+                                                        text = when (lang) {
+                                                            AppLanguage.RU -> "$autoMinutes мин."
+                                                            AppLanguage.EN -> "$autoMinutes min"
+                                                            AppLanguage.TR -> "$autoMinutes dk"
+                                                        },
                                                         style = MaterialTheme.typography.bodyMedium,
                                                         fontWeight = FontWeight.Bold,
                                                         color = MaterialTheme.colorScheme.onSurface
@@ -959,7 +1114,11 @@ fun QuranReaderView(
                                                     ) {
                                                         Icon(Icons.AutoMirrored.Filled.TrendingUp, contentDescription = null, tint = SacredGold, modifier = Modifier.size(18.dp))
                                                         Text(
-                                                            text = if (lang == AppLanguage.EN) "New Book Progress" else "Yeni Kitap İlerlemesi",
+                                                            text = when (lang) {
+                                                                AppLanguage.RU -> "Новый прогресс книги"
+                                                                AppLanguage.EN -> "New Book Progress"
+                                                                AppLanguage.TR -> "Yeni Kitap İlerlemesi"
+                                                            },
                                                             style = MaterialTheme.typography.bodyMedium,
                                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                                         )
@@ -976,17 +1135,17 @@ fun QuranReaderView(
                                             Button(
                                                 onClick = {
                                                     viewModel.updateReadingSessionProgress(
-                                                        bookTitle = if (lang == AppLanguage.EN) "Holy Quran" else "Kur'an-ı Kerim",
-                                                        subtitle = if (lang == AppLanguage.EN) {
-                                                            "${currentSelectedSurah?.nameEnglish ?: "Fatiha"} Surah (Chapter ${currentSelectedSurah?.number ?: 1})"
-                                                        } else {
-                                                            "${currentSelectedSurah?.nameTurkish ?: "Fatiha"} Suresi (${currentSelectedSurah?.number ?: 1}. Bölüm)"
+                                                        bookTitle = Loc.get("holy_quran", lang),
+                                                        subtitle = when (lang) {
+                                                            AppLanguage.RU -> "Сура ${currentSelectedSurah?.getName(lang) ?: "Фатиха"} (Сура ${currentSelectedSurah?.number ?: 1})"
+                                                            AppLanguage.EN -> "${currentSelectedSurah?.nameEnglish ?: "Fatiha"} Surah (Chapter ${currentSelectedSurah?.number ?: 1})"
+                                                            AppLanguage.TR -> "${currentSelectedSurah?.nameTurkish ?: "Fatiha"} Suresi (${currentSelectedSurah?.number ?: 1}. Bölüm)"
                                                         },
                                                         progress = calculatedProgress,
-                                                        surahOrChapter = if (lang == AppLanguage.EN) {
-                                                            "${currentSelectedSurah?.nameEnglish ?: "Fatiha"} Surah (Chapter ${currentSelectedSurah?.number ?: 1})"
-                                                        } else {
-                                                            "${currentSelectedSurah?.nameTurkish ?: "Fatiha"} Suresi (${currentSelectedSurah?.number ?: 1}. Bölüm)"
+                                                        surahOrChapter = when (lang) {
+                                                            AppLanguage.RU -> "Сура ${currentSelectedSurah?.getName(lang) ?: "Фатиха"} (Сура ${currentSelectedSurah?.number ?: 1})"
+                                                            AppLanguage.EN -> "${currentSelectedSurah?.nameEnglish ?: "Fatiha"} Surah (Chapter ${currentSelectedSurah?.number ?: 1})"
+                                                            AppLanguage.TR -> "${currentSelectedSurah?.nameTurkish ?: "Fatiha"} Suresi (${currentSelectedSurah?.number ?: 1}. Bölüm)"
                                                         },
                                                         pagesRead = autoPagesRead,
                                                         isCompleted = isBottomReached.value,
@@ -998,7 +1157,11 @@ fun QuranReaderView(
                                                 colors = ButtonDefaults.buttonColors(containerColor = SacredGold)
                                             ) {
                                                 Text(
-                                                    text = if (lang == AppLanguage.EN) "Save Reading Progress" else "Okuma İlerlemesini Kaydet",
+                                                    text = when (lang) {
+                                                        AppLanguage.RU -> "Сохранить прогресс чтения"
+                                                        AppLanguage.EN -> "Save Reading Progress"
+                                                        AppLanguage.TR -> "Okuma İlerlemesini Kaydet"
+                                                    },
                                                     color = Color.White
                                                 )
                                             }
@@ -1050,20 +1213,20 @@ fun QuranReaderView(
 
                                     Column {
                                         Text(
-                                            text = if (lang == AppLanguage.EN) {
-                                                "${currentSelectedSurah?.nameEnglish} Surah"
-                                            } else {
-                                                "${currentSelectedSurah?.nameTurkish} Suresi"
+                                            text = when (lang) {
+                                                AppLanguage.RU -> "Сура ${currentSelectedSurah?.getName(lang)}"
+                                                AppLanguage.EN -> "${currentSelectedSurah?.nameEnglish} Surah"
+                                                AppLanguage.TR -> "${currentSelectedSurah?.nameTurkish} Suresi"
                                             },
                                             style = MaterialTheme.typography.titleMedium,
                                             fontWeight = FontWeight.Bold,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                         Text(
-                                            text = if (lang == AppLanguage.EN) {
-                                                "Reading Verse ${activePlayingVerseIndex?.plus(1) ?: 1}..."
-                                            } else {
-                                                "Ayet ${activePlayingVerseIndex?.plus(1) ?: 1} okunuyor..."
+                                            text = when (lang) {
+                                                AppLanguage.RU -> "Чтение аята ${activePlayingVerseIndex?.plus(1) ?: 1}..."
+                                                AppLanguage.EN -> "Reading Verse ${activePlayingVerseIndex?.plus(1) ?: 1}..."
+                                                AppLanguage.TR -> "Ayet ${activePlayingVerseIndex?.plus(1) ?: 1} okunuyor..."
                                             },
                                             style = MaterialTheme.typography.bodySmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
@@ -1085,7 +1248,11 @@ fun QuranReaderView(
                                     ) {
                                         Icon(
                                             imageVector = if (isAudioPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
-                                            contentDescription = if (lang == AppLanguage.EN) "Play/Pause" else "Oynat/Duraklat",
+                                            contentDescription = when (lang) {
+                                                AppLanguage.RU -> "Воспроизведение/Пауза"
+                                                AppLanguage.EN -> "Play/Pause"
+                                                AppLanguage.TR -> "Oynat/Duraklat"
+                                            },
                                             tint = MaterialTheme.colorScheme.onPrimary
                                         )
                                     }
@@ -1100,7 +1267,11 @@ fun QuranReaderView(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Filled.Stop,
-                                            contentDescription = if (lang == AppLanguage.EN) "Stop" else "Durdur",
+                                            contentDescription = when (lang) {
+                                                AppLanguage.RU -> "Остановить"
+                                                AppLanguage.EN -> "Stop"
+                                                AppLanguage.TR -> "Durdur"
+                                            },
                                             tint = MaterialTheme.colorScheme.onErrorContainer
                                         )
                                     }
