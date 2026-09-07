@@ -60,7 +60,7 @@ fun HomeScreen(
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         AsyncImage(
-                            model = com.muhsintags.scriptorium.R.drawable.app_logo_icon_1785607132737,
+                            model = com.muhsintags.scriptorium.R.drawable.app_icon,
                             contentDescription = "Scriptorium Logo",
                             modifier = Modifier
                                 .size(36.dp)
@@ -262,10 +262,10 @@ fun HomeScreen(
                                     ) {
                                         val cleanText = remember(activeVerse.text) {
                                             var t = activeVerse.text.trim()
-                                            while (t.startsWith("\"") || t.startsWith("“") || t.startsWith("”") || t.startsWith("'") || t.startsWith("«") || t.startsWith("„")) {
+                                            while (t.startsWith("\"") || t.startsWith(""") || t.startsWith(""") || t.startsWith("'") || t.startsWith("«") || t.startsWith("„")) {
                                                 t = t.substring(1).trim()
                                             }
-                                            while (t.endsWith("\"") || t.endsWith("“") || t.endsWith("”") || t.endsWith("'") || t.endsWith("»") || t.endsWith("„")) {
+                                            while (t.endsWith("\"") || t.endsWith(""") || t.endsWith(""") || t.endsWith("'") || t.endsWith("»") || t.endsWith("„")) {
                                                 t = t.substring(0, t.length - 1).trim()
                                             }
                                             t
