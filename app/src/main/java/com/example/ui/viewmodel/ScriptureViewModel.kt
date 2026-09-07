@@ -59,7 +59,7 @@ data class ReaderSettings(
     val fontSizeSp: Float = 20f,
     val fontFamily: FontFamilySetting = FontFamilySetting.SERIF,
     val lineHeight: LineHeightSetting = LineHeightSetting.NORMAL,
-    val language: AppLanguage = AppLanguage.EN,
+    val language: AppLanguage = AppLanguage.deviceDefault(),
     val showOriginalScript: Boolean = true
 )
 
@@ -1146,6 +1146,14 @@ class ScriptureViewModel(application: Application) : AndroidViewModel(applicatio
         loadBibleChapterContent(bookId = "sermon", bibleBook = book, chapterNumber = chapter, isTorah = false)
     }
 
+    private fun localizedBookText(turkish: String, english: String, russian: String): String {
+        return when (_readerSettings.value.language) {
+            AppLanguage.TR -> turkish
+            AppLanguage.EN -> english
+            AppLanguage.RU -> russian
+        }
+    }
+
     fun loadBibleChapterContent(bookId: String, bibleBook: com.example.data.model.BibleBook, chapterNumber: Int, isTorah: Boolean) {
         viewModelScope.launch {
             _isBookLoading.value = true
@@ -1194,32 +1202,32 @@ class ScriptureViewModel(application: Application) : AndroidViewModel(applicatio
                         Book(
                             id = bookId,
                             title = when (bookId) {
-                                "torah" -> if (_readerSettings.value.language == AppLanguage.EN) "Torah" else "Tevrat"
-                                "talmud" -> if (_readerSettings.value.language == AppLanguage.EN) "Talmud Bavli" else "Talmud"
-                                "bukhari" -> if (_readerSettings.value.language == AppLanguage.EN) "Sahih al-Bukhari" else "Sahih-i Buhârî"
-                                "gita" -> "Bhagavad Gita"
-                                "sermon" -> if (_readerSettings.value.language == AppLanguage.EN) "Gospel" else "İncil"
-                                else -> if (_readerSettings.value.language == AppLanguage.EN) "Gospel" else "İncil"
+                                "torah" -> localizedBookText("Tevrat", "Torah", "Тора")
+                                "talmud" -> localizedBookText("Talmud", "Talmud Bavli", "Талмуд Бавли")
+                                "bukhari" -> localizedBookText("Sahih-i Buhârî", "Sahih al-Bukhari", "Сахих аль-Бухари")
+                                "gita" -> localizedBookText("Bhagavad Gita Kutsal Metni", "Bhagavad Gita", "Священная Бхагавад-гита")
+                                "sermon" -> localizedBookText("İncil", "Gospel", "Евангелие")
+                                else -> localizedBookText("İncil", "Gospel", "Евангелие")
                             },
                             category = if (bookId == "talmud" || bookId == "bukhari" || bookId == "gita") {
-                                if (_readerSettings.value.language == AppLanguage.EN) "Other Scriptures" else "Diğer Metinler"
+                                localizedBookText("Diğer Metinler", "Other Scriptures", "Другие Писания")
                             } else {
-                                if (_readerSettings.value.language == AppLanguage.EN) "Sacred Texts" else "Kutsal Metinler"
+                                localizedBookText("Kutsal Metinler", "Sacred Texts", "Священные Писания")
                             },
                             description = when (bookId) {
-                                "torah" -> if (_readerSettings.value.language == AppLanguage.EN) "Torah (Tanakh)" else "Tevrat (Tanah)"
-                                "sermon" -> if (_readerSettings.value.language == AppLanguage.EN) "Gospel (New Testament)" else "İncil (Yeni Ahit)"
-                                "talmud" -> if (_readerSettings.value.language == AppLanguage.EN) "Talmud Bavli" else "Babil Talmudu"
-                                "bukhari" -> if (_readerSettings.value.language == AppLanguage.EN) "Sahih al-Bukhari Hadith Collection" else "Sahih-i Buhârî Hadis Külliyatı"
-                                "gita" -> if (_readerSettings.value.language == AppLanguage.EN) "Bhagavad Gita" else "Bhagavad Gita Kutsal Metni"
+                                "torah" -> localizedBookText("Tevrat (Tanah)", "Torah (Tanakh)", "Тора (Танах)")
+                                "sermon" -> localizedBookText("İncil (Yeni Ahit)", "Gospel (New Testament)", "Евангелие (Новый Завет)")
+                                "talmud" -> localizedBookText("Babil Talmudu", "Talmud Bavli", "Вавилонский Талмуд")
+                                "bukhari" -> localizedBookText("Sahih-i Buhârî Hadis Külliyatı", "Sahih al-Bukhari Hadith Collection", "Сборник хадисов Сахих аль-Бухари")
+                                "gita" -> localizedBookText("Bhagavad Gita Kutsal Metni", "Bhagavad Gita", "Священная Бхагавад-гита")
                                 else -> ""
                             },
                             authorOrSource = when (bookId) {
-                                "torah" -> if (_readerSettings.value.language == AppLanguage.EN) "Hebrew Tradition" else "İbranî Geleneği"
-                                "sermon" -> if (_readerSettings.value.language == AppLanguage.EN) "Christian Tradition" else "Hristiyan Geleneği"
-                                "talmud" -> if (_readerSettings.value.language == AppLanguage.EN) "Babylonian Academies" else "Babil Akademileri"
-                                "bukhari" -> if (_readerSettings.value.language == AppLanguage.EN) "Imam Bukhari" else "İmam Buharî"
-                                "gita" -> if (_readerSettings.value.language == AppLanguage.EN) "Sanskrit Tradition" else "Sanskrit Geleneği"
+                                "torah" -> localizedBookText("İbranî Geleneği", "Hebrew Tradition", "Еврейская традиция")
+                                "sermon" -> localizedBookText("Hristiyan Geleneği", "Christian Tradition", "Христианская традиция")
+                                "talmud" -> localizedBookText("Babil Akademileri", "Babylonian Academies", "Вавилонские академии")
+                                "bukhari" -> localizedBookText("İmam Buharî", "Imam Bukhari", "Имам аль-Бухари")
+                                "gita" -> localizedBookText("Sanskrit Geleneği", "Sanskrit Tradition", "Санскритская традиция")
                                 else -> ""
                             },
                             iconName = when (bookId) {
@@ -1231,24 +1239,28 @@ class ScriptureViewModel(application: Application) : AndroidViewModel(applicatio
                             contentTitle = if (bookId == "talmud") {
                                 val pageNum = 2 + (chapterNumber - 1) / 2
                                 val side = if (chapterNumber % 2 == 1) "a" else "b"
-                                if (_readerSettings.value.language == AppLanguage.EN) "${bibleBook.nameEnglish} $pageNum$side" else "${bibleBook.nameTurkish} $pageNum$side"
+                                "${bibleBook.getName(_readerSettings.value.language)} $pageNum$side"
                             } else if (bookId == "bukhari") {
-                                if (_readerSettings.value.language == AppLanguage.EN) {
-                                    "${bibleBook.nameEnglish} Hadith $chapterNumber"
-                                } else {
-                                    "${bibleBook.nameTurkish} Hadis $chapterNumber"
-                                }
+                                localizedBookText(
+                                    "${bibleBook.nameTurkish} Hadis $chapterNumber",
+                                    "${bibleBook.nameEnglish} Hadith $chapterNumber",
+                                    "${bibleBook.nameRussian} Хадис $chapterNumber"
+                                )
                             } else {
-                                if (_readerSettings.value.language == AppLanguage.EN) "${bibleBook.nameEnglish} $chapterNumber" else "${bibleBook.nameTurkish} $chapterNumber"
+                                "${bibleBook.getName(_readerSettings.value.language)} $chapterNumber"
                             },
                             subContentTitle = if (bookId == "talmud") {
                                 val pageNum = 2 + (chapterNumber - 1) / 2
                                 val side = if (chapterNumber % 2 == 1) "a" else "b"
                                 "Talmud - $pageNum$side"
                             } else if (bookId == "bukhari") {
-                                if (_readerSettings.value.language == AppLanguage.EN) "Sahih al-Bukhari - ${bibleBook.nameEnglish}" else "Sahih-i Buharî - ${bibleBook.nameTurkish}"
+                                localizedBookText(
+                                    "Sahih-i Buharî - ${bibleBook.nameTurkish}",
+                                    "Sahih al-Bukhari - ${bibleBook.nameEnglish}",
+                                    "Сахих аль-Бухари - ${bibleBook.nameRussian}"
+                                )
                             } else {
-                                if (_readerSettings.value.language == AppLanguage.EN) "${bibleBook.nameEnglish} $chapterNumber" else "${bibleBook.nameTurkish} $chapterNumber"
+                                "${bibleBook.getName(_readerSettings.value.language)} $chapterNumber"
                             },
                             introText = if (_readerSettings.value.language == AppLanguage.EN) {
                                 "Chapter $chapterNumber of the book of ${bibleBook.nameEnglish}, loaded from local offline storage."
@@ -1257,11 +1269,11 @@ class ScriptureViewModel(application: Application) : AndroidViewModel(applicatio
                             },
                             paragraphs = paragraphsList,
                             originalLanguageName = when (bookId) {
-                                "torah" -> if (_readerSettings.value.language == AppLanguage.EN) "Hebrew" else "İbranice (Hebrew)"
-                                "talmud" -> if (_readerSettings.value.language == AppLanguage.EN) "Aramaic" else "Aramice (Aramaic)"
-                                "bukhari" -> if (_readerSettings.value.language == AppLanguage.EN) "Arabic" else "Arapça (Arabic)"
-                                "gita" -> if (_readerSettings.value.language == AppLanguage.EN) "Sanskrit" else "Sanskritçe (Sanskrit)"
-                                else -> if (_readerSettings.value.language == AppLanguage.EN) "Ancient Greek" else "Grekçe (Ancient Greek)"
+                                "torah" -> localizedBookText("İbranice (Hebrew)", "Hebrew", "Иврит")
+                                "talmud" -> localizedBookText("Aramice (Aramaic)", "Aramaic", "Арамейский")
+                                "bukhari" -> localizedBookText("Arapça (Arabic)", "Arabic", "Арабский")
+                                "gita" -> localizedBookText("Sanskritçe (Sanskrit)", "Sanskrit", "Санскрит")
+                                else -> localizedBookText("Grekçe (Ancient Greek)", "Ancient Greek", "Древнегреческий")
                             },
                             originalIntroText = if (originalParagraphsList.isNotEmpty()) originalParagraphsList.first().substringAfter(": ") else "",
                             originalParagraphs = originalParagraphsList,
@@ -2493,7 +2505,7 @@ class ScriptureViewModel(application: Application) : AndroidViewModel(applicatio
         val fontSize = settingsPrefs.getFloat("font_size", 20f)
         val fontFamilyStr = settingsPrefs.getString("font_family", "SERIF") ?: "SERIF"
         val lineHeightStr = settingsPrefs.getString("line_height", "NORMAL") ?: "NORMAL"
-        val languageStr = settingsPrefs.getString("language", "EN") ?: "EN"
+        val languageStr = settingsPrefs.getString("language", null)
         val showOriginal = settingsPrefs.getBoolean("show_original_script", true)
 
         _readerSettings.value = ReaderSettings(
@@ -2501,7 +2513,7 @@ class ScriptureViewModel(application: Application) : AndroidViewModel(applicatio
             fontSizeSp = fontSize,
             fontFamily = try { FontFamilySetting.valueOf(fontFamilyStr) } catch(e: Exception) { FontFamilySetting.SERIF },
             lineHeight = try { LineHeightSetting.valueOf(lineHeightStr) } catch(e: Exception) { LineHeightSetting.NORMAL },
-            language = try { AppLanguage.valueOf(languageStr) } catch(e: Exception) { AppLanguage.EN },
+            language = AppLanguage.fromStoredValue(languageStr) ?: AppLanguage.deviceDefault(),
             showOriginalScript = showOriginal
         )
 
@@ -4071,7 +4083,7 @@ class ScriptureViewModel(application: Application) : AndroidViewModel(applicatio
                 val fontSize = settingsObj.optDouble("fontSizeSp", 20.0).toFloat()
                 val fontFamilyStr = settingsObj.optString("fontFamily", "SERIF")
                 val lineHeightStr = settingsObj.optString("lineHeight", "NORMAL")
-                val languageStr = settingsObj.optString("language", "EN")
+                val languageStr = settingsObj.optString("language", AppLanguage.deviceDefault().name)
                 val showOriginal = settingsObj.optBoolean("showOriginalScript", true)
 
                 _readerSettings.value = ReaderSettings(
@@ -4079,7 +4091,7 @@ class ScriptureViewModel(application: Application) : AndroidViewModel(applicatio
                     fontSizeSp = fontSize,
                     fontFamily = try { FontFamilySetting.valueOf(fontFamilyStr) } catch (e: Exception) { FontFamilySetting.SERIF },
                     lineHeight = try { LineHeightSetting.valueOf(lineHeightStr) } catch (e: Exception) { LineHeightSetting.NORMAL },
-                    language = try { AppLanguage.valueOf(languageStr) } catch (e: Exception) { AppLanguage.EN },
+                    language = AppLanguage.fromStoredValue(languageStr) ?: AppLanguage.deviceDefault(),
                     showOriginalScript = showOriginal
                 )
 

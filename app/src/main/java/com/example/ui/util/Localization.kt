@@ -1,7 +1,35 @@
 package com.example.ui.util
 
 enum class AppLanguage {
-    TR, EN, RU
+    TR, EN, RU;
+
+    val localeTag: String
+        get() = when (this) {
+            TR -> "tr-TR"
+            EN -> "en-US"
+            RU -> "ru-RU"
+        }
+
+    companion object {
+        fun fromStoredValue(value: String?): AppLanguage? {
+            val normalized = value?.trim()?.uppercase()?.replace('_', '-') ?: return null
+            return when {
+                normalized == "TR" || normalized.startsWith("TR-") -> TR
+                normalized == "EN" || normalized.startsWith("EN-") -> EN
+                normalized == "RU" || normalized.startsWith("RU-") -> RU
+                else -> null
+            }
+        }
+
+        fun deviceDefault(): AppLanguage {
+            val language = java.util.Locale.getDefault().language.lowercase()
+            return when (language) {
+                "tr" -> TR
+                "ru" -> RU
+                else -> EN
+            }
+        }
+    }
 }
 
 object Loc {

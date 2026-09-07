@@ -50,12 +50,9 @@ class DailyVerseReceiver : BroadcastReceiver() {
                 val randomBook = targetBooks.randomOrNull() ?: books.first()
 
                 val settingsPrefs = context.getSharedPreferences("scriptorium_settings", Context.MODE_PRIVATE)
-                val langStr = settingsPrefs.getString("language", "TR") ?: "TR"
-                val lang = try {
-                    com.example.ui.util.AppLanguage.valueOf(langStr)
-                } catch (e: Exception) {
-                    com.example.ui.util.AppLanguage.TR
-                }
+                val langStr = settingsPrefs.getString("language", null)
+                val lang = com.example.ui.util.AppLanguage.fromStoredValue(langStr)
+                    ?: com.example.ui.util.AppLanguage.deviceDefault()
 
                 // Fetch random verse from live API, fallback to offline if error
                 val (ref, text) = fetchVerseFromApiWithFallback(randomBook.id, randomBook, lang)
